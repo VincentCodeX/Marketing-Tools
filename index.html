@@ -3,29 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>整合行銷工具盒 - QR Code 產生器</title>
+    <title>整合行銷工具盒 - Pro Version</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
-        /* 引入字型 */
+        /* 1. 核心變數設定 */
         @import "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap";
-        
-        /* 定義變數 (顏色與風格) */
         :root {
             --bg-gradient: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
             --surface-color: #FFFFFF;
-            --primary-color: #2C3E50;
-            --primary-light: #34495E;
-            --accent-color: #7D9D89;
+            --primary-color: #2C3E50; /* 深藍主色 */
+            --accent-color: #7D9D89;  /* 莫蘭迪綠點綴 */
+            --accent-light: #A3C4BC;
             --text-main: #333333;
             --text-secondary: #6B7280;
             --border-color: #E5E7EB;
-            --radius-lg: 20px;
+            --radius-lg: 16px;
             --radius-sm: 8px;
-            --shadow-xl: 0 24px 48px rgba(0, 0, 0, .12);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, .1);
+            --transition: all 0.3s ease;
         }
 
-        /* 基礎設定 */
+        /* 2. 全局樣式 */
         body {
             margin: 0;
             font-family: 'Noto Sans JP', sans-serif;
@@ -43,62 +42,115 @@
 
         .main-content {
             width: 100%;
-            max-width: 1000px;
-            animation: slideUp 0.5s ease-out;
+            max-width: 900px;
+            animation: fadeIn 0.5s ease-out;
         }
 
+        /* 3. 頭部與 Logo */
         .header {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
         }
-
         .logo {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--primary-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
+        }
+        /* SVG 圖示通用設定 */
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
+        /* 4. 分頁導覽列 (這就是你缺少的關鍵！) */
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            background: var(--surface-color);
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(125, 157, 137, 0.1);
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.2);
+        }
+
+        /* 5. 內容卡片區域 */
         .content-card {
             background: var(--surface-color);
             border-radius: var(--radius-lg);
             padding: 40px;
             box-shadow: var(--shadow-xl);
             border: 1px solid var(--border-color);
+            min-height: 400px;
         }
 
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
+        /* 隱藏未選中的區塊 */
+        .tool-section {
+            display: none; 
+            animation: slideUp 0.3s ease-out;
+        }
+        .tool-section.active {
+            display: block;
         }
 
-        @media (max-width: 768px) {
-            .grid-layout { grid-template-columns: 1fr; }
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            border-left: 4px solid var(--accent-color);
-            padding-left: 12px;
-        }
-
+        /* 6. 輸入框與按鈕樣式 */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: var(--text-secondary); }
         input {
             width: 100%;
             padding: 12px;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-sm);
-            margin-bottom: 20px;
-            box-sizing: border-box; /* 修正輸入框寬度問題 */
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(125, 157, 137, 0.2);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            background: var(--primary-color);
             color: white;
             border: none;
             padding: 12px 24px;
@@ -106,99 +158,167 @@
             cursor: pointer;
             font-weight: 500;
             width: 100%;
-            transition: 0.3s;
-        }
-
-        .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
-
-        .qr-preview-box {
-            background: #f8fafb;
-            padding: 20px;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 250px;
+            gap: 8px;
+            transition: var(--transition);
         }
+        .btn-primary:hover { transform: translateY(-2px); opacity: 0.95; }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* QR Code 預覽區專用 */
+        .qr-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .qr-preview {
+            background: #F8FAFB;
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
+        @media (max-width: 768px) { .qr-layout { grid-template-columns: 1fr; } }
+
+        /* 動畫設定 */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div class="main-content">
+<div class="app-container">
+    <div class="main-content">
+        
+        <header class="header">
+            <div class="logo">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span>Marketing ToolBox</span>
+            </div>
+        </header>
+
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('qr')">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                QR Code
+            </button>
+            <button class="tab-btn" onclick="switchTab('utm')">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                UTM 生成器
+            </button>
+            <button class="tab-btn" onclick="switchTab('ocr')">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M3 10H13C17.4183 10 21 13.5817 21 18V20M21 20L17 16M21 20L25 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                文字辨識 (OCR)
+            </button>
+        </div>
+
+        <div class="content-card">
             
-            <header class="header">
-                <div class="logo">
-                    <span>Marketing ToolBox</span>
+            <div id="section-qr" class="tool-section active">
+                <div class="qr-layout">
+                    <div>
+                        <h3 style="margin-top:0;">QR Code 製作</h3>
+                        <div class="form-group">
+                            <label>輸入網址</label>
+                            <input type="text" id="qr-input" placeholder="https://..." oninput="generateQR()">
+                        </div>
+                        <p style="font-size:13px; color:var(--accent-color);">💡 提示：輸入文字即時生成</p>
+                    </div>
+                    <div class="qr-preview">
+                        <div id="qrcode"></div>
+                    </div>
                 </div>
-            </header>
+            </div>
 
-            <div class="content-card">
-                <div class="grid-layout">
-                    
-                    <div class="input-section">
-                        <h3 class="section-title">QR Code 內容設定</h3>
-                        <p style="color: var(--text-secondary); font-size: 14px;">請輸入你想轉換成 QR Code 的網址或文字：</p>
-                        <input type="text" id="qr-input" placeholder="https://example.com" oninput="generateQR()">
-                        
-                        <div class="hint-text" style="margin-top: 20px;">
-                            <small>💡 輸入內容後，右側會自動即時產生</small>
-                        </div>
+            <div id="section-utm" class="tool-section">
+                <h3 style="margin-top:0;">UTM 網址生成器</h3>
+                <div class="form-group">
+                    <label>目標網址 (Website URL)</label>
+                    <input type="text" id="utm-url" placeholder="https://yoursite.com">
+                </div>
+                <div class="qr-layout" style="gap:20px;">
+                    <div class="form-group">
+                        <label>來源 (Source)</label>
+                        <input type="text" id="utm-source" placeholder="例如：facebook, google">
                     </div>
-
-                    <div class="preview-section">
-                        <h3 class="section-title">即時預覽</h3>
-                        <div class="qr-preview-box">
-                            <div id="qrcode"></div>
-                        </div>
+                    <div class="form-group">
+                        <label>媒介 (Medium)</label>
+                        <input type="text" id="utm-medium" placeholder="例如：cpc, banner">
                     </div>
+                </div>
+                <div class="form-group">
+                    <label>活動名稱 (Campaign)</label>
+                    <input type="text" id="utm-campaign" placeholder="例如：summer_sale">
+                </div>
+                <button class="btn-primary" onclick="generateUTM()">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    生成追蹤連結
+                </button>
+                
+                <div style="margin-top:20px; padding:15px; background:#F8FAFB; border-radius:8px;">
+                    <label style="font-size:12px;">生成的結果：</label>
+                    <code id="utm-result" style="display:block; word-break:break-all; color:var(--primary-color);">尚未生成...</code>
+                </div>
+            </div>
 
+            <div id="section-ocr" class="tool-section">
+                <div style="text-align:center; padding:40px;">
+                    <svg class="icon" style="width:48px; height:48px; color:var(--text-secondary); margin-bottom:16px;" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <h3>功能開發中</h3>
+                    <p style="color:var(--text-secondary);">文字辨識功能即將上線，敬請期待！</p>
                 </div>
             </div>
 
         </div>
     </div>
+</div>
 
-    <script>
-        // 初始化 QR Code 產生器
-        var qrcode = new QRCode(document.getElementById("qrcode"), {
-            width: 200,
-            height: 200
-        });
+<script>
+    // 1. 分頁切換邏輯 (這是讓網頁像 App 的關鍵)
+    function switchTab(tabName) {
+        // 移除所有按鈕的 active 狀態
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        // 隱藏所有區塊
+        document.querySelectorAll('.tool-section').forEach(section => section.classList.remove('active'));
 
-        // 產生 QR Code 的功能
-        function generateQR() {
-            var elText = document.getElementById("qr-input");
-            if (!elText.value) {
-                // 如果是空的，就清空 QR Code 或不做事
-                // 為了美觀，我們可以讓它保持最後一個狀態或顯示預設
-                return;
-            }
-            // 清除舊的，產生新的
-            document.getElementById("qrcode").innerHTML = ""; 
-            new QRCode(document.getElementById("qrcode"), {
-                text: elText.value,
-                width: 200,
-                height: 200
-            });
-        }
+        // 加上點擊按鈕的 active
+        event.currentTarget.classList.add('active');
+        // 顯示對應的區塊
+        document.getElementById('section-' + tabName).classList.add('active');
+    }
 
-        // 網頁載入時，預設顯示 GitHub 網址
-        generateQR(); // 先執行一次空的檢查
-        // 手動設定預設值
+    // 2. QR Code 生成邏輯
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        width: 180,
+        height: 180
+    });
+    function generateQR() {
+        var elText = document.getElementById("qr-input");
+        if (!elText.value) return;
         document.getElementById("qrcode").innerHTML = "";
         new QRCode(document.getElementById("qrcode"), {
-            text: "https://github.com",
-            width: 200,
-            height: 200
+            text: elText.value,
+            width: 180,
+            height: 180
         });
-    </script>
+    }
+    // 預設生成一個
+    qrcode.makeCode("https://github.com");
+
+    // 3. UTM 生成邏輯 (簡單版)
+    function generateUTM() {
+        var url = document.getElementById('utm-url').value;
+        var source = document.getElementById('utm-source').value;
+        var medium = document.getElementById('utm-medium').value;
+        var campaign = document.getElementById('utm-campaign').value;
+
+        if(!url) { alert("請至少輸入目標網址"); return; }
+
+        // 簡單的字串拼接
+        var finalUrl = `${url}?utm_source=${source}&utm_medium=${medium}&utm_campaign=${campaign}`;
+        document.getElementById('utm-result').innerText = finalUrl;
+    }
+</script>
 
 </body>
 </html>
