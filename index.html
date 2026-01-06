@@ -3,65 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code 生成器</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>整合行銷工具盒 - QR Code 產生器</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     <style>
+        /* 這裡就是你剛才提供的那一長串 CSS 精華 */
+        @import "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap";
+        
+        :root {
+            --bg-color: #F7F8F7;
+            --bg-gradient: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+            --surface-color: #FFFFFF;
+            --primary-color: #2C3E50;
+            --primary-light: #34495E;
+            --accent-color: #7D9D89;
+            --accent-glow: rgba(125, 157, 137, .3);
+            --text-main: #333333;
+            --text-secondary: #6B7280;
+            --border-color: #E5E7EB;
+            --radius-lg: 20px;
+            --radius-sm: 8px;
+            --shadow-xl: 0 24px 48px rgba(0, 0, 0, .12);
+            --transition-normal: .3s cubic-bezier(.4, 0, .2, 1);
+        }
+
         body {
-            overflow-x: hidden;
-            background-color: #f8f9fa;
-        }
-        /* 側邊欄樣式 */
-        #sidebar-wrapper {
+            margin: 0;
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
             min-height: 100vh;
-            width: 250px;
-            margin-left: -250px;
-            transition: margin 0.25s ease-out;
-            background-color: #343a40;
         }
-        #sidebar-wrapper .sidebar-heading {
-            padding: 1.5rem 1.25rem;
-            font-size: 1.2rem;
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .main-content {
+            width: 100%;
+            max-width: 1000px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .content-card {
+            background: var(--surface-color);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-layout { grid-template-columns: 1fr; }
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 12px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
             color: white;
-            border-bottom: 1px solid #495057;
-        }
-        #sidebar-wrapper .list-group {
-            width: 250px;
-        }
-        #wrapper.toggled #sidebar-wrapper {
-            margin-left: 0;
-        }
-        .list-group-item {
-            background-color: transparent;
-            color: #adb5bd;
             border: none;
-            padding: 1rem 1.5rem;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 500;
+            width: 100%;
+            transition: var(--transition-normal);
         }
-        .list-group-item:hover {
-            background-color: #495057;
-            color: white;
-        }
-        /* 內容區域 */
-        #page-content-wrapper {
-            min-width: 100vw;
-        }
-        #wrapper.toggled #page-content-wrapper {
-            padding-left: 250px;
-        }
-        @media (min-width: 768px) {
-            #sidebar-wrapper { margin-left: 0; }
-            #page-content-wrapper { min-width: 0; width: 100%; }
-            #wrapper.toggled #sidebar-wrapper { margin-left: -250px; }
-        }
-        /* QR Code 顯示區域 */
-        #qrcode-container {
+
+        .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        .qr-preview-box {
+            background: #f8fafb;
             padding: 20px;
-            background: white;
-            border-radius: 8px;
-            display: inline-block;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 250px;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
+<body>
+
+    <div class="app-container">
+        <div class="main-content">
+            
+            <header class="header">
+                <div class="logo">
+                    <span>Marketing ToolBox</span>
+                </div>
+            </header>
+
+            <div class="content-card">
+                <div class="grid-layout">
+                    
+                    <div class="input-section">
+                        <h3 class="section-title">QR Code 內容設定</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px;">請輸入你想轉換成 QR Code 的網址或文字：</p>
+                        <input type="text" id="qr-input" placeholder="https://example.com" oninput="generateQR()">
+                        
+                        <div class="hint-text" style="margin-top: 20px;">
+                            <small>💡 輸入內容後會自動即時產生</small>
+                        </div>
+                    </div>
+
+                    <div class="preview-section">
+                        <h3 class="section-title">即時預覽</h3>
+                        <div class="qr-preview-box">
+                            <div id="qrcode"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 初始化 QR Code 產生器
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            width: 200,
+            height: 200
+        });
+
+        function generateQR() {
+            var elText = document.getElementById("qr-input");
+            if (!elText.value) {
+                return;
+            }
+            qrcode.makeCode(elText.value);
+        }
+
+        // 預設產生一個內容
+        qrcode.makeCode("https://github.com");
+    </script>
+
+</body>
+</html>
 <body>
 
 <div class="d-flex" id="wrapper">
