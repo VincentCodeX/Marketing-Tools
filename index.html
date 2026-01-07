@@ -17,6 +17,7 @@
             --active-bg: #2C3E50;
             --active-text: #FFFFFF;
             --accent: #7D9D89;
+            --success: #10B981;
         }
 
         body {
@@ -32,115 +33,81 @@
         }
 
         .header-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--primary);
-            letter-spacing: 1px;
+            font-size: 24px; font-weight: 700; margin-bottom: 20px; color: var(--primary); letter-spacing: 1px;
         }
 
         /* 導覽列 */
         .nav-container {
-            background: var(--white);
-            padding: 10px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 24px;
-            max-width: 1000px;
-            width: 100%;
+            background: var(--white); padding: 10px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px; max-width: 1000px; width: 100%;
         }
-
         .nav-btn {
-            border: none;
-            background: transparent;
-            padding: 10px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            color: #6B7280;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-            flex: 1;
-            min-width: 110px;
-            justify-content: center;
+            border: none; background: transparent; padding: 10px 16px; border-radius: 8px; cursor: pointer;
+            font-size: 14px; font-weight: 500; color: #6B7280; display: flex; align-items: center; gap: 8px;
+            transition: all 0.2s; flex: 1; min-width: 110px; justify-content: center;
         }
-
         .nav-btn:hover { background-color: #F3F4F6; }
-        .nav-btn.active {
-            background-color: var(--active-bg);
-            color: var(--active-text);
-            box-shadow: 0 4px 6px -1px rgba(44, 62, 80, 0.4);
-        }
+        .nav-btn.active { background-color: var(--active-bg); color: var(--active-text); box-shadow: 0 4px 6px -1px rgba(44, 62, 80, 0.4); }
         .nav-btn svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; }
 
-        /* 卡片共用樣式 */
+        /* 卡片與通用 */
         .main-card {
-            background: var(--white);
-            width: 100%;
-            max-width: 1000px;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            min-height: 600px;
+            background: var(--white); width: 100%; max-width: 1000px; border-radius: 16px; padding: 40px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); min-height: 600px;
         }
-
         .tool-section { display: none; animation: fadeIn 0.3s ease-out; }
         .tool-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- QR Code 樣式 --- */
-        .qr-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .setting-group { margin-bottom: 24px; }
-        .setting-title { 
-            font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 12px; 
-            border-left: 3px solid var(--primary); padding-left: 8px; display: flex; align-items: center; gap: 8px;
-        }
-        input[type="text"], input[type="url"], select {
-            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box; background: #F9FAFB;
-        }
+        /* 輸入框組 */
+        .setting-title { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 12px; border-left: 3px solid var(--primary); padding-left: 8px; display: flex; align-items: center; gap: 8px; }
+        input[type="text"], input[type="url"], select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box; background: #F9FAFB; }
         input:focus, select:focus { outline: none; border-color: var(--primary); background: #fff; }
-        .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .file-upload { border: 1px dashed var(--border); padding: 15px; border-radius: 8px; text-align: center; cursor: pointer; background: #F9FAFB; font-size: 13px; color: #6B7280; }
-        .file-upload:hover { border-color: var(--primary); background: #fff; }
-        .preview-wrapper { position: sticky; top: 20px; background: #F8FAFB; border: 1px dashed var(--border); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; min-height: 400px; }
         .action-btn { margin-top: 20px; background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
         .action-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .action-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+
+        /* QR Code & UTM 特有樣式 (保留) */
+        .qr-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .setting-group { margin-bottom: 24px; }
         .type-toggle { display: flex; background: #F3F4F6; padding: 4px; border-radius: 8px; margin-bottom: 15px; }
         .type-btn { flex: 1; padding: 8px; border: none; background: transparent; border-radius: 6px; cursor: pointer; font-size: 14px; color: #6B7280; }
         .type-btn.active { background: white; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: 600; }
+        .preview-wrapper { position: sticky; top: 20px; background: #F8FAFB; border: 1px dashed var(--border); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; min-height: 400px; }
+        .file-upload { border: 1px dashed var(--border); padding: 15px; border-radius: 8px; text-align: center; cursor: pointer; background: #F9FAFB; font-size: 13px; color: #6B7280; }
         .color-picker { height: 45px; padding: 5px; cursor: pointer; }
-
-        /* --- GTM/UTM 專用樣式 (New) --- */
         .utm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         .full-width { grid-column: 1 / -1; }
-        .utm-result-box {
-            background: #F8FAFB;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 30px;
-        }
-        .result-link {
-            word-break: break-all;
-            color: var(--primary);
-            font-family: monospace;
-            font-size: 14px;
-            margin-bottom: 15px;
-            display: block;
-            line-height: 1.5;
-        }
-        .copy-success { color: var(--accent); font-size: 13px; margin-left: 10px; opacity: 0; transition: opacity 0.3s; }
+        .utm-result-box { background: #F8FAFB; border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-top: 30px; }
+        .result-link { word-break: break-all; color: var(--primary); font-family: monospace; font-size: 14px; margin-bottom: 15px; display: block; line-height: 1.5; }
+        .copy-success { color: var(--success); font-size: 13px; margin-left: 10px; opacity: 0; transition: opacity 0.3s; }
 
-        @media (max-width: 768px) {
-            .qr-layout, .utm-grid { grid-template-columns: 1fr; }
+        /* --- Short URL 專用樣式 (New) --- */
+        .url-result-container {
+            display: none; /* 預設隱藏 */
+            background: #ECFDF5; /* 成功時的淺綠色背景 */
+            border: 1px solid var(--success);
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 30px;
+            text-align: center;
         }
+        .short-url-display {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 15px 0;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .loading-spinner {
+            display: none;
+            width: 20px; height: 20px; border: 3px solid #FFF; border-bottom-color: transparent; border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) { .qr-layout, .utm-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -234,40 +201,31 @@
 
         <div id="tab-gtm" class="tool-section">
             <h2 style="color:var(--primary); margin-top:0;">GTM 網址產生器 (UTM Builder)</h2>
-            <p style="color:#666; font-size:14px; margin-bottom:20px;">協助您快速產生帶有追蹤參數的網址，以便在 Google Analytics 中分析成效。</p>
-            
+            <p style="color:#666; font-size:14px; margin-bottom:20px;">快速產生帶有追蹤參數的網址。</p>
             <div class="utm-grid">
                 <div class="full-width">
                     <div class="setting-title">1. 目標網址 (Website URL) <span style="color:red">*</span></div>
                     <input type="url" id="utm-url" placeholder="https://www.example.com" oninput="generateUTM()">
                 </div>
-                
                 <div>
                     <div class="setting-title">2. 來源 (Source) <span style="color:red">*</span></div>
-                    <input type="text" id="utm-source" placeholder="例如：google, facebook, edm" oninput="generateUTM()">
+                    <input type="text" id="utm-source" placeholder="例如：google, facebook" oninput="generateUTM()">
                 </div>
-                
                 <div>
                     <div class="setting-title">3. 媒介 (Medium) <span style="color:red">*</span></div>
-                    <input type="text" id="utm-medium" placeholder="例如：cpc, banner, email" oninput="generateUTM()">
+                    <input type="text" id="utm-medium" placeholder="例如：cpc, banner" oninput="generateUTM()">
                 </div>
-                
                 <div>
                     <div class="setting-title">4. 活動名稱 (Campaign)</div>
-                    <input type="text" id="utm-campaign" placeholder="例如：summer_sale_2024" oninput="generateUTM()">
+                    <input type="text" id="utm-campaign" placeholder="例如：summer_sale" oninput="generateUTM()">
                 </div>
-
                 <div>
-                    <div class="setting-title">5. 內容/關鍵字 (選填)</div>
-                    <input type="text" id="utm-content" placeholder="例如：button_a (區分不同連結用)" oninput="generateUTM()">
+                    <div class="setting-title">5. 內容 (Content)</div>
+                    <input type="text" id="utm-content" placeholder="例如：button_a" oninput="generateUTM()">
                 </div>
             </div>
-
             <div class="utm-result-box">
-                <div class="setting-title" style="border:none; padding:0;">
-                    您的追蹤連結：
-                    <span id="copy-msg" class="copy-success">✅ 已複製！</span>
-                </div>
+                <div class="setting-title" style="border:none; padding:0;">您的追蹤連結：<span id="copy-msg" class="copy-success">✅ 已複製！</span></div>
                 <code id="final-url" class="result-link">請輸入上方資料...</code>
                 <button class="action-btn" onclick="copyUTM()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
@@ -276,7 +234,35 @@
             </div>
         </div>
 
-        <div id="tab-url" class="tool-section"><div class="empty-state" style="text-align:center; padding:50px; color:#ccc;">短網址功能開發中...</div></div>
+        <div id="tab-url" class="tool-section">
+            <h2 style="color:var(--primary); margin-top:0;">短網址產生器</h2>
+            <p style="color:#666; font-size:14px; margin-bottom:30px;">
+                使用 TinyURL 的免費服務，將您的超長網址縮短。
+            </p>
+
+            <div style="max-width: 600px; margin: 0 auto;">
+                <div class="setting-title">請輸入長網址</div>
+                <div style="display:flex; gap:10px;">
+                    <input type="url" id="long-url" placeholder="https://www.example.com/very/long/url..." style="flex:1;">
+                    <button class="action-btn" id="shorten-btn" onclick="generateShortUrl()" style="margin:0; width:120px; justify-content:center;">
+                        <span id="btn-text">縮短</span>
+                        <div id="btn-loader" class="loading-spinner" style="display:none;"></div>
+                    </button>
+                </div>
+                <p style="font-size:12px; color:#999; margin-top:8px;">* 支援 http 與 https 網址</p>
+
+                <div id="short-result" class="url-result-container">
+                    <div style="color: var(--success); font-weight:bold;">🎉 縮短成功！</div>
+                    <a id="short-link" class="short-url-display" target="_blank" href="#">https://tinyurl.com/xyz</a>
+                    <br>
+                    <button class="action-btn" onclick="copyShortUrl()" style="margin: 20px auto 0 auto; background: var(--success);">
+                        複製短網址
+                    </button>
+                    <span id="short-copy-msg" class="copy-success">✅ 已複製！</span>
+                </div>
+            </div>
+        </div>
+
         <div id="tab-img" class="tool-section"><div class="empty-state" style="text-align:center; padding:50px; color:#ccc;">圖片壓縮功能開發中...</div></div>
         <div id="tab-ocr" class="tool-section"><div class="empty-state" style="text-align:center; padding:50px; color:#ccc;">OCR 功能開發中...</div></div>
         <div id="tab-ads" class="tool-section"><div class="empty-state" style="text-align:center; padding:50px; color:#ccc;">廣告規格功能開發中...</div></div>
@@ -285,7 +271,7 @@
     </div>
 
     <script>
-        // --- 全域變數 & 分頁 ---
+        // --- 1. 分頁切換 ---
         function switchTab(tabId) {
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tool-section').forEach(section => section.classList.remove('active'));
@@ -293,35 +279,25 @@
             document.getElementById('tab-' + tabId).classList.add('active');
         }
 
-        // --- 功能 1: QR Code 邏輯 ---
+        // --- 2. QR Code 邏輯 ---
         let qrCodeObj = new QRCodeStyling({
             width: 300, height: 300, type: "svg", data: "https://github.com", image: "",
             dotsOptions: { color: "#2C3E50", type: "square" }, backgroundOptions: { color: "#ffffff" },
             imageOptions: { crossOrigin: "anonymous", margin: 10 }
         });
         qrCodeObj.append(document.getElementById("qrcode-canvas"));
-
         function updateQR() {
             const text = document.getElementById('qr-text').value || "https://github.com";
             const color = document.getElementById('qr-color').value;
             const correction = document.getElementById('qr-correction').value;
             const dotsType = document.getElementById('qr-dots-type').value;
             const cornerType = document.getElementById('qr-corner-type').value;
-
-            qrCodeObj.update({
-                data: text,
-                dotsOptions: { color: color, type: dotsType },
-                cornersSquareOptions: { type: cornerType },
-                qrOptions: { errorCorrectionLevel: correction }
-            });
+            qrCodeObj.update({ data: text, dotsOptions: { color: color, type: dotsType }, cornersSquareOptions: { type: cornerType }, qrOptions: { errorCorrectionLevel: correction } });
         }
         function handleLogoUpload(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function (e) {
-                    qrCodeObj.update({ image: e.target.result });
-                    document.getElementById('logo-status').innerText = "✅ Logo 已載入";
-                }
+                reader.onload = function (e) { qrCodeObj.update({ image: e.target.result }); document.getElementById('logo-status').innerText = "✅ Logo 已載入"; }
                 reader.readAsDataURL(input.files[0]);
             }
         }
@@ -334,52 +310,78 @@
         }
         function downloadQR() { qrCodeObj.download({ name: "qrcode", extension: "png" }); }
 
-
-        // --- 功能 2: GTM (UTM) 邏輯 ---
+        // --- 3. GTM (UTM) 邏輯 ---
         function generateUTM() {
-            // 1. 抓取輸入框的值
             let url = document.getElementById('utm-url').value.trim();
             let source = document.getElementById('utm-source').value.trim();
             let medium = document.getElementById('utm-medium').value.trim();
             let campaign = document.getElementById('utm-campaign').value.trim();
             let content = document.getElementById('utm-content').value.trim();
-
             let resultDisplay = document.getElementById('final-url');
 
-            // 2. 基本檢查：如果沒有網址，就顯示提示
-            if (!url) {
-                resultDisplay.innerText = "請至少輸入「目標網址」...";
-                resultDisplay.style.color = "#ccc";
-                return;
-            }
-
-            // 3. 邏輯判斷：網址原本有沒有 '?'
-            // 如果原本是 https://site.com/?p=123，那我們要用 '&' 連接參數
-            // 如果原本是 https://site.com，那我們要用 '?' 連接參數
+            if (!url) { resultDisplay.innerText = "請至少輸入「目標網址」..."; resultDisplay.style.color = "#ccc"; return; }
             let separator = url.includes('?') ? '&' : '?';
-
             let params = [];
             if (source) params.push(`utm_source=${encodeURIComponent(source)}`);
             if (medium) params.push(`utm_medium=${encodeURIComponent(medium)}`);
             if (campaign) params.push(`utm_campaign=${encodeURIComponent(campaign)}`);
             if (content) params.push(`utm_content=${encodeURIComponent(content)}`);
 
-            // 4. 組合最終網址
             if (params.length > 0) {
                 let finalUrl = url + separator + params.join('&');
-                resultDisplay.innerText = finalUrl;
-                resultDisplay.style.color = "#2C3E50"; // 變回深色
-            } else {
-                resultDisplay.innerText = url;
-            }
+                resultDisplay.innerText = finalUrl; resultDisplay.style.color = "#2C3E50";
+            } else { resultDisplay.innerText = url; }
         }
-
         function copyUTM() {
             const urlText = document.getElementById('final-url').innerText;
             if (!urlText || urlText.includes("請輸入")) return;
+            navigator.clipboard.writeText(urlText).then(() => { const msg = document.getElementById('copy-msg'); msg.style.opacity = 1; setTimeout(() => { msg.style.opacity = 0; }, 2000); });
+        }
 
+        // --- 4. Short URL 邏輯 (New) ---
+        async function generateShortUrl() {
+            const longUrl = document.getElementById('long-url').value.trim();
+            const resultBox = document.getElementById('short-result');
+            const linkDisplay = document.getElementById('short-link');
+            const btnText = document.getElementById('btn-text');
+            const btnLoader = document.getElementById('btn-loader');
+            const shortenBtn = document.getElementById('shorten-btn');
+
+            if (!longUrl) { alert("請輸入網址！"); return; }
+
+            // 顯示 Loading 狀態
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline-block';
+            shortenBtn.disabled = true;
+            resultBox.style.display = 'none';
+
+            try {
+                // 使用 TinyURL 的 API (允許跨域請求)
+                const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+                
+                if (response.ok) {
+                    const shortUrl = await response.text();
+                    linkDisplay.innerText = shortUrl;
+                    linkDisplay.href = shortUrl;
+                    resultBox.style.display = 'block';
+                } else {
+                    alert("縮短失敗，請檢查網址是否正確。");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("發生錯誤，可能是網路問題或網址格式錯誤。");
+            } finally {
+                // 恢復按鈕狀態
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+                shortenBtn.disabled = false;
+            }
+        }
+
+        function copyShortUrl() {
+            const urlText = document.getElementById('short-link').innerText;
             navigator.clipboard.writeText(urlText).then(() => {
-                const msg = document.getElementById('copy-msg');
+                const msg = document.getElementById('short-copy-msg');
                 msg.style.opacity = 1;
                 setTimeout(() => { msg.style.opacity = 0; }, 2000);
             });
