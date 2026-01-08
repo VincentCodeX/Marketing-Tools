@@ -119,3 +119,116 @@ function copyShortUrl() {
         setTimeout(() => { msg.style.opacity = 0; }, 2000);
     });
 }
+
+// --- 5. 圖片壓縮邏輯 (使用 browser-image-compression) ---
+let currentFile = null;
+let compressedBlob = null;
+
+// A. 處理拖曳與選擇檔案
+function handleDragOver(e) {
+    e.preventDefault();
+    document.getElementById('drop-zone').classList.add('dragover');
+}
+function handleDragLeave(e) {
+    e.preventDefault();
+    document.getElementById('drop-zone').classList.remove('dragover');
+}
+function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('drop-zone').classList.remove('dragover');
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processImage(e.dataTransfer.files[0]);
+    }
+}
+
+// B. 核心處理函數
+async function processImage(file) {
+    if (!file.type.match('image.*')) {
+        alert("請上傳圖片檔案 (JPG, PNG, WebP)");
+        return;
+    }
+    
+    currentFile = file;
+    document.getElementById('compression-controls').style.display = 'block';
+    
+    // 顯示原始圖
+    document.getElementById('preview-original').src = URL.createObjectURL(file);
+    document.getElementById('info-original').innerText = formatSize(file.size);
+
+    // 開始執行壓縮
+    await runCompression();
+}
+
+// C. 執行壓縮 (與更新設定時共用)
+async function runCompression() {
+    if (!currentFile) return;
+
+    // 取得設定值
+    const quality = parseFloat(document.getElementById('quality').value);
+    const maxWidth = document.getElementById('max-width').value;
+    
+    // 顯示 Loading
+    const loading = document.getElementById('loading-overlay');
+    loading.style.display = 'flex';
+
+    // 設定參數
+    const options = {
+        maxSizeMB: 10,           // 寬鬆限制，主要靠 quality 控制
+        maxWidthOrHeight: maxWidth === 'undefined' ? undefined : parseInt(maxWidth),
+        useWebWorker: true,
+        initialQuality: quality, // 關鍵參數
+    };
+
+    try {
+        // 呼叫外掛進行壓縮
+        compressedBlob = await imageCompression(currentFile, options);
+        
+        // 顯示結果
+        document.getElementById('preview-compressed').src = URL.createObjectURL(compressedBlob);
+        
+        // 計算節省比例
+        const saved = ((currentFile.size - compressedBlob.size) / currentFile.size * 100).toFixed(1);
+        document.getElementById('info-compressed').innerHTML = 
+            `${formatSize(compressedBlob.size)} <span style="font-size:11px; color:#10B981;">(省下 ${saved}%)</span>`;
+
+    } catch (error) {
+        console.error(error);
+        alert("壓縮失敗，請換一張圖片試試");
+    } finally {
+        loading.style.display = 'none';
+    }
+}
+
+// D. 更新設定時自動重壓
+function updateCompressionSetting() {
+    // 更新顯示數值
+    document.getElementById('quality-val').innerText = document.getElementById('quality').value;
+    const width = document.getElementById('max-width').value;
+    document.getElementById('width-val').innerText = width === 'undefined' ? '原尺寸' : width + 'px';
+    
+    // 稍微延遲執行，避免拉動滑桿時瘋狂運算 (防抖動)
+    if(this.timer) clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+        runCompression();
+    }, 500);
+}
+
+// E. 下載檔案
+function downloadImage() {
+    if(!compressedBlob) return;
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(compressedBlob);
+    // 檔名加上 -min
+    const newName = currentFile.name.replace(/(\.[\w\d_-]+)$/i, '-min$1');
+    link.download = newName;
+    link.click();
+}
+
+// 工具：格式化檔案大小
+function formatSize(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
