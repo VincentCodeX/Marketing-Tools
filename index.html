@@ -156,65 +156,116 @@
             </div>
         </div>
 
-        <div id="tab-img" class="tool-section">
-            <h2 style="color:var(--primary); margin-top:0;">圖片智能壓縮</h2>
-            <p style="color:#666; font-size:14px; margin-bottom:20px;">
-                在瀏覽器端直接運算，<strong style="color:var(--primary);">圖片不會上傳到伺服器</strong>，確保隱私安全。
-            </p>
-
-            <div class="upload-zone" id="drop-zone" onclick="document.getElementById('img-input').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-                <input type="file" id="img-input" accept="image/*" style="display:none" onchange="processImage(this.files[0])">
-                <div style="font-size:40px; margin-bottom:10px;">📤</div>
-                <div style="font-weight:600; color:var(--primary);">點擊或拖曳圖片至此</div>
-                <div style="font-size:13px; color:#999; margin-top:5px;">支援 JPG, PNG, WEBP (建議小於 10MB)</div>
+<div id="tab-img" class="tool-section">
+            
+            <div class="info-banner">
+                <div class="info-icon">🖼️</div>
+                <div>
+                    <strong style="color:var(--primary); font-size:15px;">專業圖片壓縮工具</strong>
+                    <div style="font-size:12px; color:#666; margin-top:4px;">
+                        支援批量處理、廣告平台預設尺寸、格式轉換。所有運算皆在瀏覽器完成，隱私百分百。
+                    </div>
+                </div>
             </div>
 
-            <div id="compression-controls" style="display:none; margin-top:30px;">
-                
-                <div class="control-panel">
-                    <div class="setting-group" style="margin-bottom:0;">
-                        <div class="setting-title">壓縮設定</div>
-                        <div class="control-grid">
-                            <div>
-                                <label style="font-size:12px; color:#666;">壓縮品質 (Quality): <span id="quality-val" style="color:var(--primary); font-weight:bold;">0.8</span></label>
-                                <input type="range" id="quality" min="0.1" max="1.0" step="0.1" value="0.8" oninput="updateCompressionSetting()">
-                            </div>
-                            <div>
-                                <label style="font-size:12px; color:#666;">最大寬度 (Max Width): <span id="width-val" style="color:var(--primary); font-weight:bold;">1920px</span></label>
-                                <select id="max-width" onchange="updateCompressionSetting()">
-                                    <option value="1920">1920px (FHD)</option>
-                                    <option value="1280">1280px (HD)</option>
-                                    <option value="800">800px (Web)</option>
-                                    <option value="undefined">不改變尺寸</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="compare-grid">
-                    <div class="img-card">
-                        <div class="badge">原始</div>
-                        <img id="preview-original" class="img-preview">
-                        <div class="img-info" id="info-original">0 KB</div>
-                    </div>
+            <div class="compress-dashboard">
+                <div class="compress-controls">
                     
-                    <div style="display:flex; align-items:center; justify-content:center; font-size:24px; color:#ccc;">➔</div>
-
-                    <div class="img-card">
-                        <div class="badge" style="background:var(--success);">壓縮後</div>
-                        <div id="loading-overlay" class="loading-overlay" style="display:none;">
-                            <div class="spinner"></div>處理中...
+                    <div class="control-block">
+                        <div class="block-title">⬆️ 上傳圖片</div>
+                        <div class="upload-box-small" id="drop-zone" onclick="document.getElementById('img-input').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <div class="upload-icon">📄</div>
+                            <div>
+                                <div style="font-weight:600; color:var(--primary);">拖放圖片或點擊上傳</div>
+                                <div style="font-size:11px; color:#999;">支援 JPG, PNG, WEBP</div>
+                            </div>
                         </div>
-                        <img id="preview-compressed" class="img-preview">
-                        <div class="img-info" id="info-compressed" style="color:var(--success); font-weight:bold;">0 KB</div>
+                        <input type="file" id="img-input" accept="image/*" style="display:none" onchange="processImage(this.files[0])">
                     </div>
+
+                    <div class="control-block">
+                        <div class="block-title">▦ 廣告平台預設尺寸</div>
+                        <select id="preset-select" class="form-select" onchange="applyPreset()">
+                            <option value="custom">自訂尺寸 (保持原樣)</option>
+                            <option value="1200x630">Facebook 貼文 (1200 x 630)</option>
+                            <option value="1080x1080">Instagram 貼文 (1080 x 1080)</option>
+                            <option value="1080x1920">IG / FB 限時動態 (1080 x 1920)</option>
+                            <option value="1280x720">YouTube 縮圖 (1280 x 720)</option>
+                            <option value="800xauto">網頁文章標準寬 (800 px)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-block">
+                        <div class="block-title">✨ 自訂尺寸 (px)</div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <input type="number" id="custom-width" placeholder="寬度" class="form-input" oninput="runCompression()">
+                            <span style="color:#ccc;">×</span>
+                            <input type="number" id="custom-height" placeholder="高度" class="form-input" oninput="runCompression()">
+                        </div>
+                    </div>
+
+                    <div class="control-block">
+                        <div class="block-title">⚙️ 壓縮設定</div>
+                        
+                        <div class="setting-row">
+                            <label>壓縮品質 (Quality)</label>
+                            <input type="range" id="quality" min="0.1" max="1.0" step="0.1" value="0.8" style="width:100px;" oninput="updateQualityVal()">
+                            <span id="quality-val" style="font-size:12px; font-weight:bold; width:30px;">0.8</span>
+                        </div>
+
+                        <div class="setting-row">
+                            <label>輸出格式</label>
+                            <select id="output-format" class="form-select" style="width:auto;" onchange="runCompression()">
+                                <option value="original">保持原格式</option>
+                                <option value="image/jpeg">轉成 JPEG (最小)</option>
+                                <option value="image/png">轉成 PNG (透明)</option>
+                                <option value="image/webp">轉成 WebP (新一代)</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-row">
+                            <label>浮水印 (尚未實裝)</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" disabled>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
                 </div>
 
-                <button class="action-btn" id="download-btn" onclick="downloadImage()" style="margin:30px auto 0 auto; width:200px; justify-content:center;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    下載壓縮圖片
-                </button>
+                <div class="compress-preview-area">
+                    
+                    <div id="preview-empty" class="empty-preview">
+                        <div style="font-size:48px; color:#E5E7EB; margin-bottom:15px;">🖼️</div>
+                        <div style="color:#6B7280;">尚未上傳圖片</div>
+                        <div style="font-size:12px; color:#9CA3AF;">請從左側上傳圖片開始使用</div>
+                    </div>
+
+                    <div id="preview-active" style="display:none; width:100%; text-align:center;">
+                        <div class="preview-card">
+                            <img id="preview-compressed" class="preview-img">
+                            <div id="loading-overlay" class="loading-overlay" style="display:none;">
+                                <div class="spinner"></div>處理中...
+                            </div>
+                        </div>
+
+                        <div class="result-stats">
+                            <div>原始：<span id="info-original">0 KB</span></div>
+                            <div style="color:#ccc;">➔</div>
+                            <div style="color:var(--success); font-weight:bold;">優化後：<span id="info-compressed">0 KB</span></div>
+                        </div>
+
+                        <button class="action-btn" onclick="downloadImage()" style="width:100%; justify-content:center; margin-top:15px;">
+                            下載圖片
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="usage-hint">
+                ℹ️ <strong>使用提示：</strong> 圖片壓縮完全在您的瀏覽器中處理，不會上傳到伺服器。建議先選擇「廣告平台預設尺寸」可快速調整。
             </div>
         </div>
 
