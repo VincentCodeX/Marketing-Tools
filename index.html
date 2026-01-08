@@ -271,7 +271,56 @@
 
         <div id="tab-ocr" class="tool-section"><div class="empty-state" style="text-align:center; padding:50px; color:#ccc;">OCR 功能開發中...</div></div>
         <div id="tab-ads" class="tool-section"><div class="empty-state" style="text-align:center; padding:50px; color:#ccc;">廣告規格功能開發中...</div></div>
-        <div id="tab-emoji" class="tool-section"><div class="empty-state" style="text-align:center; padding:50px; color:#ccc;">Emoji 功能開發中...</div></div>
+       <div id="tab-emoji" class="tool-section">
+            <h2 style="color:var(--primary); margin-top:0;">常用行銷符號與 Emoji</h2>
+            <p style="font-size:14px; color:#666;">點擊即可複製，讓貼文更吸睛！</p>
+            
+            <div class="emoji-category">
+                <div class="cat-title">🔥 吸引注意 / 強調</div>
+                <div class="emoji-grid">
+                    <button onclick="copyEmoji('🔥')">🔥</button>
+                    <button onclick="copyEmoji('⚡')">⚡</button>
+                    <button onclick="copyEmoji('🚨')">🚨</button>
+                    <button onclick="copyEmoji('📢')">📢</button>
+                    <button onclick="copyEmoji('🔔')">🔔</button>
+                    <button onclick="copyEmoji('⚠️')">⚠️</button>
+                    <button onclick="copyEmoji('💎')">💎</button>
+                    <button onclick="copyEmoji('💡')">💡</button>
+                    <button onclick="copyEmoji('📌')">📌</button>
+                </div>
+            </div>
+
+            <div class="emoji-category">
+                <div class="cat-title">👉 引導行動 / 連結</div>
+                <div class="emoji-grid">
+                    <button onclick="copyEmoji('👉')">👉</button>
+                    <button onclick="copyEmoji('👇')">👇</button>
+                    <button onclick="copyEmoji('🔗')">🔗</button>
+                    <button onclick="copyEmoji('🛒')">🛒</button>
+                    <button onclick="copyEmoji('📩')">📩</button>
+                    <button onclick="copyEmoji('🔎')">🔎</button>
+                    <button onclick="copyEmoji('👀')">👀</button>
+                    <button onclick="copyEmoji('💬')">💬</button>
+                </div>
+            </div>
+
+            <div class="emoji-category">
+                <div class="cat-title">✅ 正面 / 檢核 / 數字</div>
+                <div class="emoji-grid">
+                    <button onclick="copyEmoji('✅')">✅</button>
+                    <button onclick="copyEmoji('☑️')">☑️</button>
+                    <button onclick="copyEmoji('🌟')">🌟</button>
+                    <button onclick="copyEmoji('💯')">💯</button>
+                    <button onclick="copyEmoji('❤️')">❤️</button>
+                    <button onclick="copyEmoji('👍')">👍</button>
+                    <button onclick="copyEmoji('1️⃣')">1️⃣</button>
+                    <button onclick="copyEmoji('2️⃣')">2️⃣</button>
+                    <button onclick="copyEmoji('3️⃣')">3️⃣</button>
+                </div>
+            </div>
+            
+            <div id="emoji-toast" class="toast-msg">已複製！</div>
+        </div>
 
     </div>
 
