@@ -88,3 +88,93 @@ input:focus, select:focus { outline: none; border-color: var(--primary); backgro
 @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 @media (max-width: 768px) { .qr-layout, .utm-grid { grid-template-columns: 1fr; } }
+
+/* --- Tab 4: 圖片壓縮專用樣式 --- */
+.upload-zone {
+    border: 2px dashed #CBD5E1;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    background: #F8FAFB;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--primary);
+    background: #EFF6FF;
+    transform: scale(1.01);
+}
+
+.control-panel {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    gap: 10px;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.img-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.img-preview {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.img-info {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #666;
+    font-family: monospace;
+}
+
+.badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #666;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 13px;
+    z-index: 10;
+}
+.spinner {
+    width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: rotation 1s linear infinite; margin-bottom: 5px;
+}
+
+@media (max-width: 600px) {
+    .compare-grid { grid-template-columns: 1fr; gap: 20px; }
+}
