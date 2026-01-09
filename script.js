@@ -184,9 +184,8 @@ function formatSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// --- 6. OCR 名片掃描邏輯 (強化解析與匯出) ---
+// --- 6. OCR 名片掃描邏輯 (修復版) ---
 
-// A. 處理拖曳
 function handleOcrDragLeave(e) { e.preventDefault(); document.getElementById('ocr-drop-zone').style.borderColor = '#E2E8F0'; }
 function handleOcrDrop(e) {
     e.preventDefault();
@@ -194,80 +193,83 @@ function handleOcrDrop(e) {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) processOcr(e.dataTransfer.files[0]);
 }
 
-// B. 核心處理
 async function processOcr(file) {
     if (!file) return;
+    
+    // UI 初始化
     const imgUrl = URL.createObjectURL(file);
     document.getElementById('ocr-preview-img').src = imgUrl;
     document.getElementById('ocr-preview-img').style.display = 'block';
     document.getElementById('ocr-default-view').style.display = 'none';
     document.getElementById('ocr-loading').style.display = 'flex';
-    document.getElementById('ocr-status-text').innerText = "引擎初始化中 (初次需下載語言包)...";
+    document.getElementById('ocr-status-text').innerText = "下載語言包 (初次約需 10-20 秒)...";
     
     clearOcrForm();
 
     try {
-        // 使用更強的參數設定
-        const { data: { text } } = await Tesseract.recognize(file, 'chi_tra+eng', {
+        // 設定 Worker，指定語言包路徑，避免跨域問題
+        const worker = Tesseract.createWorker({
             logger: m => {
                 if(m.status === 'recognizing text') {
-                    document.getElementById('ocr-status-text').innerText = `辨識中... ${Math.round(m.progress * 100)}%`;
+                    document.getElementById('ocr-status-text').innerText = `文字辨識中... ${Math.round(m.progress * 100)}%`;
                 }
             }
         });
-        parseOcrText(text); // 呼叫強化版解析器
+
+        await worker.load();
+        await worker.loadLanguage('chi_tra+eng'); // 下載繁體中文和英文
+        await worker.initialize('chi_tra+eng');
+        
+        const { data: { text } } = await worker.recognize(file);
+        console.log("辨識原文:", text); // 方便你除錯
+        
+        parseOcrText(text); // 開始解析
+        
+        await worker.terminate(); // 釋放記憶體
+
     } catch (error) {
         console.error(error);
-        alert("辨識發生錯誤，請確保網路正常 (需下載語言包)");
+        alert("辨識失敗。請確認網路連線正常 (需要下載語言包)。");
     } finally {
         document.getElementById('ocr-loading').style.display = 'none';
     }
 }
 
-// C. 強化版解析邏輯 (針對台灣名片優化)
 function parseOcrText(text) {
-    // 1. Email (通用)
-    const emailMatch = text.match(/[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}/);
+    // 移除空白行，統一處理
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const fullText = lines.join(' '); // 單行全文字，方便正則比對
+
+    // 1. Email (更寬鬆的匹配)
+    const emailMatch = fullText.match(/[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
     if(emailMatch) document.getElementById('ocr-email').value = emailMatch[0];
 
-    // 2. 手機/電話 (支援 09xx, +886, 02-xxxx)
-    const phoneMatch = text.match(/((\+886|0)9\d{2}[-\s]?\d{3}[-\s]?\d{3}|0\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4})/);
+    // 2. 手機 (台灣格式優化)
+    const phoneMatch = fullText.match(/09\d{2}[-\s]?\d{3}[-\s]?\d{3}/) || fullText.match(/\+886\s?9\d{2}[-\s]?\d{3}[-\s]?\d{3}/);
     if(phoneMatch) document.getElementById('ocr-phone').value = phoneMatch[0];
 
-    // 3. 統編 (精準 8 碼數字)
-    const taxMatch = text.match(/(?:統編|統一編號|Tax ID)[:\s]*(\d{8})/);
-    if(taxMatch) {
-        document.getElementById('ocr-tax').value = taxMatch[1];
-    } else {
-        // 備用方案：找獨立的 8 碼數字 (風險較高，但有用)
-        const pureTax = text.match(/\b\d{8}\b/);
-        if(pureTax && !pureTax[0].startsWith('09')) document.getElementById('ocr-tax').value = pureTax[0];
-    }
+    // 3. 統編 (8碼數字)
+    const taxMatch = fullText.match(/\b\d{8}\b/);
+    if(taxMatch) document.getElementById('ocr-tax').value = taxMatch[0];
 
-    // 4. LINE ID (模糊比對)
-    const lineMatch = text.match(/(?:LINE|ID)[:\s]*([A-Za-z0-9_.-]+)/i);
+    // 4. LINE ID (簡單匹配)
+    const lineMatch = fullText.match(/LINE[:\s]?\s*([a-zA-Z0-9_.-]+)/i);
     if(lineMatch) document.getElementById('ocr-line').value = lineMatch[1];
 
-    // 5. 姓名與公司 (啟發式猜測)
-    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 1);
-    if(lines.length > 0) {
-        // 假設：包含 '公司', 'Ltd', 'Inc' 的是公司名稱
-        const companyLine = lines.find(l => l.includes('公司') || l.includes('Ltd') || l.includes('Inc'));
-        if(companyLine) document.getElementById('ocr-company').value = companyLine;
+    // 5. 姓名與公司 (啟發式)
+    // 通常公司名會有 "公司", "Inc", "Ltd"
+    const companyLine = lines.find(l => l.includes('公司') || l.includes('Ltd') || l.includes('Inc'));
+    if(companyLine) document.getElementById('ocr-company').value = companyLine;
 
-        // 假設：職稱通常包含 '經理', '總監' 等
-        const titles = ['經理', '總監', '工程師', '專員', 'Manager', 'Director', 'CEO', 'Representative'];
-        const titleLine = lines.find(l => titles.some(t => l.includes(t)));
-        if(titleLine) document.getElementById('ocr-title').value = titleLine;
+    // 通常職稱會有 "經理", "Manager"
+    const titleLine = lines.find(l => l.includes('經理') || l.includes('Manager') || l.includes('總監') || l.includes('專員'));
+    if(titleLine) document.getElementById('ocr-title').value = titleLine;
 
-        // 假設：既不是公司也不是職稱的前兩行，可能是姓名
-        // 這部分很難精準，只能盡量猜
-        const potentialNames = lines.filter(l => l !== companyLine && l !== titleLine && l.length < 10);
-        if(potentialNames.length > 0) document.getElementById('ocr-name').value = potentialNames[0];
-    }
+    // 剩下的可能是姓名 (排除掉已找到的行)
+    const nameLine = lines.find(l => l !== companyLine && l !== titleLine && l.length < 5 && l.length > 1); // 姓名通常短
+    if(nameLine) document.getElementById('ocr-name').value = nameLine;
 }
 
-// D. 表單操作
 function clearOcrForm() {
     ['ocr-name', 'ocr-title', 'ocr-company', 'ocr-phone', 'ocr-email', 'ocr-line', 'ocr-tax'].forEach(id => document.getElementById(id).value = '');
 }
@@ -280,8 +282,8 @@ function resetOcr() {
 }
 
 function copyAllOcr() {
-    const data = getOcrData();
-    const text = `姓名: ${data.name}\n職稱: ${data.title}\n公司: ${data.company}\n電話: ${data.phone}\nEmail: ${data.email}\nLINE: ${data.line}\n統編: ${data.tax}`;
+    const d = getOcrData();
+    const text = `姓名: ${d.name}\n職稱: ${d.title}\n公司: ${d.company}\n電話: ${d.phone}\nEmail: ${d.email}\nLINE: ${d.line}\n統編: ${d.tax}`;
     navigator.clipboard.writeText(text).then(() => alert('已複製全部資料'));
 }
 
@@ -297,41 +299,28 @@ function getOcrData() {
     };
 }
 
-// --- 7. 匯出功能實作 (New) ---
-
-function exportToCsv() {
+// 匯出功能 - 確保全域可用
+window.exportToCsv = function() {
     const d = getOcrData();
-    // BOM (\uFEFF) 用於解決 Excel 開啟中文亂碼問題
-    const csvContent = "\uFEFF姓名,職稱,公司,電話,Email,LINE,統編\n" +
-        `${d.name},${d.title},${d.company},${d.phone},${d.email},${d.line},${d.tax}`;
-    
+    const csvContent = "\uFEFF姓名,職稱,公司,電話,Email,LINE,統編\n" + `${d.name},${d.title},${d.company},${d.phone},${d.email},${d.line},${d.tax}`;
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "ocr_contact.csv";
+    link.download = "contact.csv";
     link.click();
-}
+};
 
-function copyNotionFormat() {
+window.copyNotionFormat = function() {
     const d = getOcrData();
-    // 這是 Notion / Markdown 表格格式
     const text = `| 欄位 | 資料 |\n| --- | --- |\n| 姓名 | ${d.name} |\n| 職稱 | ${d.title} |\n| 公司 | ${d.company} |\n| 電話 | ${d.phone} |\n| Email | ${d.email} |\n| LINE | ${d.line} |\n| 統編 | ${d.tax} |`;
-    navigator.clipboard.writeText(text).then(() => alert('已複製 Notion 表格格式，請去 Notion 貼上'));
-}
+    navigator.clipboard.writeText(text).then(() => alert('已複製 Notion 格式'));
+};
 
-function exportToJson() {
+window.exportToJson = function() {
     const d = getOcrData();
-    const jsonStr = JSON.stringify(d, null, 2);
-    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = "contact.json";
     link.click();
-}
-
-// 綁定按鈕事件 (避免 HTML onclick 雜亂)
-// 請確保 HTML 中的按鈕 onclick 已經指向這些函數
-// 這裡用 window 綁定確保全域可呼叫
-window.exportToCsv = exportToCsv;
-window.copyNotionFormat = copyNotionFormat;
-window.exportToJson = exportToJson;
+};
