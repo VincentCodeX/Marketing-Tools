@@ -326,29 +326,37 @@
     <div id="ads-toast" class="toast-msg">已複製尺寸</div>
 </div>
 
-        <div id="tab-emoji" class="tool-section">
-            <h2 style="color:var(--primary); margin-top:0;">常用行銷符號與 Emoji</h2>
-            <p style="font-size:14px; color:#666;">點擊即可複製，讓貼文更吸睛！</p>
-            <div class="emoji-category">
-                <div class="cat-title">🔥 吸引注意 / 強調</div>
-                <div class="emoji-grid">
-                    <button onclick="copyEmoji('🔥')">🔥</button><button onclick="copyEmoji('⚡')">⚡</button><button onclick="copyEmoji('🚨')">🚨</button><button onclick="copyEmoji('📢')">📢</button><button onclick="copyEmoji('🔔')">🔔</button><button onclick="copyEmoji('⚠️')">⚠️</button><button onclick="copyEmoji('💎')">💎</button><button onclick="copyEmoji('💡')">💡</button><button onclick="copyEmoji('📌')">📌</button>
-                </div>
-            </div>
-            <div class="emoji-category">
-                <div class="cat-title">👉 引導行動 / 連結</div>
-                <div class="emoji-grid">
-                    <button onclick="copyEmoji('👉')">👉</button><button onclick="copyEmoji('👇')">👇</button><button onclick="copyEmoji('🔗')">🔗</button><button onclick="copyEmoji('🛒')">🛒</button><button onclick="copyEmoji('📩')">📩</button><button onclick="copyEmoji('🔎')">🔎</button><button onclick="copyEmoji('👀')">👀</button><button onclick="copyEmoji('💬')">💬</button>
-                </div>
-            </div>
-            <div class="emoji-category">
-                <div class="cat-title">✅ 正面 / 檢核 / 數字</div>
-                <div class="emoji-grid">
-                    <button onclick="copyEmoji('✅')">✅</button><button onclick="copyEmoji('☑️')">☑️</button><button onclick="copyEmoji('🌟')">🌟</button><button onclick="copyEmoji('💯')">💯</button><button onclick="copyEmoji('❤️')">❤️</button><button onclick="copyEmoji('👍')">👍</button><button onclick="copyEmoji('1️⃣')">1️⃣</button><button onclick="copyEmoji('2️⃣')">2️⃣</button><button onclick="copyEmoji('3️⃣')">3️⃣</button>
-                </div>
-            </div>
-            <div id="emoji-toast" class="toast-msg">已複製！</div>
+       <div id="tab-emoji" class="tool-section">
+    <div class="emoji-header-box">
+        <div class="emoji-icon-bg">😊</div>
+        <div>
+            <h2 style="margin:0; color:var(--primary);">常用標點符號 & Emoji & 顏文字</h2>
+            <p style="margin:5px 0 0; font-size:13px; color:#666;">點擊即可複製到剪貼簿，方便快速使用</p>
         </div>
+    </div>
+
+    <div class="sub-nav-container">
+        <button class="sub-nav-btn active" onclick="switchSubTab('symbols')">T 標點符號</button>
+        <button class="sub-nav-btn" onclick="switchSubTab('emojis')">☺ Emoji</button>
+        <button class="sub-nav-btn" onclick="switchSubTab('kaomoji')">ʕ•ᴥ•ʔ 顏文字</button>
+    </div>
+
+    <div id="view-symbols" class="sub-view active">
+        </div>
+
+    <div id="view-emojis" class="sub-view">
+        </div>
+
+    <div id="view-kaomoji" class="sub-view">
+        </div>
+
+    <div class="footer-note" style="margin-top:30px;">
+        <span>⚡</span>
+        <div>小技巧：點擊符號、Emoji 或顏文字即可自動複製，然後在任何地方使用 Ctrl+V (或 Cmd+V) 貼上。</div>
+    </div>
+    
+    <div id="symbol-toast" class="toast-msg">已複製！</div>
+</div>
 
     </div>
 
