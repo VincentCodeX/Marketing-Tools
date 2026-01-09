@@ -301,7 +301,30 @@
             </div>
         </div>
 
-        <div id="tab-ads" class="tool-section"><div class="empty-state" style="text-align:center; padding:50px; color:#ccc;">廣告規格功能開發中...</div></div>
+        <div id="tab-ads" class="tool-section">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+        <h2 style="color:var(--primary); margin:0;">各大平台廣告規格速查</h2>
+        <select id="platformFilter" onchange="renderCards(this.value)" style="width:auto; max-width:200px;">
+            <option value="all">全部平台</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Google Ads">Google Ads</option>
+            <option value="LINE">LINE</option>
+            <option value="YouTube">YouTube</option>
+            <option value="Threads">Threads</option>
+        </select>
+    </div>
+
+    <div id="gridContainer" class="ads-grid-container">
+        </div>
+
+    <div style="margin-top:20px; padding:15px; background:#F0FDF4; border:1px solid #DCFCE7; border-radius:8px; font-size:13px; color:#444; display:flex; gap:10px;">
+        <span>ⓘ</span>
+        <div>提示：點擊右側複製按鈕可快速複製尺寸（如 1080x1080），方便在 PS 或 Canva 中使用。</div>
+    </div>
+    
+    <div id="ads-toast" class="toast-msg">已複製尺寸</div>
+</div>
 
         <div id="tab-emoji" class="tool-section">
             <h2 style="color:var(--primary); margin-top:0;">常用行銷符號與 Emoji</h2>
