@@ -320,3 +320,67 @@ input:checked + .slider:before { transform: translateX(20px); }
     display: flex; align-items: center; justify-content: center; transition: all 0.2s;
 }
 .copy-btn-small:hover { border-color: var(--primary); color: var(--primary); background: #F8FAFC; }
+
+/* --- Tab 7: 符號工具專用樣式 --- */
+
+/* 頂部標題裝飾 */
+.emoji-header-box {
+    background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px;
+    display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+}
+.emoji-icon-bg {
+    width: 48px; height: 48px; background: #CFD8DC; color: white; font-size: 24px;
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+}
+
+/* 子分頁切換按鈕 */
+.sub-nav-container {
+    display: flex; gap: 10px; margin-bottom: 24px;
+}
+.sub-nav-btn {
+    flex: 1; padding: 12px; border: 1px solid #E2E8F0; background: white;
+    border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; color: #64748B;
+    transition: all 0.2s;
+}
+.sub-nav-btn:hover { background: #F1F5F9; color: var(--primary); }
+.sub-nav-btn.active {
+    background: var(--primary); color: white; border-color: var(--primary);
+    box-shadow: 0 4px 6px -1px rgba(44, 62, 80, 0.3);
+}
+
+/* 隱藏/顯示控制 */
+.sub-view { display: none; }
+.sub-view.active { display: block; animation: fadeIn 0.3s ease-out; }
+
+/* 內容卡片與網格 */
+.symbol-group-card {
+    background: white; border: 1px solid #E2E8F0; border-radius: 12px;
+    margin-bottom: 20px; overflow: hidden;
+}
+.symbol-card-header {
+    background: #fff; padding: 15px 20px; font-weight: 700; color: var(--primary); font-size: 14px;
+    border-bottom: 1px solid #F1F5F9;
+}
+.symbol-grid {
+    display: grid; padding: 15px; gap: 10px;
+}
+/* 根據內容類型調整網格大小 */
+.grid-cols-8 { grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); } /* 標點 */
+.grid-cols-emoji { grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); } /* Emoji */
+.grid-cols-kaomoji { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); } /* 顏文字 */
+
+/* 單個符號按鈕 */
+.symbol-btn {
+    border: none; background: transparent; cursor: pointer; border-radius: 6px;
+    font-size: 18px; padding: 8px 0; transition: 0.2s; color: #333;
+    display: flex; align-items: center; justify-content: center;
+}
+.symbol-btn:hover { background: #F1F5F9; transform: scale(1.2); color: var(--primary); }
+.symbol-btn:active { transform: scale(0.95); }
+
+/* 顏文字特別樣式 (字體要清楚) */
+.kaomoji-btn {
+    font-family: "Arial", "Microsoft JhengHei", sans-serif; font-size: 13px;
+    padding: 10px; background: #F8FAFC; border-radius: 6px;
+}
+.kaomoji-btn:hover { background: #E2E8F0; transform: translateY(-2px); }
