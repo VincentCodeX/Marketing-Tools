@@ -133,7 +133,6 @@
             <p style="color:#666; font-size:14px; margin-bottom:30px;">
                 使用 <strong style="color:var(--primary);">is.gd</strong> 服務，產生永久有效、完全無廣告的短網址。
             </p>
-
             <div style="max-width: 600px; margin: 0 auto;">
                 <div class="setting-title">請輸入長網址</div>
                 <div style="display:flex; gap:10px;">
@@ -144,7 +143,6 @@
                     </button>
                 </div>
                 <p style="font-size:12px; color:#999; margin-top:8px;">* 系統會自動處理跨網域請求 (CORS Proxy)</p>
-
                 <div id="short-result" class="url-result-container">
                     <div style="color: var(--success); font-weight:bold;">🎉 縮短成功！</div>
                     <a id="short-link" class="short-url-display" target="_blank" href="#">https://is.gd/xyz</a>
@@ -158,7 +156,6 @@
         </div>
 
         <div id="tab-img" class="tool-section">
-            
             <div class="info-banner">
                 <div class="info-icon">🖼️</div>
                 <div>
@@ -168,10 +165,8 @@
                     </div>
                 </div>
             </div>
-
             <div class="compress-dashboard">
                 <div class="compress-controls">
-                    
                     <div class="control-block">
                         <div class="block-title">⬆️ 上傳圖片</div>
                         <div class="upload-box-small" id="drop-zone" onclick="document.getElementById('img-input').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
@@ -183,7 +178,6 @@
                         </div>
                         <input type="file" id="img-input" accept="image/*" style="display:none" onchange="processImage(this.files[0])">
                     </div>
-
                     <div class="control-block">
                         <div class="block-title">▦ 廣告平台預設尺寸</div>
                         <select id="preset-select" class="form-select" onchange="applyPreset()">
@@ -195,7 +189,6 @@
                             <option value="800xauto">網頁文章標準寬 (800 px)</option>
                         </select>
                     </div>
-
                     <div class="control-block">
                         <div class="block-title">✨ 自訂尺寸 (px)</div>
                         <div style="display:flex; align-items:center; gap:10px;">
@@ -204,16 +197,13 @@
                             <input type="number" id="custom-height" placeholder="高度" class="form-input" oninput="runCompression()">
                         </div>
                     </div>
-
                     <div class="control-block">
                         <div class="block-title">⚙️ 壓縮設定</div>
-                        
                         <div class="setting-row">
                             <label>壓縮品質 (Quality)</label>
                             <input type="range" id="quality" min="0.1" max="1.0" step="0.1" value="0.8" style="width:100px;" oninput="updateQualityVal()">
                             <span id="quality-val" style="font-size:12px; font-weight:bold; width:30px;">0.8</span>
                         </div>
-
                         <div class="setting-row">
                             <label>輸出格式</label>
                             <select id="output-format" class="form-select" style="width:auto;" onchange="runCompression()">
@@ -223,7 +213,6 @@
                                 <option value="image/webp">轉成 WebP (新一代)</option>
                             </select>
                         </div>
-
                         <div class="setting-row">
                             <label>浮水印 (尚未實裝)</label>
                             <label class="toggle-switch">
@@ -232,17 +221,13 @@
                             </label>
                         </div>
                     </div>
-
                 </div>
-
                 <div class="compress-preview-area">
-                    
                     <div id="preview-empty" class="empty-preview">
                         <div style="font-size:48px; color:#E5E7EB; margin-bottom:15px;">🖼️</div>
                         <div style="color:#6B7280;">尚未上傳圖片</div>
                         <div style="font-size:12px; color:#9CA3AF;">請從左側上傳圖片開始使用</div>
                     </div>
-
                     <div id="preview-active" style="display:none; width:100%; text-align:center;">
                         <div class="preview-card">
                             <img id="preview-compressed" class="preview-img">
@@ -250,52 +235,42 @@
                                 <div class="spinner"></div>處理中...
                             </div>
                         </div>
-
                         <div class="result-stats">
                             <div>原始：<span id="info-original">0 KB</span></div>
                             <div style="color:#ccc;">➔</div>
                             <div style="color:var(--success); font-weight:bold;">優化後：<span id="info-compressed">0 KB</span></div>
                         </div>
-
                         <button class="action-btn" onclick="downloadImage()" style="width:100%; justify-content:center; margin-top:15px;">
                             下載圖片
                         </button>
                     </div>
-
                 </div>
             </div>
-
             <div class="usage-hint">
                 ℹ️ <strong>使用提示：</strong> 圖片壓縮完全在您的瀏覽器中處理，不會上傳到伺服器。建議先選擇「廣告平台預設尺寸」可快速調整。
             </div>
         </div>
 
         <div id="tab-ocr" class="tool-section">
-            
             <div class="ocr-dashboard">
                 <div class="ocr-left-panel">
                     <div class="ocr-upload-box" id="ocr-drop-zone" onclick="document.getElementById('ocr-input').click()" ondrop="handleOcrDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleOcrDragLeave(event)">
-                        
                         <div id="ocr-default-view">
                             <div class="upload-icon" style="background:#E0E7FF; color:#4F46E5;">📷</div>
                             <div style="font-weight:600; color:var(--primary); margin-top:10px;">拖放名片或點擊上傳</div>
                             <div style="font-size:12px; color:#999; margin-top:5px;">支援 JPG, PNG, HEIC</div>
                         </div>
-
                         <img id="ocr-preview-img" class="ocr-preview" style="display:none;">
-                        
                         <div id="ocr-loading" class="loading-overlay" style="display:none;">
                             <div class="spinner"></div>
                             <div id="ocr-status-text" style="margin-top:10px; font-size:14px;">正在讀取文字...</div>
                         </div>
                     </div>
                     <input type="file" id="ocr-input" accept="image/*" style="display:none" onchange="processOcr(this.files[0])">
-
                     <div class="ocr-hint">
                         ✨ <strong>提示：</strong> 請確保名片圖片清晰、光線充足，以獲得最佳辨識效果。支援中文及英文辨識。
                     </div>
                 </div>
-
                 <div class="ocr-right-panel">
                     <div class="panel-header">
                         <h3 style="margin:0; font-size:16px; color:var(--primary);">整理後資料</h3>
@@ -305,38 +280,15 @@
                         </div>
                     </div>
                     <hr style="border:0; border-top:1px solid #E5E7EB; margin:15px 0;">
-
                     <div class="ocr-form">
-                        <div class="form-group">
-                            <label>👤 姓名</label>
-                            <input type="text" id="ocr-name" placeholder="請輸入姓名">
-                        </div>
-                        <div class="form-group">
-                            <label>💼 職稱</label>
-                            <input type="text" id="ocr-title" placeholder="請輸入職稱">
-                        </div>
-                        <div class="form-group">
-                            <label>🏢 公司</label>
-                            <input type="text" id="ocr-company" placeholder="請輸入公司名稱">
-                        </div>
-                        <div class="form-group">
-                            <label>📞 電話</label>
-                            <input type="text" id="ocr-phone" placeholder="請輸入電話號碼">
-                        </div>
-                        <div class="form-group">
-                            <label>✉️ Email</label>
-                            <input type="text" id="ocr-email" placeholder="請輸入 Email">
-                        </div>
-                        <div class="form-group">
-                            <label>💬 LINE</label>
-                            <input type="text" id="ocr-line" placeholder="請輸入 LINE ID">
-                        </div>
-                        <div class="form-group">
-                            <label>#️⃣ 統編</label>
-                            <input type="text" id="ocr-tax" placeholder="請輸入統一編號">
-                        </div>
+                        <div class="form-group"><label>👤 姓名</label><input type="text" id="ocr-name" placeholder="請輸入姓名"></div>
+                        <div class="form-group"><label>💼 職稱</label><input type="text" id="ocr-title" placeholder="請輸入職稱"></div>
+                        <div class="form-group"><label>🏢 公司</label><input type="text" id="ocr-company" placeholder="請輸入公司名稱"></div>
+                        <div class="form-group"><label>📞 電話</label><input type="text" id="ocr-phone" placeholder="請輸入電話號碼"></div>
+                        <div class="form-group"><label>✉️ Email</label><input type="text" id="ocr-email" placeholder="請輸入 Email"></div>
+                        <div class="form-group"><label>💬 LINE</label><input type="text" id="ocr-line" placeholder="請輸入 LINE ID"></div>
+                        <div class="form-group"><label>#️⃣ 統編</label><input type="text" id="ocr-tax" placeholder="請輸入統一編號"></div>
                     </div>
-
                     <div class="export-actions">
                         <button class="export-btn dark" onclick="exportToCsv()">📄 Google Sheets</button>
                         <button class="export-btn outline" onclick="copyNotionFormat()">📝 Notion</button>
@@ -348,55 +300,30 @@
                 </div>
             </div>
         </div>
+
         <div id="tab-ads" class="tool-section"><div class="empty-state" style="text-align:center; padding:50px; color:#ccc;">廣告規格功能開發中...</div></div>
-       <div id="tab-emoji" class="tool-section">
+
+        <div id="tab-emoji" class="tool-section">
             <h2 style="color:var(--primary); margin-top:0;">常用行銷符號與 Emoji</h2>
             <p style="font-size:14px; color:#666;">點擊即可複製，讓貼文更吸睛！</p>
-            
             <div class="emoji-category">
                 <div class="cat-title">🔥 吸引注意 / 強調</div>
                 <div class="emoji-grid">
-                    <button onclick="copyEmoji('🔥')">🔥</button>
-                    <button onclick="copyEmoji('⚡')">⚡</button>
-                    <button onclick="copyEmoji('🚨')">🚨</button>
-                    <button onclick="copyEmoji('📢')">📢</button>
-                    <button onclick="copyEmoji('🔔')">🔔</button>
-                    <button onclick="copyEmoji('⚠️')">⚠️</button>
-                    <button onclick="copyEmoji('💎')">💎</button>
-                    <button onclick="copyEmoji('💡')">💡</button>
-                    <button onclick="copyEmoji('📌')">📌</button>
+                    <button onclick="copyEmoji('🔥')">🔥</button><button onclick="copyEmoji('⚡')">⚡</button><button onclick="copyEmoji('🚨')">🚨</button><button onclick="copyEmoji('📢')">📢</button><button onclick="copyEmoji('🔔')">🔔</button><button onclick="copyEmoji('⚠️')">⚠️</button><button onclick="copyEmoji('💎')">💎</button><button onclick="copyEmoji('💡')">💡</button><button onclick="copyEmoji('📌')">📌</button>
                 </div>
             </div>
-
             <div class="emoji-category">
                 <div class="cat-title">👉 引導行動 / 連結</div>
                 <div class="emoji-grid">
-                    <button onclick="copyEmoji('👉')">👉</button>
-                    <button onclick="copyEmoji('👇')">👇</button>
-                    <button onclick="copyEmoji('🔗')">🔗</button>
-                    <button onclick="copyEmoji('🛒')">🛒</button>
-                    <button onclick="copyEmoji('📩')">📩</button>
-                    <button onclick="copyEmoji('🔎')">🔎</button>
-                    <button onclick="copyEmoji('👀')">👀</button>
-                    <button onclick="copyEmoji('💬')">💬</button>
+                    <button onclick="copyEmoji('👉')">👉</button><button onclick="copyEmoji('👇')">👇</button><button onclick="copyEmoji('🔗')">🔗</button><button onclick="copyEmoji('🛒')">🛒</button><button onclick="copyEmoji('📩')">📩</button><button onclick="copyEmoji('🔎')">🔎</button><button onclick="copyEmoji('👀')">👀</button><button onclick="copyEmoji('💬')">💬</button>
                 </div>
             </div>
-
             <div class="emoji-category">
                 <div class="cat-title">✅ 正面 / 檢核 / 數字</div>
                 <div class="emoji-grid">
-                    <button onclick="copyEmoji('✅')">✅</button>
-                    <button onclick="copyEmoji('☑️')">☑️</button>
-                    <button onclick="copyEmoji('🌟')">🌟</button>
-                    <button onclick="copyEmoji('💯')">💯</button>
-                    <button onclick="copyEmoji('❤️')">❤️</button>
-                    <button onclick="copyEmoji('👍')">👍</button>
-                    <button onclick="copyEmoji('1️⃣')">1️⃣</button>
-                    <button onclick="copyEmoji('2️⃣')">2️⃣</button>
-                    <button onclick="copyEmoji('3️⃣')">3️⃣</button>
+                    <button onclick="copyEmoji('✅')">✅</button><button onclick="copyEmoji('☑️')">☑️</button><button onclick="copyEmoji('🌟')">🌟</button><button onclick="copyEmoji('💯')">💯</button><button onclick="copyEmoji('❤️')">❤️</button><button onclick="copyEmoji('👍')">👍</button><button onclick="copyEmoji('1️⃣')">1️⃣</button><button onclick="copyEmoji('2️⃣')">2️⃣</button><button onclick="copyEmoji('3️⃣')">3️⃣</button>
                 </div>
             </div>
-            
             <div id="emoji-toast" class="toast-msg">已複製！</div>
         </div>
 
