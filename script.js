@@ -443,7 +443,139 @@ function copyAdSize(text) {
     });
 }
 
-// 頁面載入時先執行一次，確保預設顯示所有卡片
+// --- 8. 符號/Emoji/顏文字工具邏輯 ---
+
+// 1. 資料庫 (依照你的截圖分類)
+const symbolsData = [
+    {
+        title: "常用標點",
+        items: ["、", "。", "，", "；", "：", "！", "？", "「」", "『』", "（）", "【】", "《》", "〈〉", "——", "……", "．", "～", "／", "＼", "＆", "＠", "＃", "％", "＊", "＋", "－", "＝"]
+    },
+    {
+        title: "特殊符號",
+        items: ["→", "←", "↑", "↓", "↔", "↕", "⇒", "⇐", "★", "☆", "○", "●", "◎", "◇", "◆", "□", "■", "△", "▲", "▽", "▼", "❤", "♠", "♣", "✔", "✕", "✖", "©", "®", "™", "℃", "℉"]
+    },
+    {
+        title: "數學符號",
+        items: ["±", "×", "÷", "≠", "≈", "≦", "≧", "∞", "Σ", "π", "√", "∝", "∈", "∉", "∩", "∪", "⊂", "⊃", "⊆", "⊇", "∀", "∃", "∧", "∨", "½", "¼", "¾"]
+    },
+    {
+        title: "數字符號",
+        items: ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾", "❿", "㈠", "㈡", "㈢", "㈣", "㈤", "㈥", "㈦", "㈧", "㈨", "㈩", "Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ", "Ⅵ", "Ⅶ", "Ⅷ", "Ⅸ", "Ⅹ"]
+    },
+    {
+        title: "貨幣符號",
+        items: ["$", "¥", "€", "£", "₩", "฿", "₹", "₽"]
+    }
+];
+
+const emojisData = [
+    {
+        title: "表情 / 心情",
+        items: ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "t😰", "😥", "😓", "🤗", "🤔", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱", "😴", "🤤", "😪", "😵", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿", "💀", "👻", "💩", "🤡"]
+    },
+    {
+        title: "手勢 / 人物",
+        items: ["👋", "🤚", "🖐", "✋", "🖖", "👌", "🤌", "🤏", "✌️", "🤞", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "💪", "💅", "🤳", "🙇", "💁", "🙅", "🙆", "🙋"]
+    },
+    {
+        title: "愛心 / 裝飾",
+        items: ["❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔", "❣️", "💕", "💞", "💓", "💗", "💖", "💘", "💝", "💟", "✨", "⭐️", "🌟", "💫", "⚡️", "🔥", "💥", "💢", "💦", "💨"]
+    },
+    {
+        title: "慶祝 / 生活",
+        items: ["🎉", "🎊", "🎈", "🎂", "🎁", "🎀", "🎄", "🎃", "🎆", "🎇", "🧨", "🧧", "🎋", "🎍", "🎎", "🎏", "🎐", "🎑", "🎒", "🎓", "👑", "💍", "💄", "💎", "📢", "📣", "🔔", "🎵", "🎶", "🎤", "🎧", "📷", "📸", "📹", "📺", "📻", "📱", "📲", "☎️", "📞", "💻", "🖥", "🖨", "⌨️", "🖱", "🔋", "🔌", "💡", "🔦", "🕯", "🪔", "💰", "💵", "💴", "💶", "💷", "💸", "💳", "🧾", "🛒", "🛍"]
+    },
+    {
+        title: "商務 / 文書",
+        items: ["📅", "📆", "🗓", "📂", "📁", "🗂", "📊", "📈", "📉", "🗒", "🗓", "🗳", "🗃", "🗳", "🗄", "📋", "📁", "📂", "🗂", "🗞", "📰", "📓", "📔", "📒", "📕", "📗", "📘", "📙", "📚", "📖", "🔖", "🔗", "📎", "🖇", "📐", "📏", "📌", "📍", "✂️", "🖊", "🖋", "✒️", "🖌", "🖍", "📝", "✏️", "🔍", "🔎"]
+    }
+];
+
+const kaomojiData = [
+    {
+        title: "打招呼 / 開心",
+        items: ["(o´・_・)o", "(=ﾟωﾟ)ﾉ", "( ´ ▽ ` )ﾉ", "o(ww)o", "(≧∇≦)/", "(*^▽^*)", "\\(★ω★)/", "(☆▽☆)", "(o^ ^o)", "(￣▽￣)"]
+    },
+    {
+        title: "可愛 / 撒嬌",
+        items: ["(・ω<)", "(*≧ω≦)", "(///▽///)", "(◕‿◕)", "(つ✧ω✧)つ", "(づ￣ ³￣)づ", "(｡･ω･｡)ﾉ♡", "♡(> ਊ <)♡", "(*♡∀♡)"]
+    },
+    {
+        title: "生氣 / 翻桌",
+        items: ["(╬ Ò ‸ Ó)", "(＃`Д´)", "( ` ω ´ )", "(ノಠ益ಠ)ノ", "(/ﾟДﾟ)/", "┻━┻ ︵ ヽ(°□°ヽ)", "(╯°□°）╯︵ ┻━┻", "(ノ｀Д´)ノ彡┻━┻", "ಠ_ಠ"]
+    },
+    {
+        title: "無奈 / 傷心",
+        items: ["(￣ω￣;)", "(;´・`)>", "(T_T)", "(;´༎ຶД༎ຶ`)", "(ToT)", "(╥_╥)", "(´-﹏-`；)", "┐(‘～`；)┌", "(can_t help)"]
+    },
+    {
+        title: "驚訝 / 疑惑",
+        items: ["(⊙_⊙)", "(O_O;)", "(°ロ°)", "∑(O_O;)", "(o_O)", "(・_・;)", "(>_<)", "(@_@)"]
+    }
+];
+
+// 2. 渲染函式 (產生 HTML)
+function renderSymbolSection(containerId, data, gridClass, btnClass = 'symbol-btn') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+
+    data.forEach(group => {
+        const card = document.createElement('div');
+        card.className = 'symbol-group-card';
+        
+        // 產生按鈕 HTML
+        const btnsHtml = group.items.map(item => 
+            `<button class="${btnClass}" onclick="copySymbol('${item}')">${item}</button>`
+        ).join('');
+
+        card.innerHTML = `
+            <div class="symbol-card-header">${group.title}</div>
+            <div class="symbol-grid ${gridClass}">
+                ${btnsHtml}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// 3. 切換子分頁
+function switchSubTab(tabName) {
+    // 處理按鈕樣式
+    const buttons = document.querySelectorAll('.sub-nav-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    // 簡單用文字內容判斷目前點擊的是哪個按鈕，加上 active
+    event.currentTarget.classList.add('active');
+
+    // 處理顯示內容
+    document.querySelectorAll('.sub-view').forEach(view => view.classList.remove('active'));
+    
+    if (tabName === 'symbols') {
+        document.getElementById('view-symbols').classList.add('active');
+    } else if (tabName === 'emojis') {
+        document.getElementById('view-emojis').classList.add('active');
+    } else if (tabName === 'kaomoji') {
+        document.getElementById('view-kaomoji').classList.add('active');
+    }
+}
+
+// 4. 複製功能
+function copySymbol(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('symbol-toast');
+        toast.style.opacity = 1;
+        setTimeout(() => { toast.style.opacity = 0; }, 1500);
+    });
+}
+
+// 5. 初始化渲染 (加在原本的 DOMContentLoaded 裡面，或者獨立執行)
 document.addEventListener('DOMContentLoaded', () => {
-    renderCards('all');
+    // 渲染三個區塊
+    renderSymbolSection('view-symbols', symbolsData, 'grid-cols-8');
+    renderSymbolSection('view-emojis', emojisData, 'grid-cols-emoji');
+    renderSymbolSection('view-kaomoji', kaomojiData, 'grid-cols-kaomoji', 'symbol-btn kaomoji-btn');
+    
+    // 確保原本的 renderCards 也會執行 (避免覆蓋)
+    if(typeof renderCards === 'function') renderCards('all');
 });
