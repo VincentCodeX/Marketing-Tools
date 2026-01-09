@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>廣告素材規格速查</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-main: #333;
+            --text-sub: #666;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* 頂部標題與選單區 */
+        .header-section {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1::before {
+            content: '';
+            display: block;
+            width: 5px;
+            height: 20px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .description {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin: 0;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            width: 100%;
+            max-width: 300px;
+            cursor: pointer;
+        }
+
+        /* 網格佈局 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        /* 卡片樣式 */
+        .platform-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* 平台顏色標示條 */
+        .card-header.youtube { border-left: 5px solid #ff0000; color: #ff0000; }
+        .card-header.facebook { border-left: 5px solid #1877f2; color: #1877f2; }
+        .card-header.instagram { border-left: 5px solid #e1306c; color: #e1306c; }
+        .card-header.line { border-left: 5px solid #00b900; color: #00b900; }
+        .card-header.google { border-left: 5px solid #4285f4; color: #4285f4; }
+        .card-header.threads { border-left: 5px solid #000000; color: #000000; }
+
+        .spec-count {
+            font-size: 0.8rem;
+            color: #999;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: normal;
+        }
+
+        .card-body {
+            padding: 10px 0;
+        }
+
+        /* 單個規格項目 */
+        .spec-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .spec-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .spec-title {
+            font-size: 0.95rem;
+            color: #444;
+            font-weight: 500;
+        }
+
+        .spec-details {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: monospace;
+            font-size: 1rem;
+            color: #222;
+            font-weight: bold;
+        }
+
+        /* 標籤樣式 */
+        .tag {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: sans-serif;
+            font-weight: normal;
+        }
+
+        .tag-ratio { background: #f0f0f0; color: #666; }
+        .tag-img { background: #e6f4ea; color: #1e8e3e; } /* 圖片綠色 */
+        .tag-video { background: #fce8e6; color: #d93025; } /* 影片紅色 */
+
+        /* 複製按鈕 */
+        .copy-btn {
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            color: #888;
+        }
+
+        .copy-btn:hover {
+            background: #f0f0f0;
+            color: #333;
+            border-color: #ccc;
+        }
+
+        .copy-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* 複製成功的提示 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* 底部提示 */
+        .footer-note {
+            margin-top: 30px;
+            background: #eefdf3;
+            border: 1px solid #bceac9;
+            color: #444;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-section">
+        <div>
+            <h1>廣告素材規格速查</h1>
+            <p class="description">各大平台廣告圖片尺寸與比例一覽</p>
+        </div>
+        <select id="platformFilter">
+            <option value="all">全部平台</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Google Ads">Google Ads</option>
+            <option value="LINE">LINE</option>
+            <option value="YouTube">YouTube</option>
+            <option value="Threads">Threads</option>
+        </select>
+    </div>
+
+    <div id="gridContainer" class="grid-container">
+        </div>
+
+    <div class="footer-note">
+        <span>ⓘ</span>
+        <div>
+            提示：點擊複製按鈕可快速複製尺寸（如 1080x1080），方便在圖片編輯軟體中使用。實際規格可能因平台更新而略有調整，請以各平台官方文件為準。
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast">已複製尺寸</div>
+
+<script>
+    // 資料結構：所有的規格都在這裡，方便維護
+    const platformsData = [
+        {
+            name: "Facebook",
+            class: "facebook",
+            specs: [
+                { title: "動態消息圖片", size: "1200 x 628", ratio: "1.91:1", type: "圖片" },
+                { title: "動態消息正方形", size: "1080 x 1080", ratio: "1:1", type: "圖片" },
+                { title: "限時動態", size: "1080 x 1920", ratio: "9:16", type: "圖片/影片" },
+                { title: "Messenger 廣告", size: "1200 x 628", ratio: "1.91:1", type: "圖片" },
+                { title: "輪播廣告", size: "1080 x 1080", ratio: "1:1", type: "圖片" },
+                { title: "封面相片", size: "820 x 312", ratio: "2.7:1", type: "圖片" },
+                { title: "大頭貼", size: "180 x 180", ratio: "1:1", type: "圖片" }
+            ]
+        },
+        {
+            name: "Instagram",
+            class: "instagram",
+            specs: [
+                { title: "貼文正方形", size: "1080 x 1080", ratio: "1:1", type: "圖片" },
+                { title: "貼文直式", size: "1080 x 1350", ratio: "4:5", type: "圖片" },
+                { title: "貼文橫式", size: "1080 x 566", ratio: "1.91:1", type: "圖片" },
+                { title: "限時動態 / Reels", size: "1080 x 1920", ratio: "9:16", type: "圖片/影片" },
+                { title: "輪播廣告", size: "1080 x 1080", ratio: "1:1", type: "圖片" },
+                { title: "IGTV 封面", size: "420 x 654", ratio: "1:1.55", type: "圖片" }
+            ]
+        },
+        {
+            name: "Google Ads",
+            class: "google",
+            specs: [
+                { title: "橫幅 (Landscape)", size: "1200 x 628", ratio: "1.91:1", type: "圖片" },
+                { title: "方形 (Square)", size: "1200 x 1200", ratio: "1:1", type: "圖片" },
+                { title: "直式 (Portrait)", size: "960 x 1200", ratio: "4:5", type: "圖片" },
+                { title: "全景式", size: "1200 x 300", ratio: "4:1", type: "圖片" },
+                { title: "Discovery 廣告", size: "1200 x 628", ratio: "1.91:1", type: "圖片" }
+            ]
+        },
+        {
+            name: "LINE",
+            class: "line",
+            specs: [
+                { title: "官方帳號封面", size: "1200 x 800", ratio: "3:2", type: "圖片" },
+                { title: "圖文訊息 (方形)", size: "1040 x 1040", ratio: "1:1", type: "圖片" },
+                { title: "圖文訊息 (橫式)", size: "1040 x 520", ratio: "2:1", type: "圖片" },
+                { title: "LINE VOOM", size: "1080 x 1080", ratio: "1:1", type: "圖片/影片" },
+                { title: "優惠券圖片", size: "690 x 480", ratio: "1.44:1", type: "圖片" }
+            ]
+        },
+        {
+            name: "YouTube",
+            class: "youtube",
+            specs: [
+                { title: "頻道封面", size: "2560 x 1440", ratio: "16:9", type: "圖片" },
+                { title: "影片縮圖", size: "1280 x 720", ratio: "16:9", type: "圖片" },
+                { title: "影片浮水印", size: "150 x 150", ratio: "1:1", type: "圖片" },
+                { title: "Shorts", size: "1080 x 1920", ratio: "9:16", type: "影片" }
+            ]
+        },
+        {
+            name: "Threads",
+            class: "threads",
+            specs: [
+                { title: "貼文圖片", size: "1080 x 1350", ratio: "4:5", type: "圖片" },
+                { title: "貼文正方形", size: "1080 x 1080", ratio: "1:1", type: "圖片" }
+            ]
+        }
+    ];
+
+    const gridContainer = document.getElementById('gridContainer');
+    const platformFilter = document.getElementById('platformFilter');
+    const toast = document.getElementById('toast');
+
+    // 渲染卡片函數
+    function renderCards(filterValue) {
+        gridContainer.innerHTML = ''; // 清空內容
+
+        platformsData.forEach(platform => {
+            // 過濾邏輯
+            if (filterValue !== 'all' && platform.name !== filterValue) return;
+
+            // 建立卡片 HTML
+            const card = document.createElement('div');
+            card.className = 'platform-card';
+            
+            // 處理規格列表 HTML
+            const specsHtml = platform.specs.map(spec => {
+                // 判斷類型標籤顏色
+                let typeClass = spec.type.includes('影片') ? 'tag-video' : 'tag-img';
+                
+                return `
+                <div class="spec-item">
+                    <div class="spec-info">
+                        <div class="spec-title">${spec.title}</div>
+                        <div class="spec-details">
+                            ${spec.size}
+                            <span class="tag tag-ratio">${spec.ratio}</span>
+                            <span class="tag ${typeClass}">${spec.type}</span>
+                        </div>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('${spec.size}')" title="複製尺寸">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                </div>
+                `;
+            }).join('');
+
+            card.innerHTML = `
+                <div class="card-header ${platform.class}">
+                    <span>${platform.name}</span>
+                    <span class="spec-count">${platform.specs.length} 項規格</span>
+                </div>
+                <div class="card-body">
+                    ${specsHtml}
+                </div>
+            `;
+
+            gridContainer.appendChild(card);
+        });
+    }
+
+    // 複製功能
+    function copyToClipboard(text) {
+        // 去除空格，方便複製後直接使用
+        const cleanText = text.replace(/\s/g, ''); 
+        
+        navigator.clipboard.writeText(cleanText).then(() => {
+            showToast(`已複製: ${cleanText}`);
+        }).catch(err => {
+            console.error('複製失敗:', err);
+        });
+    }
+
+    // 顯示 Toast 提示
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2000);
+    }
+
+    // 監聽選單變更
+    platformFilter.addEventListener('change', (e) => {
+        renderCards(e.target.value);
+    });
+
+    // 初始渲染
+    renderCards('all');
+
+</script>
+
+</body>
+</html>
