@@ -184,7 +184,7 @@ function formatSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// --- 6. OCR 名片掃描邏輯 (修復版) ---
+// --- 6. OCR 名片掃描邏輯 (支援直書 + 橫書) ---
 
 function handleOcrDragLeave(e) { e.preventDefault(); document.getElementById('ocr-drop-zone').style.borderColor = '#E2E8F0'; }
 function handleOcrDrop(e) {
@@ -202,30 +202,30 @@ async function processOcr(file) {
     document.getElementById('ocr-preview-img').style.display = 'block';
     document.getElementById('ocr-default-view').style.display = 'none';
     document.getElementById('ocr-loading').style.display = 'flex';
-    document.getElementById('ocr-status-text').innerText = "下載語言包 (初次約需 10-20 秒)...";
+    document.getElementById('ocr-status-text').innerText = "下載中英直橫語言包 (首次需約 30 秒)...";
     
     clearOcrForm();
 
     try {
-        // 設定 Worker，指定語言包路徑，避免跨域問題
         const worker = Tesseract.createWorker({
             logger: m => {
                 if(m.status === 'recognizing text') {
-                    document.getElementById('ocr-status-text').innerText = `文字辨識中... ${Math.round(m.progress * 100)}%`;
+                    document.getElementById('ocr-status-text').innerText = `辨識中... ${Math.round(m.progress * 100)}%`;
                 }
             }
         });
 
         await worker.load();
-        await worker.loadLanguage('chi_tra+eng'); // 下載繁體中文和英文
-        await worker.initialize('chi_tra+eng');
+        // 關鍵：同時下載 繁中(chi_tra)、英文(eng) 和 繁中直書(chi_tra_vert)
+        await worker.loadLanguage('chi_tra+chi_tra_vert+eng');
+        await worker.initialize('chi_tra+chi_tra_vert+eng');
         
         const { data: { text } } = await worker.recognize(file);
-        console.log("辨識原文:", text); // 方便你除錯
         
-        parseOcrText(text); // 開始解析
+        console.log("原始辨識結果:", text);
+        parseOcrText(text); // 解析
         
-        await worker.terminate(); // 釋放記憶體
+        await worker.terminate();
 
     } catch (error) {
         console.error(error);
@@ -236,37 +236,50 @@ async function processOcr(file) {
 }
 
 function parseOcrText(text) {
-    // 移除空白行，統一處理
+    // 預處理：去除直書可能產生的過多空白，但保留換行
+    // 先把所有空白去掉，方便找電話
+    const cleanText = text.replace(/ /g, '');
     const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    const fullText = lines.join(' '); // 單行全文字，方便正則比對
 
-    // 1. Email (更寬鬆的匹配)
-    const emailMatch = fullText.match(/[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+    // 1. Email (通用)
+    const emailMatch = text.match(/[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
     if(emailMatch) document.getElementById('ocr-email').value = emailMatch[0];
 
-    // 2. 手機 (台灣格式優化)
-    const phoneMatch = fullText.match(/09\d{2}[-\s]?\d{3}[-\s]?\d{3}/) || fullText.match(/\+886\s?9\d{2}[-\s]?\d{3}[-\s]?\d{3}/);
-    if(phoneMatch) document.getElementById('ocr-phone').value = phoneMatch[0];
+    // 2. 手機 (台灣格式，針對無空白字串搜尋)
+    // 支援 09xxxxxxxx, +8869xxxxxxxx
+    const phoneMatch = cleanText.match(/((\+886|0)9\d{8}|0\d{1,2}\d{7,8})/);
+    if(phoneMatch) {
+        // 嘗試格式化一下電話號碼
+        let p = phoneMatch[0];
+        if(p.startsWith('09') && p.length === 10) p = p.replace(/(\d{4})(\d{3})(\d{3})/, '$1-$2-$3');
+        document.getElementById('ocr-phone').value = p;
+    }
 
     // 3. 統編 (8碼數字)
-    const taxMatch = fullText.match(/\b\d{8}\b/);
-    if(taxMatch) document.getElementById('ocr-tax').value = taxMatch[0];
+    const taxMatch = cleanText.match(/\D(\d{8})\D/); // 前後非數字的8碼
+    if(taxMatch) document.getElementById('ocr-tax').value = taxMatch[1];
 
-    // 4. LINE ID (簡單匹配)
-    const lineMatch = fullText.match(/LINE[:\s]?\s*([a-zA-Z0-9_.-]+)/i);
+    // 4. LINE ID
+    const lineMatch = text.match(/LINE[:\s]?\s*([A-Za-z0-9_.-]+)/i);
     if(lineMatch) document.getElementById('ocr-line').value = lineMatch[1];
 
     // 5. 姓名與公司 (啟發式)
-    // 通常公司名會有 "公司", "Inc", "Ltd"
-    const companyLine = lines.find(l => l.includes('公司') || l.includes('Ltd') || l.includes('Inc'));
+    const companyKeywords = ['公司', 'Ltd', 'Inc', 'Co.', 'Group'];
+    const companyLine = lines.find(l => companyKeywords.some(kw => l.includes(kw)));
     if(companyLine) document.getElementById('ocr-company').value = companyLine;
 
-    // 通常職稱會有 "經理", "Manager"
-    const titleLine = lines.find(l => l.includes('經理') || l.includes('Manager') || l.includes('總監') || l.includes('專員'));
+    const titleKeywords = ['經理', '總監', '工程師', '專員', 'Manager', 'Director', 'CEO', 'Representative', '襄理', '處長'];
+    const titleLine = lines.find(l => titleKeywords.some(t => l.includes(t)));
     if(titleLine) document.getElementById('ocr-title').value = titleLine;
 
-    // 剩下的可能是姓名 (排除掉已找到的行)
-    const nameLine = lines.find(l => l !== companyLine && l !== titleLine && l.length < 5 && l.length > 1); // 姓名通常短
+    // 姓名猜測：排除公司和職稱，字數少的行
+    const nameLine = lines.find(l => 
+        l !== companyLine && 
+        l !== titleLine && 
+        l.length < 5 && 
+        l.length > 1 &&
+        !/[0-9]/.test(l) // 名字通常沒有數字
+    ); 
     if(nameLine) document.getElementById('ocr-name').value = nameLine;
 }
 
@@ -281,25 +294,7 @@ function resetOcr() {
     clearOcrForm();
 }
 
-function copyAllOcr() {
-    const d = getOcrData();
-    const text = `姓名: ${d.name}\n職稱: ${d.title}\n公司: ${d.company}\n電話: ${d.phone}\nEmail: ${d.email}\nLINE: ${d.line}\n統編: ${d.tax}`;
-    navigator.clipboard.writeText(text).then(() => alert('已複製全部資料'));
-}
-
-function getOcrData() {
-    return {
-        name: document.getElementById('ocr-name').value,
-        title: document.getElementById('ocr-title').value,
-        company: document.getElementById('ocr-company').value,
-        phone: document.getElementById('ocr-phone').value,
-        email: document.getElementById('ocr-email').value,
-        line: document.getElementById('ocr-line').value,
-        tax: document.getElementById('ocr-tax').value
-    };
-}
-
-// 匯出功能 - 確保全域可用
+// 匯出功能
 window.exportToCsv = function() {
     const d = getOcrData();
     const csvContent = "\uFEFF姓名,職稱,公司,電話,Email,LINE,統編\n" + `${d.name},${d.title},${d.company},${d.phone},${d.email},${d.line},${d.tax}`;
@@ -324,3 +319,22 @@ window.exportToJson = function() {
     link.download = "contact.json";
     link.click();
 };
+
+function getOcrData() {
+    return {
+        name: document.getElementById('ocr-name').value,
+        title: document.getElementById('ocr-title').value,
+        company: document.getElementById('ocr-company').value,
+        phone: document.getElementById('ocr-phone').value,
+        email: document.getElementById('ocr-email').value,
+        line: document.getElementById('ocr-line').value,
+        tax: document.getElementById('ocr-tax').value
+    };
+}
+
+// 綁定三個複製按鈕
+window.copyAllOcr = function() {
+    const d = getOcrData();
+    const text = `姓名: ${d.name}\n職稱: ${d.title}\n公司: ${d.company}\n電話: ${d.phone}\nEmail: ${d.email}\nLINE: ${d.line}\n統編: ${d.tax}`;
+    navigator.clipboard.writeText(text).then(() => alert('已複製全部資料'));
+}
