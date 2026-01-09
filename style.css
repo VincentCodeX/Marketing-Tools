@@ -254,3 +254,69 @@ input:checked + .slider:before { transform: translateX(20px); }
     .ocr-dashboard { grid-template-columns: 1fr; }
     .export-actions { grid-template-columns: 1fr; }
 }
+
+/* --- Tab 6: 廣告規格樣式 --- */
+.ads-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* 自動排版 */
+    gap: 20px;
+}
+
+.platform-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.platform-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    padding: 12px 16px;
+    background: #F8FAFC;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-weight: 700; font-size: 15px;
+}
+
+/* 各平台標示色 */
+.card-header.youtube { border-left: 4px solid #ff0000; color: #cc0000; }
+.card-header.facebook { border-left: 4px solid #1877f2; color: #1877f2; }
+.card-header.instagram { border-left: 4px solid #e1306c; color: #e1306c; }
+.card-header.line { border-left: 4px solid #00b900; color: #00b900; }
+.card-header.google { border-left: 4px solid #4285f4; color: #4285f4; }
+.card-header.threads { border-left: 4px solid #000000; color: #000000; }
+
+.spec-count {
+    font-size: 11px; background: white; border: 1px solid #ddd;
+    padding: 2px 8px; border-radius: 10px; color: #666; font-weight: normal;
+}
+
+.spec-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.spec-item:last-child { border-bottom: none; }
+
+.spec-title { font-size: 13px; color: #64748B; margin-bottom: 4px; }
+.spec-details {
+    font-family: 'Monaco', monospace; font-size: 14px; font-weight: 600; color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+}
+
+.tag { font-size: 11px; padding: 1px 5px; border-radius: 4px; font-weight: normal; font-family: sans-serif; }
+.tag-ratio { background: #f1f5f9; color: #64748B; border: 1px solid #e2e8f0; }
+.tag-video { background: #FEF2F2; color: #EF4444; } /* 紅色系 */
+.tag-img { background: #F0FDF4; color: #10B981; }    /* 綠色系 */
+
+.copy-btn-small {
+    background: white; border: 1px solid #e2e8f0; color: #94a3b8;
+    width: 32px; height: 32px; border-radius: 6px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.copy-btn-small:hover { border-color: var(--primary); color: var(--primary); background: #F8FAFC; }
