@@ -338,15 +338,9 @@
                     </div>
 
                     <div class="export-actions">
-                        <button class="export-btn dark" onclick="alert('功能開發中：將匯出 CSV')">
-                            📄 Google Sheets
-                        </button>
-                        <button class="export-btn outline" onclick="alert('功能開發中：將複製 Notion 格式')">
-                            📝 Notion
-                        </button>
-                        <button class="export-btn outline" onclick="alert('功能開發中：將下載 JSON')">
-                            {} JSON
-                        </button>
+                        <button class="export-btn dark" onclick="exportToCsv()">📄 Google Sheets</button>
+                        <button class="export-btn outline" onclick="copyNotionFormat()">📝 Notion</button>
+                        <button class="export-btn outline" onclick="exportToJson()">{} JSON</button>
                     </div>
                     <div style="text-align:center; margin-top:15px; font-size:11px; color:#999;">
                         * Google Sheets: 下載 CSV 後匯入 | Notion: 複製後貼上表格
