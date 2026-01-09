@@ -204,3 +204,124 @@ function formatSize(bytes) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
+
+// --- 6. 名片 OCR 邏輯 (Tesseract.js) ---
+
+// A. 處理拖曳
+function handleOcrDragLeave(e) { e.preventDefault(); document.getElementById('ocr-drop-zone').style.borderColor = '#E2E8F0'; }
+function handleOcrDrop(e) {
+    e.preventDefault();
+    document.getElementById('ocr-drop-zone').style.borderColor = '#E2E8F0';
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) processOcr(e.dataTransfer.files[0]);
+}
+
+// B. 核心處理
+async function processOcr(file) {
+    if (!file) return;
+    
+    // 1. 顯示預覽圖 & Loading
+    const imgUrl = URL.createObjectURL(file);
+    const preview = document.getElementById('ocr-preview-img');
+    const defaultView = document.getElementById('ocr-default-view');
+    const loading = document.getElementById('ocr-loading');
+    const statusText = document.getElementById('ocr-status-text');
+
+    preview.src = imgUrl;
+    preview.style.display = 'block';
+    defaultView.style.display = 'none';
+    loading.style.display = 'flex';
+    
+    // 清空舊資料
+    clearOcrForm();
+
+    try {
+        statusText.innerText = "正在初始化引擎...";
+        
+        // 2. 執行 OCR (使用 Tesseract)
+        // 'chi_tra+eng' 代表同時辨識 繁體中文 + 英文
+        const { data: { text } } = await Tesseract.recognize(
+            file,
+            'chi_tra+eng', 
+            {
+                logger: m => {
+                    if(m.status === 'recognizing text') {
+                        statusText.innerText = `辨識中... ${Math.round(m.progress * 100)}%`;
+                    }
+                }
+            }
+        );
+
+        console.log("OCR Result:", text); // 開發者工具可看原始結果
+        
+        // 3. 智能解析 (把文字填入表格)
+        parseOcrText(text);
+
+    } catch (error) {
+        console.error(error);
+        alert("辨識發生錯誤，請重試");
+    } finally {
+        loading.style.display = 'none';
+    }
+}
+
+// C. 智能解析文字 (Regex 大法)
+function parseOcrText(text) {
+    // 1. Email
+    const emailMatch = text.match(/[\w.-]+@[\w.-]+\.[\w]+/);
+    if(emailMatch) document.getElementById('ocr-email').value = emailMatch[0];
+
+    // 2. 手機/電話 (抓取 09xx 或 02-xxxx 格式)
+    const phoneMatch = text.match(/(\(?0\d{1,3}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4})/);
+    if(phoneMatch) document.getElementById('ocr-phone').value = phoneMatch[0];
+
+    // 3. 統編 (8碼數字)
+    const taxMatch = text.match(/\b\d{8}\b/);
+    if(taxMatch) document.getElementById('ocr-tax').value = taxMatch[0];
+
+    // 4. 姓名與職稱 (這比較難，通常取前幾行，或尋找特定關鍵字)
+    // 這裡做一個簡單的假設：第一行通常是公司或姓名
+    const lines = text.split('\n').filter(line => line.trim() !== '');
+    if(lines.length > 0) {
+        // 嘗試猜測，如果第一行包含 "公司" 字眼，就填公司，否則填姓名
+        if(lines[0].includes('公司') || lines[0].includes('Ltd')) {
+            document.getElementById('ocr-company').value = lines[0];
+            if(lines[1]) document.getElementById('ocr-name').value = lines[1];
+        } else {
+            document.getElementById('ocr-name').value = lines[0];
+            // 找職稱關鍵字
+            const titleKeywords = ['經理', '總監', '工程師', '專員', 'Manager', 'Director', 'CEO'];
+            const titleLine = lines.find(line => titleKeywords.some(kw => line.includes(kw)));
+            if(titleLine) document.getElementById('ocr-title').value = titleLine;
+        }
+    }
+    
+    // 5. 嘗試找 LINE ID (通常前面會有 LINE 字樣)
+    const lineMatch = text.match(/LINE[:\s]?\s*([A-Za-z0-9_.-]+)/i);
+    if(lineMatch) document.getElementById('ocr-line').value = lineMatch[1];
+}
+
+// D. 清空與重置
+function clearOcrForm() {
+    const ids = ['ocr-name', 'ocr-title', 'ocr-company', 'ocr-phone', 'ocr-email', 'ocr-line', 'ocr-tax'];
+    ids.forEach(id => document.getElementById(id).value = '');
+}
+
+function resetOcr() {
+    document.getElementById('ocr-preview-img').style.display = 'none';
+    document.getElementById('ocr-default-view').style.display = 'flex';
+    document.getElementById('ocr-input').value = '';
+    clearOcrForm();
+}
+
+function copyAllOcr() {
+    // 把所有欄位組合成一段文字複製
+    const ids = ['ocr-name', 'ocr-title', 'ocr-company', 'ocr-phone', 'ocr-email', 'ocr-line', 'ocr-tax'];
+    const text = ids.map(id => {
+        const val = document.getElementById(id).value;
+        return val ? `${val}` : '';
+    }).filter(v => v).join('\n');
+    
+    if(text) {
+        navigator.clipboard.writeText(text).then(() => alert('已複製全部資料'));
+    }
+}
