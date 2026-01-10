@@ -170,9 +170,10 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* --- Tab 5: OCR 名片掃描專用樣式 --- */
 
+/* 調整版面配置：左邊固定 320px，右邊空間變大 */
 .ocr-dashboard {
     display: grid;
-    grid-template-columns: 40% 60%; /* 左4 右6 比例 */
+    grid-template-columns: 320px 1fr; /* 舊的是 40% 60% */
     gap: 32px;
     align-items: start;
 }
@@ -203,9 +204,12 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 /* 右側面板 */
+/* 優化右側面板：加上背景卡片與內距，解決「貼邊」問題 */
 .ocr-right-panel {
-    background: #fff;
-    /* 這裡不需要陰影，因為外層 main-card 已經有了，保持乾淨 */
+    background: #F8FAFC;       /* 增加淡淡的灰底，讓區域更明顯 */
+    border: 1px solid #E2E8F0; /* 加上細邊框 */
+    border-radius: 12px;       /* 圓角設計 */
+    padding: 24px;             /* 關鍵！增加 24px 的內部留白，文字就不會貼邊了 */
 }
 
 .panel-header {
