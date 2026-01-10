@@ -1,3 +1,7 @@
+/* --- 請貼在 style.css 的最第一行 --- */
+* {
+    box-sizing: border-box;
+}
 :root {
     --primary: #2C3E50;
     --bg: #F3F4F6;
@@ -385,66 +389,108 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 .kaomoji-btn:hover { background: #E2E8F0; transform: translateY(-2px); }
 
-/* --- 手機版專用優化 (RWD) --- */
+/* --- 手機版專用優化 (最終完整版) --- */
 @media (max-width: 768px) {
     
-    /* 1. 導覽列優化：變成可橫向滑動的選單，按鈕變大好按 */
-    .nav-container {
-        flex-wrap: nowrap;         /* 不換行，讓它橫向排列 */
-        overflow-x: auto;          /* 超出範圍時出現卷軸 */
-        justify-content: flex-start;
-        padding: 10px;
-        gap: 12px;
-        -webkit-overflow-scrolling: touch; /* 讓滑動更順暢 (iOS) */
-        /* 隱藏醜醜的卷軸但保留功能 */
-        scrollbar-width: none;     /* Firefox */
+    /* 1. 全域版面調整 */
+    body {
+        padding: 10px; /* 減少手機版的最外圍留白 */
     }
-    .nav-container::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+    
+    .main-card {
+        padding: 15px; /* 大幅減少卡片內距，讓內容有更多空間 */
+    }
+
+    /* 2. 導覽列優化：九宮格全顯示，不需滑動 */
+    .nav-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 一排 4 個，自動換行 */
+        gap: 8px; /* 按鈕之間的間距 */
+        padding: 5px;
+        overflow-x: visible; /* 取消滑動 */
+        justify-content: center;
+        margin-bottom: 20px;
+    }
     
     .nav-btn {
-        flex: 0 0 auto;           /* 不要壓縮按鈕寬度 */
-        min-width: auto;
-        padding: 10px 15px;
-        font-size: 15px;          /* 字體加大 */
-        white-space: nowrap;      /* 文字不換行 */
-        background: #F1F5F9;      /* 增加底色，看起來更像按鈕 */
-    }
-    .nav-btn.active {
-        background: var(--primary);
-        color: white;
+        flex: none;
+        flex-direction: column; /* 圖標改到文字上方 */
+        gap: 4px;
+        padding: 8px 2px;
+        font-size: 12px;       /* 字體縮小一點以放入方格 */
+        text-align: center;
+        height: auto;          /* 高度自動 */
+        aspect-ratio: 1 / 0.8; /* 讓按鈕接近方形 */
+        justify-content: center;
     }
 
-    /* 2. Emoji / 符號按鈕優化：加大觸控面積 */
-    .symbol-grid {
-        gap: 8px; /* 間距縮小一點，讓畫面塞多一點 */
+    .nav-btn svg {
+        width: 22px; 
+        height: 22px;
+        margin-bottom: 2px;
     }
-    .symbol-btn {
-        padding: 12px 0;    /* 高度拉高，手指好點 */
-        font-size: 22px;    /* 符號變大 */
-        background: #F8FAFC; /* 給個淺底色區分 */
-        border: 1px solid #EEF2F6;
+
+    /* 3. 第一頁 QR Code 防爆版修正 */
+    .qr-layout, .utm-grid, .control-grid, .compress-dashboard { 
+        grid-template-columns: 1fr; /* 強制變成單欄排版 */
+        gap: 20px;
     }
     
-    /* 顏文字按鈕特化 */
+    /* 強制 QR Code 圖片隨螢幕縮放，絕對不超出邊界 */
+    #qrcode-canvas, #qrcode-canvas svg, #qrcode-canvas canvas {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block;
+        margin: 0 auto; /* 居中 */
+    }
+    
+    /* 預覽區塊調整 */
+    .preview-wrapper {
+        padding: 15px; 
+        min-height: 250px;
+        overflow: hidden; /* 防止內容溢出 */
+    }
+
+    /* 4. Emoji / 符號按鈕優化 */
+    .symbol-grid {
+        grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); /* 確保按鈕不會太小 */
+        gap: 6px;
+    }
+    
+    .symbol-btn {
+        padding: 10px 0;
+        font-size: 20px;
+    }
+    
+    /* 顏文字特別調整 */
     .kaomoji-btn {
-        padding: 15px 5px;
-        font-size: 14px;
+        font-size: 13px;
+        padding: 12px 0;
     }
 
-    /* 3. 子分頁切換按鈕 (標點/Emoji/顏文字) */
-    .sub-nav-btn {
-        padding: 12px 5px; /* 內距調整 */
-        font-size: 14px;
+    /* 5. 廣告規格卡片改為單欄 */
+    .ads-grid-container {
+        grid-template-columns: 1fr;
     }
 
-    /* 4. 頂部標題區塊縮小，節省手機螢幕空間 */
-    .emoji-header-box {
-        padding: 15px;
-        flex-direction: column; /* 上下排列 */
-        align-items: flex-start;
-        gap: 10px;
+    /* 6. 其他微調 */
+    .header-title {
+        font-size: 18px; 
+        margin-bottom: 15px;
+        text-align: center;
     }
+    
+    .setting-group {
+        width: 100%; 
+    }
+    
+    /* 隱藏裝飾用的 emoji 背景圓圈，節省空間 */
     .emoji-icon-bg {
-        width: 40px; height: 40px; font-size: 20px;
+        display: none;
+    }
+    .emoji-header-box {
+        padding: 10px;
+        text-align: center;
+        display: block;
     }
 }
