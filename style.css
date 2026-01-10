@@ -384,3 +384,67 @@ input:checked + .slider:before { transform: translateX(20px); }
     padding: 10px; background: #F8FAFC; border-radius: 6px;
 }
 .kaomoji-btn:hover { background: #E2E8F0; transform: translateY(-2px); }
+
+/* --- 手機版專用優化 (RWD) --- */
+@media (max-width: 768px) {
+    
+    /* 1. 導覽列優化：變成可橫向滑動的選單，按鈕變大好按 */
+    .nav-container {
+        flex-wrap: nowrap;         /* 不換行，讓它橫向排列 */
+        overflow-x: auto;          /* 超出範圍時出現卷軸 */
+        justify-content: flex-start;
+        padding: 10px;
+        gap: 12px;
+        -webkit-overflow-scrolling: touch; /* 讓滑動更順暢 (iOS) */
+        /* 隱藏醜醜的卷軸但保留功能 */
+        scrollbar-width: none;     /* Firefox */
+    }
+    .nav-container::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+    
+    .nav-btn {
+        flex: 0 0 auto;           /* 不要壓縮按鈕寬度 */
+        min-width: auto;
+        padding: 10px 15px;
+        font-size: 15px;          /* 字體加大 */
+        white-space: nowrap;      /* 文字不換行 */
+        background: #F1F5F9;      /* 增加底色，看起來更像按鈕 */
+    }
+    .nav-btn.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    /* 2. Emoji / 符號按鈕優化：加大觸控面積 */
+    .symbol-grid {
+        gap: 8px; /* 間距縮小一點，讓畫面塞多一點 */
+    }
+    .symbol-btn {
+        padding: 12px 0;    /* 高度拉高，手指好點 */
+        font-size: 22px;    /* 符號變大 */
+        background: #F8FAFC; /* 給個淺底色區分 */
+        border: 1px solid #EEF2F6;
+    }
+    
+    /* 顏文字按鈕特化 */
+    .kaomoji-btn {
+        padding: 15px 5px;
+        font-size: 14px;
+    }
+
+    /* 3. 子分頁切換按鈕 (標點/Emoji/顏文字) */
+    .sub-nav-btn {
+        padding: 12px 5px; /* 內距調整 */
+        font-size: 14px;
+    }
+
+    /* 4. 頂部標題區塊縮小，節省手機螢幕空間 */
+    .emoji-header-box {
+        padding: 15px;
+        flex-direction: column; /* 上下排列 */
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .emoji-icon-bg {
+        width: 40px; height: 40px; font-size: 20px;
+    }
+}
