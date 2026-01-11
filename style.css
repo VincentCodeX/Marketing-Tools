@@ -393,70 +393,107 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 .kaomoji-btn:hover { background: #E2E8F0; transform: translateY(-2px); }
 
-/* --- 手機版專用深度優化 (RWD) --- */
+/* --- 手機版專用深度優化 (RWD - 3+3+1 完美佈局) --- */
 @media (max-width: 768px) {
-    /* 1. 減少整體邊距，讓內容更緊湊 */
+    
+    /* 1. 全域版面調整：防止左右超出 */
     body {
         padding: 10px;
+        overflow-x: hidden; /* 禁止橫向捲動 */
     }
     
-    .main-card {
-        padding: 20px 15px; /* 縮小內距 */
-        border-radius: 12px;
+    .header-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+        text-align: center;
     }
 
-    /* 2. 導覽列優化：改為 2x4 或 3x3 的網格，避免按鈕太扁 */
+    /* 2. 導覽列優化：3x3 網格 + 底部長條按鈕 */
     .nav-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-        gap: 6px;
-        padding: 5px;
+        /* 改為 3 欄，讓按鈕變寬，文字不擠 */
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px; /* 按鈕間距 */
+        padding: 8px;
+        width: 100%;
+        box-sizing: border-box; /* 確保內距不會撐大寬度 */
+        justify-content: center;
+        margin-bottom: 20px;
     }
-
+    
     .nav-btn {
         flex-direction: column; /* 圖示在上，文字在下 */
-        padding: 10px 5px;
-        font-size: 11px;
-        min-width: 0;
+        gap: 6px;
+        padding: 12px 4px;
+        font-size: 13px;        /* 字體適中 */
+        min-width: 0;           /* 關鍵：允許按鈕縮小，防止撐破版面 */
+        width: 100%;            /* 填滿格子 */
         height: auto;
+        aspect-ratio: auto;     /* 取消強制比例，依內容高度 */
+        text-align: center;
+        white-space: nowrap;    /* 文字不換行，保持整齊 */
     }
 
     .nav-btn svg {
-        width: 20px;
-        height: 20px;
-        margin-bottom: 4px;
+        width: 24px; 
+        height: 24px;
+        margin-bottom: 0;
     }
 
-    /* 3. OCR 與圖片壓縮的儀表板改為單欄 */
-    .ocr-dashboard, .compress-dashboard {
-        grid-template-columns: 1fr !important;
+    /* --- 關鍵魔法：讓第 7 個按鈕 (最後一個) 變成橫式長條 --- */
+    .nav-btn:last-child {
+        grid-column: 1 / -1;    /* 橫跨所有欄位 (左到右) */
+        flex-direction: row;    /* 改回橫向排列 (圖左字右) */
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        background-color: #F1F5F9; /* 稍微區分顏色，更有收尾感 */
+        font-weight: 700;
+        color: var(--primary);
+    }
+    
+    /* 選中狀態時的修正 */
+    .nav-btn.active:last-child {
+        background-color: var(--active-bg);
+        color: var(--active-text);
+    }
+
+    /* 3. 內容區塊優化 (單欄排版) */
+    .main-card {
+        padding: 20px 15px;
+        border-radius: 12px;
+    }
+
+    .qr-layout, .utm-grid, .control-grid, .compress-dashboard, .ocr-dashboard, .export-actions, .ads-grid-container { 
+        grid-template-columns: 1fr !important; /* 強制單欄 */
         gap: 20px;
     }
 
-    /* 4. 讓輸入框在手機上更容易點擊 (變高一點) */
-    input[type="text"], input[type="url"], input[type="number"], select {
-        padding: 12px;
-        font-size: 16px; /* 防止 iOS 自動縮放螢幕 */
-    }
-
-    /* 5. 優化 OCR 表單：標籤與輸入框的間距 */
-    .ocr-right-panel {
-        padding: 15px;
-    }
-
-    .form-group {
-        margin-bottom: 12px;
-    }
-
-    /* 6. 讓底部按鈕在手機上佔滿寬度，方便大拇指點擊 */
-    .export-actions {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-
-    .action-btn {
+    /* OCR 預覽圖區塊 */
+    .ocr-left-panel {
         width: 100%;
-        justify-content: center;
-        padding: 14px;
+    }
+    
+    .ocr-upload-box {
+        min-height: 200px;
+    }
+
+    /* QR Code 防爆版修正 */
+    #qrcode-canvas, #qrcode-canvas svg, #qrcode-canvas canvas {
+        max-width: 100% !important;
+        height: auto !important;
+        margin: 0 auto;
+    }
+    
+    .preview-wrapper {
+        padding: 15px; 
+        min-height: 250px;
+        overflow: hidden;
+    }
+
+    /* 輸入框優化 */
+    input[type="text"], input[type="url"], input[type="number"], select {
+        font-size: 16px; /* 防止 iOS 自動縮放 */
+        padding: 12px;
     }
 }
