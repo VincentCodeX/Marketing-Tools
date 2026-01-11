@@ -184,7 +184,7 @@ function formatSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// --- 6. OCR 名片掃描邏輯 (支援直書 + 橫書 + 智慧推測) ---
+// --- 6. OCR 名片掃描邏輯 (修正版：更穩定) ---
 
 function handleOcrDragLeave(e) { e.preventDefault(); document.getElementById('ocr-drop-zone').style.borderColor = '#E2E8F0'; }
 function handleOcrDrop(e) {
@@ -202,7 +202,7 @@ async function processOcr(file) {
     document.getElementById('ocr-preview-img').style.display = 'block';
     document.getElementById('ocr-default-view').style.display = 'none';
     document.getElementById('ocr-loading').style.display = 'flex';
-    document.getElementById('ocr-status-text').innerText = "下載中英直橫語言包 (首次需約 30 秒)...";
+    document.getElementById('ocr-status-text').innerText = "下載語言包 (首次需約 10-20 秒)...";
     
     clearOcrForm();
 
@@ -216,18 +216,17 @@ async function processOcr(file) {
         });
 
         await worker.load();
-        // 關鍵：同時下載 繁中(chi_tra)、英文(eng) 和 繁中直書(chi_tra_vert)
-        await worker.loadLanguage('chi_tra+chi_tra_vert+eng');
-        await worker.initialize('chi_tra+chi_tra_vert+eng');
+        
+        // 【修正 1】只載入繁中與英文，避免 chi_tra_vert 下載失敗
+        await worker.loadLanguage('chi_tra+eng');
+        await worker.initialize('chi_tra+eng');
         
         const { data: { text } } = await worker.recognize(file);
         
         console.log("原始辨識結果:", text);
         
-        // 使用新的智慧分析函式
         const parsedData = parseOcrResult(text);
         
-        // 填入資料
         document.getElementById('ocr-name').value = parsedData.name;
         document.getElementById('ocr-title').value = parsedData.title;
         document.getElementById('ocr-company').value = parsedData.company;
@@ -240,30 +239,33 @@ async function processOcr(file) {
 
     } catch (error) {
         console.error(error);
-        alert("辨識失敗。請確認網路連線正常 (需要下載語言包)。");
+        alert("辨識失敗。可能原因：\n1. 網路連線問題 (無法下載語言包)\n2. 圖片太過模糊");
     } finally {
         document.getElementById('ocr-loading').style.display = 'none';
     }
 }
 
-// --- 優化後的智慧分析邏輯 (寬容版) ---
+// 【修正 2】優化後的智慧分析邏輯 (更聰明版)
 function parseOcrResult(text) {
     if (!text) return {};
 
-    // 1. 基本清洗
+    // 1. 基本清洗：切成一行一行
     const lines = text.split('\n')
         .map(line => line.trim())
-        .filter(line => line.length > 0); // 只要有字就留著
+        .filter(line => line.length > 0);
 
     const data = { name: '', title: '', company: '', phone: '', email: '', line: '', tax: '' };
 
-    // Regex 規則 (更寬鬆)
+    // Regex 規則
     const emailRegex = /[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
     const taxRegex = /\d{8}/;
     const lineRegex = /(line|id)[:\s]*([a-z0-9_.-]+)/i;
     
-    // 手機/電話規則：抓取「09開頭」或「0x開頭」的連續數字 (先去掉分隔符號再來比對)
-    const phoneCleanRegex = /(^09\d{8}$)|(^0\d{1,2}\d{7,8}$)/; 
+    // 手機/電話規則：只找數字是否符合長度，忽略中間的符號
+    // 09開頭(10碼) 或 0x開頭(9-10碼)
+    const isPhone = (str) => {
+        return /^(09\d{8}|0\d{8,9})$/.test(str);
+    };
 
     // --- 第一輪：精確抓取 (Email, 統編, LINE) ---
     lines.forEach(line => {
@@ -272,7 +274,7 @@ function parseOcrResult(text) {
             data.email = line.match(emailRegex)[0];
             return;
         }
-        // 統編 (8碼數字)
+        // 統編
         if (taxRegex.test(line) && !data.tax && (line.includes('統編') || line.length === 8)) {
              data.tax = line.match(taxRegex)[0];
              return;
@@ -285,65 +287,60 @@ function parseOcrResult(text) {
         }
     });
 
-    // --- 第二輪：針對「去掉空格後的文字」找電話 ---
+    // --- 第二輪：抓電話 (寬容模式) ---
     lines.forEach(line => {
         if (data.phone) return;
         
-        // 把這行所有的 - ( ) 空格 都拿掉，變成純數字
-        const cleanLine = line.replace(/[-\s\(\)]/g, ''); 
+        // 把這行所有的非數字字元都拿掉
+        const digits = line.replace(/\D/g, ''); 
         
-        // 檢查是否符合電話格式
-        if (phoneCleanRegex.test(cleanLine)) {
+        if (isPhone(digits)) {
             // 格式化輸出
-            if(cleanLine.startsWith('09') && cleanLine.length === 10) {
-                data.phone = cleanLine.replace(/(\d{4})(\d{3})(\d{3})/, '$1-$2-$3');
+            if(digits.startsWith('09') && digits.length === 10) {
+                data.phone = digits.replace(/(\d{4})(\d{3})(\d{3})/, '$1-$2-$3');
             } else {
-                data.phone = line; // 如果不是手機，就保留原本有分隔符號的樣子
+                data.phone = line; // 市話就保留原本的樣子比較安全
             }
         }
     });
 
-    // --- 第三輪：猜測 公司、職稱、名字 ---
+    // --- 第三輪：猜測 公司、職稱 ---
     lines.forEach(line => {
-        // 如果這行已經被抓過 (是Email或電話)，就跳過
-        if (line.includes(data.email) || (data.phone && line.replace(/[-\s]/g,'') === data.phone.replace(/[-\s]/g,''))) return;
+        if (line.includes(data.email) || (data.phone && line.includes(data.phone.split('-')[0]))) return;
 
         // 猜測公司
-        const companyKeywords = ['公司', 'Ltd', 'Inc', 'Co.', 'Group', '銀行', '工作室', '診所', '商行'];
+        const companyKeywords = ['公司', 'Ltd', 'Inc', 'Co.', 'Group', '銀行', '工作室', '診所', '商行', '中心'];
         if (!data.company && companyKeywords.some(kw => line.includes(kw))) {
             data.company = line;
             return;
         }
 
         // 猜測職稱
-        const titleKeywords = ['經理', '總監', '工程師', '專員', 'Manager', 'Director', 'CEO', '襄理', '處長', '負責人', '顧問', '助理', '代表', '設計師', '會計'];
+        const titleKeywords = ['經理', '總監', '工程師', '專員', 'Manager', 'Director', 'CEO', '襄理', '處長', '負責人', '顧問', '助理', '代表', '設計師', '會計', '創辦人'];
         if (!data.title && titleKeywords.some(kw => line.includes(kw))) {
             data.title = line;
             return;
         }
     });
 
-    // --- 第四輪：剩下的行猜名字 (最難的部份) ---
+    // --- 第四輪：猜測名字 ---
     lines.forEach(line => {
-        // 排除已使用的行
         if (line.includes(data.email) || line === data.company || line === data.title) return;
-        if (data.phone && line.includes(data.phone)) return;
+        if (data.phone && line.replace(/\D/g, '').includes(data.phone.replace(/\D/g, ''))) return;
 
         // 名字判斷：
-        // 1. 還沒找到名字
-        // 2. 去掉空格後，長度在 2~4 字 (解決 "王 小 明" 問題)
-        // 3. 不包含數字
-        // 4. 不包含地址關鍵字
+        // 1. 去掉空格後，長度在 2~4 字
+        // 2. 不包含數字
+        // 3. 不包含排除關鍵字
         const cleanName = line.replace(/\s/g, ''); // 去掉所有空格
         
         if (!data.name && cleanName.length >= 2 && cleanName.length <= 4) {
-            const isAddress = ['路', '街', '段', '號', '樓', '市', '區', '縣'].some(addr => line.includes(addr));
-            const hasNumber = /\d/.test(line);
-            const badKeywords = ['電話', '傳真', '手機', '統編', '地址', '信箱', 'TEL', 'FAX', 'ADD'];
+            const badKeywords = ['電話', '傳真', '手機', '統編', '地址', '信箱', 'TEL', 'FAX', 'ADD', '路', '號', '樓'];
             const isLabel = badKeywords.some(k => line.toUpperCase().includes(k));
+            const hasNumber = /\d/.test(line);
 
-            if (!isAddress && !hasNumber && !isLabel) {
-                data.name = cleanName; // 儲存去掉空格的名字，比較乾淨
+            if (!hasNumber && !isLabel) {
+                data.name = cleanName; 
             }
         }
     });
