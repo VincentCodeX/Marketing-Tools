@@ -246,143 +246,109 @@ async function processOcr(file) {
     }
 }
 
-// 新版智慧分析邏輯
+// --- 優化後的智慧分析邏輯 (寬容版) ---
 function parseOcrResult(text) {
-    // 1. 先把辨識出來的文字依照「換行」切開，並過濾掉太短的雜訊
+    if (!text) return {};
+
+    // 1. 基本清洗
     const lines = text.split('\n')
         .map(line => line.trim())
-        .filter(line => line.length > 1);
+        .filter(line => line.length > 0); // 只要有字就留著
 
     const data = { name: '', title: '', company: '', phone: '', email: '', line: '', tax: '' };
 
-    // Regex 規則
-    const emailRegex = /[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}/;
-    // 寬鬆的手機/電話規則 (09開頭 或 02開頭)
-    const phoneRegex = /((\+886|0)9\d{8}|0\d{1,2}[- ]?\d{7,8})/; 
+    // Regex 規則 (更寬鬆)
+    const emailRegex = /[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
     const taxRegex = /\d{8}/;
-    // LINE ID 通常是英數混合，比較難抓，這裡試著抓 "ID" 關鍵字
     const lineRegex = /(line|id)[:\s]*([a-z0-9_.-]+)/i;
+    
+    // 手機/電話規則：抓取「09開頭」或「0x開頭」的連續數字 (先去掉分隔符號再來比對)
+    const phoneCleanRegex = /(^09\d{8}$)|(^0\d{1,2}\d{7,8}$)/; 
 
-    // 第一輪：精確抓取有格式的資料 (Email, 電話, 統編, LINE)
+    // --- 第一輪：精確抓取 (Email, 統編, LINE) ---
     lines.forEach(line => {
         // Email
         if (emailRegex.test(line) && !data.email) {
             data.email = line.match(emailRegex)[0];
             return;
         }
-        // 電話 (如果有抓到，試著格式化)
-        if (phoneRegex.test(line) && !data.phone) {
-            // 先把可能的雜訊去掉，只留數字
-            let rawNum = line.replace(/[^\d]/g, ''); 
-            // 如果是手機 09xxxxxxxx
-            if(rawNum.startsWith('09') && rawNum.length === 10) {
-                data.phone = rawNum.replace(/(\d{4})(\d{3})(\d{3})/, '$1-$2-$3');
-            } else {
-                data.phone = line.match(phoneRegex)[0];
-            }
-            return;
-        }
-        // 統編 (通常 8 碼數字，且附近可能有 '統編' 字樣)
+        // 統編 (8碼數字)
         if (taxRegex.test(line) && !data.tax && (line.includes('統編') || line.length === 8)) {
              data.tax = line.match(taxRegex)[0];
              return;
         }
         // LINE
         if (lineRegex.test(line) && !data.line) {
-            data.line = line.match(lineRegex)[2]; // 抓群組2
+            const match = line.match(lineRegex);
+            if(match && match[2]) data.line = match[2];
             return;
         }
     });
 
-    // 第二輪：用刪去法猜測 姓名、公司、職稱
+    // --- 第二輪：針對「去掉空格後的文字」找電話 ---
     lines.forEach(line => {
-        // 如果這行已經被抓走了 (例如整行就是Email)，就跳過
-        if (line.includes(data.email) || (data.phone && line.includes(data.phone))) return;
+        if (data.phone) return;
+        
+        // 把這行所有的 - ( ) 空格 都拿掉，變成純數字
+        const cleanLine = line.replace(/[-\s\(\)]/g, ''); 
+        
+        // 檢查是否符合電話格式
+        if (phoneCleanRegex.test(cleanLine)) {
+            // 格式化輸出
+            if(cleanLine.startsWith('09') && cleanLine.length === 10) {
+                data.phone = cleanLine.replace(/(\d{4})(\d{3})(\d{3})/, '$1-$2-$3');
+            } else {
+                data.phone = line; // 如果不是手機，就保留原本有分隔符號的樣子
+            }
+        }
+    });
 
-        // 猜測公司 (包含特定關鍵字)
-        const companyKeywords = ['公司', 'Ltd', 'Inc', 'Co.', 'Group', '銀行', '工作室'];
+    // --- 第三輪：猜測 公司、職稱、名字 ---
+    lines.forEach(line => {
+        // 如果這行已經被抓過 (是Email或電話)，就跳過
+        if (line.includes(data.email) || (data.phone && line.replace(/[-\s]/g,'') === data.phone.replace(/[-\s]/g,''))) return;
+
+        // 猜測公司
+        const companyKeywords = ['公司', 'Ltd', 'Inc', 'Co.', 'Group', '銀行', '工作室', '診所', '商行'];
         if (!data.company && companyKeywords.some(kw => line.includes(kw))) {
             data.company = line;
             return;
         }
 
         // 猜測職稱
-        const titleKeywords = ['經理', '總監', '工程師', '專員', 'Manager', 'Director', 'CEO', '襄理', '處長', '負責人', '顧問', '助理'];
+        const titleKeywords = ['經理', '總監', '工程師', '專員', 'Manager', 'Director', 'CEO', '襄理', '處長', '負責人', '顧問', '助理', '代表', '設計師', '會計'];
         if (!data.title && titleKeywords.some(kw => line.includes(kw))) {
             data.title = line;
             return;
         }
     });
 
-    // 第三輪：剩下的行，如果很短，很有可能是名字
+    // --- 第四輪：剩下的行猜名字 (最難的部份) ---
     lines.forEach(line => {
-        if (line.includes(data.email) || line.includes(data.phone) || line === data.company || line === data.title) return;
+        // 排除已使用的行
+        if (line.includes(data.email) || line === data.company || line === data.title) return;
+        if (data.phone && line.includes(data.phone)) return;
 
-        // 名字判斷條件：
+        // 名字判斷：
         // 1. 還沒找到名字
-        // 2. 字數 2~4 字 (常見中文名)
-        // 3. 不包含數字 (排除地址、電話殘留)
-        // 4. 不包含 "地址", "路", "段" (排除地址)
-        if (!data.name && line.length >= 2 && line.length <= 4) {
-            const isAddress = ['路', '街', '段', '號', '樓', '市', '區'].some(addr => line.includes(addr));
+        // 2. 去掉空格後，長度在 2~4 字 (解決 "王 小 明" 問題)
+        // 3. 不包含數字
+        // 4. 不包含地址關鍵字
+        const cleanName = line.replace(/\s/g, ''); // 去掉所有空格
+        
+        if (!data.name && cleanName.length >= 2 && cleanName.length <= 4) {
+            const isAddress = ['路', '街', '段', '號', '樓', '市', '區', '縣'].some(addr => line.includes(addr));
             const hasNumber = /\d/.test(line);
-            
-            if (!isAddress && !hasNumber) {
-                data.name = line;
+            const badKeywords = ['電話', '傳真', '手機', '統編', '地址', '信箱', 'TEL', 'FAX', 'ADD'];
+            const isLabel = badKeywords.some(k => line.toUpperCase().includes(k));
+
+            if (!isAddress && !hasNumber && !isLabel) {
+                data.name = cleanName; // 儲存去掉空格的名字，比較乾淨
             }
         }
     });
 
     return data;
-}
-
-function clearOcrForm() {
-    ['ocr-name', 'ocr-title', 'ocr-company', 'ocr-phone', 'ocr-email', 'ocr-line', 'ocr-tax'].forEach(id => document.getElementById(id).value = '');
-}
-
-function resetOcr() {
-    document.getElementById('ocr-preview-img').style.display = 'none';
-    document.getElementById('ocr-default-view').style.display = 'block';
-    document.getElementById('ocr-input').value = '';
-    clearOcrForm();
-}
-
-// 匯出功能
-window.exportToCsv = function() {
-    const d = getOcrData();
-    const csvContent = "\uFEFF姓名,職稱,公司,電話,Email,LINE,統編\n" + `${d.name},${d.title},${d.company},${d.phone},${d.email},${d.line},${d.tax}`;
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "contact.csv";
-    link.click();
-};
-
-window.copyNotionFormat = function() {
-    const d = getOcrData();
-    const text = `| 欄位 | 資料 |\n| --- | --- |\n| 姓名 | ${d.name} |\n| 職稱 | ${d.title} |\n| 公司 | ${d.company} |\n| 電話 | ${d.phone} |\n| Email | ${d.email} |\n| LINE | ${d.line} |\n| 統編 | ${d.tax} |`;
-    navigator.clipboard.writeText(text).then(() => alert('已複製 Notion 格式'));
-};
-
-window.exportToJson = function() {
-    const d = getOcrData();
-    const blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "contact.json";
-    link.click();
-};
-
-function getOcrData() {
-    return {
-        name: document.getElementById('ocr-name').value,
-        title: document.getElementById('ocr-title').value,
-        company: document.getElementById('ocr-company').value,
-        phone: document.getElementById('ocr-phone').value,
-        email: document.getElementById('ocr-email').value,
-        line: document.getElementById('ocr-line').value,
-        tax: document.getElementById('ocr-tax').value
-    };
 }
 
 // 綁定三個複製按鈕
