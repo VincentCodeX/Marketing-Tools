@@ -498,3 +498,12 @@ input:checked + .slider:before { transform: translateX(20px); }
         display: block;
     }
 }
+
+/* --- 桌面版預設樣式 (原本的 code) --- */
+.container { width: 1000px; }
+
+/* --- 手機版專用調整 (Media Query) --- */
+@media (max-width: 768px) {
+    .container { width: 100%; padding: 10px; }
+    /* 在這裡專門修理手機版跑版的問題 */
+}
