@@ -393,117 +393,70 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 .kaomoji-btn:hover { background: #E2E8F0; transform: translateY(-2px); }
 
-/* --- 手機版專用優化 (最終完整版) --- */
+/* --- 手機版專用深度優化 (RWD) --- */
 @media (max-width: 768px) {
-    
-    /* 1. 全域版面調整 */
+    /* 1. 減少整體邊距，讓內容更緊湊 */
     body {
-        padding: 10px; /* 減少手機版的最外圍留白 */
+        padding: 10px;
     }
     
     .main-card {
-        padding: 15px; /* 大幅減少卡片內距，讓內容有更多空間 */
+        padding: 20px 15px; /* 縮小內距 */
+        border-radius: 12px;
     }
 
-    /* 2. 導覽列優化：九宮格全顯示，不需滑動 */
+    /* 2. 導覽列優化：改為 2x4 或 3x3 的網格，避免按鈕太扁 */
     .nav-container {
         display: grid;
-        grid-template-columns: repeat(4, 1fr); /* 一排 4 個，自動換行 */
-        gap: 8px; /* 按鈕之間的間距 */
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 6px;
         padding: 5px;
-        overflow-x: visible; /* 取消滑動 */
-        justify-content: center;
-        margin-bottom: 20px;
     }
-    
+
     .nav-btn {
-        flex: none;
-        flex-direction: column; /* 圖標改到文字上方 */
-        gap: 4px;
-        padding: 8px 2px;
-        font-size: 12px;       /* 字體縮小一點以放入方格 */
-        text-align: center;
-        height: auto;          /* 高度自動 */
-        aspect-ratio: 1 / 0.8; /* 讓按鈕接近方形 */
-        justify-content: center;
+        flex-direction: column; /* 圖示在上，文字在下 */
+        padding: 10px 5px;
+        font-size: 11px;
+        min-width: 0;
+        height: auto;
     }
 
     .nav-btn svg {
-        width: 22px; 
-        height: 22px;
-        margin-bottom: 2px;
+        width: 20px;
+        height: 20px;
+        margin-bottom: 4px;
     }
 
-    /* 3. 第一頁 QR Code 防爆版修正 */
-    .qr-layout, .utm-grid, .control-grid, .compress-dashboard { 
-        grid-template-columns: 1fr; /* 強制變成單欄排版 */
+    /* 3. OCR 與圖片壓縮的儀表板改為單欄 */
+    .ocr-dashboard, .compress-dashboard {
+        grid-template-columns: 1fr !important;
         gap: 20px;
     }
-    
-    /* 強制 QR Code 圖片隨螢幕縮放，絕對不超出邊界 */
-    #qrcode-canvas, #qrcode-canvas svg, #qrcode-canvas canvas {
-        max-width: 100% !important;
-        height: auto !important;
-        display: block;
-        margin: 0 auto; /* 居中 */
-    }
-    
-    /* 預覽區塊調整 */
-    .preview-wrapper {
-        padding: 15px; 
-        min-height: 250px;
-        overflow: hidden; /* 防止內容溢出 */
+
+    /* 4. 讓輸入框在手機上更容易點擊 (變高一點) */
+    input[type="text"], input[type="url"], input[type="number"], select {
+        padding: 12px;
+        font-size: 16px; /* 防止 iOS 自動縮放螢幕 */
     }
 
-    /* 4. Emoji / 符號按鈕優化 */
-    .symbol-grid {
-        grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); /* 確保按鈕不會太小 */
-        gap: 6px;
-    }
-    
-    .symbol-btn {
-        padding: 10px 0;
-        font-size: 20px;
-    }
-    
-    /* 顏文字特別調整 */
-    .kaomoji-btn {
-        font-size: 13px;
-        padding: 12px 0;
+    /* 5. 優化 OCR 表單：標籤與輸入框的間距 */
+    .ocr-right-panel {
+        padding: 15px;
     }
 
-    /* 5. 廣告規格卡片改為單欄 */
-    .ads-grid-container {
+    .form-group {
+        margin-bottom: 12px;
+    }
+
+    /* 6. 讓底部按鈕在手機上佔滿寬度，方便大拇指點擊 */
+    .export-actions {
         grid-template-columns: 1fr;
+        gap: 8px;
     }
 
-    /* 6. 其他微調 */
-    .header-title {
-        font-size: 18px; 
-        margin-bottom: 15px;
-        text-align: center;
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 14px;
     }
-    
-    .setting-group {
-        width: 100%; 
-    }
-    
-    /* 隱藏裝飾用的 emoji 背景圓圈，節省空間 */
-    .emoji-icon-bg {
-        display: none;
-    }
-    .emoji-header-box {
-        padding: 10px;
-        text-align: center;
-        display: block;
-    }
-}
-
-/* --- 桌面版預設樣式 (原本的 code) --- */
-.container { width: 1000px; }
-
-/* --- 手機版專用調整 (Media Query) --- */
-@media (max-width: 768px) {
-    .container { width: 100%; padding: 10px; }
-    /* 在這裡專門修理手機版跑版的問題 */
 }
