@@ -408,42 +408,46 @@ input:checked + .slider:before { transform: translateX(20px); }
     input[type="text"], input[type="url"], input[type="number"], select { font-size: 16px; padding: 12px; }
 }
 
-/* --- 頁尾專用樣式 (Glass Pill Style) --- */
+/* --- 頁尾專用樣式 (文青質感版) --- */
 .app-footer {
-    margin-top: 40px;         /* 與上方卡片保持距離 */
-    margin-bottom: 20px;      /* 與視窗底部保持距離 */
-    padding: 10px 24px;       /* 內部留白 */
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding: 8px 20px;
     text-align: center;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--primary);    /* 使用主色調 */
-    letter-spacing: 0.5px;    /* 字距稍微拉開一點點，比較高級 */
     
-    /* 玻璃膠囊效果 */
-    background: rgba(255, 255, 255, 0.4); 
+    /* 文學感核心設定 */
+    font-family: "Songti TC", "Noto Serif TC", serif; /* 優先使用宋體或襯線體 */
+    font-size: 12px;            /* 字體縮小，更顯精緻 */
+    font-weight: 500;
+    color: rgba(44, 62, 80, 0.55); /* 顏色調淡，變成半透明的灰藍色 */
+    letter-spacing: 1.2px;      /* 字距拉開，營造呼吸感 */
+    font-style: italic;         /* 斜體，像手寫簽名的感覺 */
+    
+    /* 極淡的玻璃膠囊 */
+    background: rgba(255, 255, 255, 0.25); /* 背景更透明 */
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50px;      /* 變成圓弧膠囊狀 */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
     
-    /* 動畫：滑鼠移上去稍微亮一點 */
-    transition: all 0.3s ease;
+    /* 讓它不那麼搶眼，滑鼠放上去才清楚 */
+    transition: all 0.5s ease;
     cursor: default;
+    user-select: none; /* 防止選取文字，保持美觀 */
 }
 
+/* 滑鼠移過去時，字體變清楚，稍微浮起 */
 .app-footer:hover {
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.5);
+    color: var(--primary); /* 變回深色，確保想看時看得到 */
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* 手機版微調 */
 @media (max-width: 768px) {
     .app-footer {
+        width: auto;
+        font-size: 11px; /* 手機上再小一點 */
         margin-top: 30px;
-        width: 100%;           /* 手機版不用膠囊，直接置底也不錯，或者保持膠囊 */
-        max-width: 90%;        /* 避免太寬 */
-        font-size: 12px;
     }
 }
