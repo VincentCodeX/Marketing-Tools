@@ -184,8 +184,6 @@ function formatSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-<script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
-
 // 綁定三個複製按鈕
 window.copyAllOcr = function() {
     const d = getOcrData();
