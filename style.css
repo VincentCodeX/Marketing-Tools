@@ -407,3 +407,43 @@ input:checked + .slider:before { transform: translateX(20px); }
     .preview-wrapper { padding: 15px; min-height: 250px; overflow: hidden; }
     input[type="text"], input[type="url"], input[type="number"], select { font-size: 16px; padding: 12px; }
 }
+
+/* --- 頁尾專用樣式 (Glass Pill Style) --- */
+.app-footer {
+    margin-top: 40px;         /* 與上方卡片保持距離 */
+    margin-bottom: 20px;      /* 與視窗底部保持距離 */
+    padding: 10px 24px;       /* 內部留白 */
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary);    /* 使用主色調 */
+    letter-spacing: 0.5px;    /* 字距稍微拉開一點點，比較高級 */
+    
+    /* 玻璃膠囊效果 */
+    background: rgba(255, 255, 255, 0.4); 
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;      /* 變成圓弧膠囊狀 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    
+    /* 動畫：滑鼠移上去稍微亮一點 */
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.app-footer:hover {
+    background: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 手機版微調 */
+@media (max-width: 768px) {
+    .app-footer {
+        margin-top: 30px;
+        width: 100%;           /* 手機版不用膠囊，直接置底也不錯，或者保持膠囊 */
+        max-width: 90%;        /* 避免太寬 */
+        font-size: 12px;
+    }
+}
