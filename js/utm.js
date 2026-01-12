@@ -23,5 +23,5 @@ function generateUTM() {
 function copyUTM() {
     const urlText = document.getElementById('final-url').innerText;
     if (!urlText || urlText.includes("請輸入")) return;
-    navigator.clipboard.writeText(urlText).then(() => {showToast("✅ UTM 連結已複製！");
+    navigator.clipboard.writeText(urlText).then(() => { showToast("✅ UTM 連結已複製！");
 }

@@ -33,7 +33,8 @@ function renderCards(filterValue) {
 }
 function copyAdSize(text) {
     const cleanText = text.replace(/\s/g, ''); 
-    navigator.clipboard.writeText(cleanText).then(() => { const toast = document.getElementById('ads-toast'); toast.style.opacity = 1; setTimeout(() => { toast.style.opacity = 0; }, 2000); });
+    navigator.clipboard.writeText(cleanText).then(() => { showToast(`✅ 已複製尺寸：${cleanText}`);
+    });
 }
 // 初始化
 document.addEventListener('DOMContentLoaded', () => { renderCards('all'); });
