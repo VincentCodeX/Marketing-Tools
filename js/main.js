@@ -33,3 +33,21 @@ function switchTab(tabId, currentBtn) {
         target.classList.add('active');
     }
 }
+
+// --- 共用彈跳通知函式 ---
+function showToast(message) {
+    // 取得我們剛剛在 index.html 建立的共用元素
+    const toast = document.getElementById("global-toast");
+    if (!toast) return;
+
+    // 設定文字
+    toast.innerText = message;
+    
+    // 加上 .show 類別讓它顯示
+    toast.className = "toast-msg show success";
+
+    // 3 秒後移除 .show 讓它消失
+    setTimeout(function(){ 
+        toast.className = toast.className.replace("show", ""); 
+    }, 3000);
+}
