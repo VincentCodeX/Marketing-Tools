@@ -21,8 +21,12 @@ function switchSubTab(tabName) {
     else if (tabName === 'emojis') document.getElementById('view-emojis').classList.add('active');
     else if (tabName === 'kaomoji') document.getElementById('view-kaomoji').classList.add('active');
 }
+// 修改後的複製函式 (呼叫共用彈跳視窗)
 function copySymbol(text) {
-    navigator.clipboard.writeText(text).then(() => { const toast = document.getElementById('symbol-toast'); toast.style.opacity = 1; setTimeout(() => { toast.style.opacity = 0; }, 1500); });
+    navigator.clipboard.writeText(text).then(() => { 
+        // 呼叫 main.js 裡的共用函式，並顯示「已複製：(符號)」
+        showToast(`已複製：${text}`);
+    });
 }
 document.addEventListener('DOMContentLoaded', () => {
     renderSymbolSection('view-symbols', symbolsData, 'grid-cols-8');
