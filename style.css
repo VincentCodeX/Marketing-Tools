@@ -453,11 +453,14 @@ body {
 /* 1. 分頁切換器 (Segmented Control) */
 .sub-nav-container {
     display: flex;
-    background: #eff1f5 !important;  /* 淺灰底槽 */
+    background: #eff1f5 !important;
+    /* 淺灰底槽 */
     padding: 6px !important;
     border-radius: 12px !important;
-    max-width: 600px;                /* 限制寬度讓它更精緻 */
-    margin: 0 auto 40px auto;        /* 置中並與內容拉開距離 */
+    max-width: 600px;
+    /* 限制寬度讓它更精緻 */
+    margin: 0 auto 40px auto;
+    /* 置中並與內容拉開距離 */
 }
 
 .sub-nav-btn {
@@ -483,10 +486,12 @@ body {
 /* 2. 符號按鈕 (像巧克力塊一樣整齊) */
 .symbol-btn {
     background: #ffffff !important;
-    border: 1px solid #d2d2d7 !important; /* Apple 淺灰邊框 */
+    border: 1px solid #d2d2d7 !important;
+    /* Apple 淺灰邊框 */
     border-radius: 10px !important;
     padding: 15px !important;
-    font-size: 20px !important;       /* 放大符號，易讀性提升 */
+    font-size: 20px !important;
+    /* 放大符號，易讀性提升 */
     color: #1d1d1f !important;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -504,7 +509,8 @@ body {
 }
 
 .symbol-btn:active {
-    transform: translateY(0) scale(0.95); /* 點擊時縮小的物理反饋 */
+    transform: translateY(0) scale(0.95);
+    /* 點擊時縮小的物理反饋 */
     background: #e8e8ed !important;
 }
 
@@ -962,26 +968,30 @@ body {
 .toast-msg {
     position: fixed;
     /* 1. 位置調整：移至頂部置中 */
-    top: 30px;                      
+    top: 30px;
     left: 50%;
-    transform: translateX(-50%) translateY(-20px); /* 預設向上偏移，用於進場動畫 */
-    
+    transform: translateX(-50%) translateY(-20px);
+    /* 預設向上偏移，用於進場動畫 */
+
     /* 2. Apple 毛玻璃質感 (Frosted Glass) */
     background: rgba(255, 255, 255, 0.72) !important;
-    backdrop-filter: blur(20px) saturate(180%); /* 關鍵：高質感模糊 */
+    backdrop-filter: blur(20px) saturate(180%);
+    /* 關鍵：高質感模糊 */
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    
+
     /* 3. 視覺細節 */
     color: #1d1d1f !important;
     padding: 10px 24px !important;
-    border-radius: 980px !important; /* 膠囊形狀 */
+    border-radius: 980px !important;
+    /* 膠囊形狀 */
     font-size: 14px !important;
     font-weight: 600 !important;
     border: 1px solid rgba(0, 0, 0, 0.08) !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
-    
+
     /* 4. 層級與顯示邏輯 */
-    z-index: 9999 !important;        /* 確保在所有元件（包含 Header）之上 */
+    z-index: 9999 !important;
+    /* 確保在所有元件（包含 Header）之上 */
     opacity: 0;
     pointer-events: none;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -990,7 +1000,8 @@ body {
 /* 顯示時的狀態 */
 .toast-msg.show {
     opacity: 1;
-    transform: translateX(-50%) translateY(0); /* 回到原位 */
+    transform: translateX(-50%) translateY(0);
+    /* 回到原位 */
 }
 
 @keyframes bounceIn {
@@ -2043,11 +2054,11 @@ input[type="range"]::-webkit-slider-thumb {
 /* === 22. 頁尾版權宣告 (修正版) === */
 .app-footer {
     /* 1. 調整位置：將 100px 縮減為 40px 或 60px */
-    margin-top: 40px !important;    
-    
+    margin-top: 40px !important;
+
     /* 2. 縮減內距：讓線條離文字近一點 */
-    padding: 20px 20px !important;  
-    
+    padding: 20px 20px !important;
+
     text-align: center;
     border-top: 1px solid #d2d2d7 !important;
     max-width: 1000px;
@@ -2069,7 +2080,8 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* 4. 懸浮效果：輕微變深即可，不加底線 */
 .footer-link:hover {
-    color: #1d1d1f !important;       /* 變回深灰色 */
+    color: #1d1d1f !important;
+    /* 變回深灰色 */
 }
 
 /* 針對 ✨VincentGame✨ 做微小的加強，讓品牌更有質感 */
@@ -2077,3 +2089,60 @@ input[type="range"]::-webkit-slider-thumb {
     font-weight: 600;
     margin: 0 4px;
 }
+
+/* === 23. 行動裝置專屬最終修正 (Apple Mobile Style) === */
+/* 確保這一行前面沒有漏掉任何 } 號 */
+
+@media screen and (max-width: 768px) {
+    
+    /* 1. 選單 3-3-1 佈局 */
+    .nav-container {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    .nav-btn {
+        flex-direction: column !important;
+        padding: 10px 5px !important;
+        font-size: 11px !important;
+    }
+
+    .nav-btn svg {
+        margin-right: 0 !important;
+        margin-bottom: 4px !important;
+    }
+
+    /* 最後一個按鈕橫跨三欄 */
+    .nav-btn:last-child {
+        grid-column: span 3 !important;
+        flex-direction: row !important;
+        font-size: 14px !important;
+        padding: 15px !important;
+    }
+
+    /* 2. 工具內容：手機版改為上下堆疊 (1fr) */
+    .qr-layout, 
+    .utm-layout-container, 
+    .shorten-layout-container, 
+    .compress-layout-container, 
+    .ocr-layout-container,
+    #gridContainer {
+        grid-template-columns: 1fr !important; /* 電腦版不會吃到這條 */
+    }
+
+    /* 3. 取消 Sticky 效果，讓結果卡片乖乖排在下面 */
+    .preview-wrapper, 
+    .result-sticky-card {
+        position: relative !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin-top: 30px !important;
+    }
+
+    /* 4. 手機版標題縮小 */
+    .header-title {
+        font-size: 26px !important;
+    }
+} 
+/* 這裡的 } 號絕對不能漏掉，它是關閉手機版區塊的關鍵 */
