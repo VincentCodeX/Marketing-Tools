@@ -2090,59 +2090,74 @@ input[type="range"]::-webkit-slider-thumb {
     margin: 0 4px;
 }
 
-/* === 23. 行動裝置專屬最終修正 (Apple Mobile Style) === */
-/* 確保這一行前面沒有漏掉任何 } 號 */
-
-@media screen and (max-width: 768px) {
-    
-    /* 1. 選單 3-3-1 佈局 */
+/* === 23. iPhone 專屬：3-3-1 選單與內容自動換行優化 === */
+@media (max-width: 768px) {
+    /* 1. 選單容器：強制 3 欄網格佈局 */
     .nav-container {
         display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 8px !important;
-    }
-
-    .nav-btn {
-        flex-direction: column !important;
-        padding: 10px 5px !important;
-        font-size: 11px !important;
-    }
-
-    .nav-btn svg {
-        margin-right: 0 !important;
-        margin-bottom: 4px !important;
-    }
-
-    /* 最後一個按鈕橫跨三欄 */
-    .nav-btn:last-child {
-        grid-column: span 3 !important;
-        flex-direction: row !important;
-        font-size: 14px !important;
+        grid-template-columns: repeat(3, 1fr) !important; /* 核心：3 欄排列 */
+        gap: 12px !important;                             /* 增加間距，防止擠壓 */
         padding: 15px !important;
+        background: transparent !important;
     }
 
-    /* 2. 工具內容：手機版改為上下堆疊 (1fr) */
-    .qr-layout, 
-    .utm-layout-container, 
-    .shorten-layout-container, 
-    .compress-layout-container, 
-    .ocr-layout-container,
-    #gridContainer {
-        grid-template-columns: 1fr !important; /* 電腦版不會吃到這條 */
+    /* 2. 選單按鈕：縮小圖示，垂直排列 */
+    .nav-btn {
+        flex-direction: column !important;               /* 圖示在上，文字在下 */
+        padding: 15px 5px !important;
+        border-radius: 18px !important;                  /* 更有 App Icon 的感覺 */
+        background: rgba(255, 255, 255, 0.8) !important; /* 淡淡的半透明白 */
+        backdrop-filter: blur(10px);
+        height: auto !important;
+        justify-content: center !important;
     }
 
-    /* 3. 取消 Sticky 效果，讓結果卡片乖乖排在下面 */
-    .preview-wrapper, 
-    .result-sticky-card {
-        position: relative !important;
-        top: 0 !important;
+    /* 解決圖示過大問題 (針對 SVG 與圖片) */
+    .nav-btn svg, .nav-btn i, .nav-btn span:first-child {
+        width: 24px !important;                          /* 強制縮小圖示 */
+        height: 24px !important;
+        margin-right: 0 !important;
+        margin-bottom: 8px !important;                   /* 與文字拉開距離 */
+    }
+
+    .nav-btn span {
+        font-size: 11px !important;                      /* 縮小文字，防止換行 */
+        font-weight: 600;
+        letter-spacing: -0.5px;
+    }
+
+    /* 3. 關鍵：最後一個按鈕 (第 7 個) 變成長條置中 */
+    .nav-btn:last-child {
+        grid-column: span 3 !important;                  /* 橫跨三欄 */
+        flex-direction: row !important;                  /* 回歸橫向排列 */
+        padding: 15px !important;
+        font-size: 14px !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+    }
+
+    /* 4. 內容區域：全自動符合螢幕與換行 */
+    .container, .main-content {
         width: 100% !important;
-        margin-top: 30px !important;
+        padding: 10px !important;                        /* 縮小邊距，增加內容空間 */
+        box-sizing: border-box !important;               /* 確保寬度包含內距 */
     }
 
-    /* 4. 手機版標題縮小 */
-    .header-title {
-        font-size: 26px !important;
+    /* 讓所有表格、輸入框、設定組自動垂直換行 */
+    .control-grid, .form-row, .utm-inputs, .stats-container {
+        display: flex !important;
+        flex-direction: column !important;               /* 全部改為垂直排列 */
+        gap: 15px !important;
     }
-} 
-/* 這裡的 } 號絕對不能漏掉，它是關閉手機版區塊的關鍵 */
+
+    .setting-group {
+        width: 100% !important;
+        padding: 20px 15px !important;
+        box-sizing: border-box !important;
+    }
+
+    input, select, .file-upload, .action-btn {
+        width: 100% !important;                          /* 寬度撐滿手機螢幕 */
+        max-width: none !important;
+        font-size: 16px !important;                       /* 防止 iOS 自動縮放畫面 */
+    }
+}
