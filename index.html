@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的專案：行銷工具盒</title>
     <link rel="icon" href="favicon.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
     <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
-    
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/tools.css">
-    <link rel="stylesheet" href="css/responsive.css">
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div id="global-toast" class="toast-msg">已複製到剪貼簿</div>
     <h1 class="header-title">整合行銷工具盒</h1>
 
     <div class="nav-container">
         <button class="nav-btn active" data-target="qr">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7"></rect>
                 <rect x="14" y="3" width="7" height="7"></rect>
                 <rect x="14" y="14" width="7" height="7"></rect>
@@ -32,7 +33,8 @@
         </button>
 
         <button class="nav-btn" data-target="utm">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="20" x2="12" y2="10"></line>
                 <line x1="18" y1="20" x2="18" y2="4"></line>
                 <line x1="6" y1="20" x2="6" y2="16"></line>
@@ -41,14 +43,16 @@
         </button>
 
         <button class="nav-btn" data-target="shorten">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
             </svg>
             短網址
         </button>
 
         <button class="nav-btn" data-target="compress">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                 <circle cx="8.5" cy="8.5" r="1.5"></circle>
                 <polyline points="21 15 16 10 5 21"></polyline>
@@ -57,33 +61,38 @@
         </button>
 
         <button class="nav-btn" data-target="ocr">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"></path>
-                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                <path
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                </path>
             </svg>
             OCR 辨識
         </button>
-        
+
         <button class="nav-btn" data-target="ads">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect>
                 <polyline points="17 2 12 7 7 2"></polyline>
             </svg>
             廣告規格
         </button>
-        
+
         <button class="nav-btn" data-target="emoji">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-               <circle cx="12" cy="12" r="10"></circle>
-               <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-               <line x1="9" y1="9" x2="9.01" y2="9"></line>
-               <line x1="15" y1="9" x2="15.01" y2="9"></line>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                <line x1="15" y1="9" x2="15.01" y2="9"></line>
             </svg>
             特殊符號
         </button>
     </div>
-    <div class="main-card">
-        
+    <div class="container main-content">
+
         <div id="tab-qr" class="tool-section active">
             <div class="qr-layout">
                 <div class="controls">
@@ -112,7 +121,8 @@
                             </div>
                             <div>
                                 <label style="font-size:12px; color:#666;">顏色</label>
-                                <input type="color" id="qr-color" class="color-picker" value="#2C3E50" oninput="updateQR()">
+                                <input type="color" id="qr-color" class="color-picker" value="#2C3E50"
+                                    oninput="updateQR()">
                             </div>
                         </div>
                     </div>
@@ -140,7 +150,8 @@
                     </div>
                     <div class="setting-group">
                         <div class="setting-title">品牌 Logo</div>
-                        <input type="file" id="qr-logo" accept="image/*" style="display:none" onchange="handleLogoUpload(this)">
+                        <input type="file" id="qr-logo" accept="image/*" style="display:none"
+                            onchange="handleLogoUpload(this)">
                         <div class="file-upload" onclick="document.getElementById('qr-logo').click()">
                             <span id="logo-status">📤 點擊上傳 Logo (置中顯示)</span>
                         </div>
@@ -155,211 +166,265 @@
         </div>
 
         <div id="tab-utm" class="tool-section">
-            <h2 style="color:var(--primary); margin-top:0;">GTM 網址產生器</h2>
-            <div class="utm-grid">
-                <div class="full-width">
-                    <div class="setting-title">1. 目標網址 (Website URL) <span style="color:red">*</span></div>
-                    <input type="url" id="utm-url" placeholder="https://www.example.com" oninput="generateUTM()">
+
+            <h2 class="section-title">GTM 網址產生器</h2>
+
+            <div class="utm-layout-container">
+
+                <div class="utm-left-panel">
+                    <div class="form-group full-width">
+                        <label>1. 目標網址 (Website URL) <span style="color:#ef4444">*</span></label>
+                        <input type="url" id="utm-url" placeholder="https://www.example.com" oninput="generateUTM()">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>2. 來源 (Source) <span style="color:#ef4444">*</span></label>
+                            <input type="text" id="utm-source" placeholder="google, facebook" oninput="generateUTM()">
+                        </div>
+                        <div class="form-group">
+                            <label>3. 媒介 (Medium) <span style="color:#ef4444">*</span></label>
+                            <input type="text" id="utm-medium" placeholder="cpc, banner" oninput="generateUTM()">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>4. 活動名稱 (Campaign)</label>
+                            <input type="text" id="utm-campaign" placeholder="summer_sale" oninput="generateUTM()">
+                        </div>
+                        <div class="form-group">
+                            <label>5. 內容 (Content)</label>
+                            <input type="text" id="utm-content" placeholder="button_a" oninput="generateUTM()">
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <div class="setting-title">2. 來源 (Source) <span style="color:red">*</span></div>
-                    <input type="text" id="utm-source" placeholder="例如：google, facebook" oninput="generateUTM()">
+
+                <div class="utm-right-panel">
+                    <div class="result-sticky-card">
+                        <div class="result-header">
+                            <span>追蹤連結預覽</span>
+                            <span id="copy-msg" class="copy-status">✅ 已複製</span>
+                        </div>
+                        <div class="code-display">
+                            <code id="final-url">請輸入左側資料...</code>
+                        </div>
+                        <button class="action-btn" onclick="copyUTM()">複製連結</button>
+                    </div>
                 </div>
-                <div>
-                    <div class="setting-title">3. 媒介 (Medium) <span style="color:red">*</span></div>
-                    <input type="text" id="utm-medium" placeholder="例如：cpc, banner" oninput="generateUTM()">
-                </div>
-                <div>
-                    <div class="setting-title">4. 活動名稱 (Campaign)</div>
-                    <input type="text" id="utm-campaign" placeholder="例如：summer_sale" oninput="generateUTM()">
-                </div>
-                <div>
-                    <div class="setting-title">5. 內容 (Content)</div>
-                    <input type="text" id="utm-content" placeholder="例如：button_a" oninput="generateUTM()">
-                </div>
-            </div>
-            <div class="utm-result-box">
-                <div class="setting-title" style="border:none; padding:0;">您的追蹤連結：<span id="copy-msg" class="copy-success">✅ 已複製！</span></div>
-                <code id="final-url" class="result-link">請輸入上方資料...</code>
-                <button class="action-btn" onclick="copyUTM()">複製連結</button>
+
             </div>
         </div>
 
         <div id="tab-shorten" class="tool-section">
-            <h2 style="color:var(--primary); margin-top:0;">短網址產生器 (is.gd)</h2>
-            <p style="color:#666; font-size:14px; margin-bottom:30px;">
-                使用 <strong style="color:var(--primary);">is.gd</strong> 服務，產生永久有效、完全無廣告的短網址。
-            </p>
-            <div style="max-width: 600px; margin: 0 auto;">
-                <div class="setting-title">請輸入長網址</div>
-                <div style="display:flex; gap:10px;">
-                    <input type="url" id="long-url" placeholder="https://..." style="flex:1;">
-                    <button class="action-btn" id="shorten-btn" onclick="generateShortUrl()" style="margin:0; width:120px; justify-content:center;">
-                        <span id="btn-text">縮短</span>
+            <h2 class="section-title">短網址產生器 (is.gd)</h2>
+            <p class="section-subtitle">使用 is.gd 服務，產生永久有效、完全無廣告的短連結。</p>
+
+            <div class="shorten-layout-container">
+                <div class="shorten-left-panel">
+                    <div class="form-group full-width">
+                        <label>請輸入長網址 (Website URL)</label>
+                        <input type="url" id="long-url" placeholder="https://www.example.com/very-long-link"
+                            style="width: 100%;">
+                    </div>
+                    <button class="action-btn secondary-btn" id="shorten-btn" onclick="generateShortUrl()">
+                        <span id="btn-text">產生短網址</span>
                         <div id="btn-loader" class="loading-spinner" style="display:none;"></div>
                     </button>
+                    <p class="usage-hint">* 系統自動處理跨網域請求 (CORS Proxy)</p>
                 </div>
-                <p style="font-size:12px; color:#999; margin-top:8px;">* 系統會自動處理跨網域請求 (CORS Proxy)</p>
-                <div id="short-result" class="url-result-container">
-                    <div style="color: var(--success); font-weight:bold;">🎉 縮短成功！</div>
-                    <a id="short-link" class="short-url-display" target="_blank" href="#">https://is.gd/xyz</a>
-                    <br>
-                    <button class="action-btn" onclick="copyShortUrl()" style="margin: 20px auto 0 auto; background: var(--success);">
-                        複製短網址
-                    </button>
-                    <span id="short-copy-msg" class="copy-success">✅ 已複製！</span>
+
+                <div class="shorten-right-panel">
+                    <div id="short-result" class="result-sticky-card">
+                        <div class="result-header">
+                            <span>您的短連結</span>
+                            <span id="short-copy-msg" class="copy-status">✅ 已複製</span>
+                        </div>
+
+                        <div class="short-url-box">
+                            <a id="short-link" href="#" target="_blank">https://is.gd/xyz</a>
+                        </div>
+
+                        <button class="action-btn primary-btn" onclick="copyShortUrl()">
+                            複製短網址
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div id="tab-compress" class="tool-section">
-            <div class="info-banner">
-                <div class="info-icon">🖼️</div>
-                <div>
-                    <strong style="color:var(--primary); font-size:15px;">專業圖片壓縮工具</strong>
-                    <div style="font-size:12px; color:#666; margin-top:4px;">
-                        支援批量處理、廣告平台預設尺寸、格式轉換。所有運算皆在瀏覽器完成，隱私百分百。
-                    </div>
-                </div>
-            </div>
-            <div class="compress-dashboard">
-                <div class="compress-controls">
-                    <div class="control-block">
-                        <div class="block-title">⬆️ 上傳圖片</div>
-                        <div class="upload-box-small" id="drop-zone" onclick="document.getElementById('img-input').click()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-                            <div class="upload-icon">📄</div>
-                            <div>
-                                <div style="font-weight:600; color:var(--primary);">拖放圖片或點擊上傳</div>
-                                <div style="font-size:11px; color:#999;">支援 JPG, PNG, WEBP</div>
-                            </div>
+            <h2 class="section-title">專業圖片壓縮</h2>
+            <p class="section-subtitle">所有運算皆在瀏覽器完成，隱私百分百，支援批量預設尺寸。</p>
+
+            <div class="compress-layout-container">
+                <div class="compress-left-panel">
+
+                    <div class="setting-group">
+                        <div class="setting-title">1. 上傳圖片</div>
+                        <div class="file-upload-card" id="drop-zone"
+                            onclick="document.getElementById('img-input').click()">
+                            <div class="upload-icon">🖼️</div>
+                            <div class="upload-text">點擊或拖放圖片至此</div>
+                            <div class="upload-hint">支援 JPG, PNG, WEBP</div>
                         </div>
-                        <input type="file" id="img-input" accept="image/*" style="display:none" onchange="processImage(this.files[0])">
+                        <input type="file" id="img-input" accept="image/*" style="display:none"
+                            onchange="processImage(this.files[0])">
                     </div>
-                    <div class="control-block">
-                        <div class="block-title">▦ 廣告平台預設尺寸</div>
-                        <select id="preset-select" class="form-select" onchange="applyPreset()">
-                            <option value="custom">自訂尺寸 (保持原樣)</option>
-                            <option value="1200x630">Facebook 貼文 (1200 x 630)</option>
-                            <option value="1080x1080">Instagram 貼文 (1080 x 1080)</option>
-                            <option value="1080x1920">IG / FB 限時動態 (1080 x 1920)</option>
-                            <option value="1280x720">YouTube 縮圖 (1280 x 720)</option>
-                            <option value="800xauto">網頁文章標準寬 (800 px)</option>
-                        </select>
-                    </div>
-                    <div class="control-block">
-                        <div class="block-title">✨ 自訂尺寸 (px)</div>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <input type="number" id="custom-width" placeholder="寬度" class="form-input" oninput="runCompression()">
-                            <span style="color:#ccc;">×</span>
-                            <input type="number" id="custom-height" placeholder="高度" class="form-input" oninput="runCompression()">
-                        </div>
-                    </div>
-                    <div class="control-block">
-                        <div class="block-title">⚙️ 壓縮設定</div>
-                        <div class="setting-row">
-                            <label>壓縮品質 (Quality)</label>
-                            <input type="range" id="quality" min="0.1" max="1.0" step="0.1" value="0.8" style="width:100px;" oninput="updateQualityVal()">
-                            <span id="quality-val" style="font-size:12px; font-weight:bold; width:30px;">0.8</span>
-                        </div>
-                        <div class="setting-row">
-                            <label>輸出格式</label>
-                            <select id="output-format" class="form-select" style="width:auto;" onchange="runCompression()">
-                                <option value="original">保持原格式</option>
-                                <option value="image/jpeg">轉成 JPEG (最小)</option>
-                                <option value="image/png">轉成 PNG (透明)</option>
-                                <option value="image/webp">轉成 WebP (新一代)</option>
+
+                    <div class="setting-group">
+                        <div class="setting-title">2. 尺寸調整</div>
+                        <div class="form-group">
+                            <label>平台預設規格</label>
+                            <select id="preset-select" onchange="applyPreset()">
+                                <option value="custom">自訂尺寸 (保持原樣)</option>
+                                <option value="1200x630">Facebook 貼文 (1200x630)</option>
+                                <option value="1080x1080">Instagram 貼文 (1080x1080)</option>
+                                <option value="1280x720">YouTube 縮圖 (1280x720)</option>
                             </select>
                         </div>
-                        <div class="setting-row">
-                            <label>浮水印 (尚未實裝)</label>
-                            <label class="toggle-switch">
-                                <input type="checkbox" disabled>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="compress-preview-area">
-                    <div id="preview-empty" class="empty-preview">
-                        <div style="font-size:48px; color:#E5E7EB; margin-bottom:15px;">🖼️</div>
-                        <div style="color:#6B7280;">尚未上傳圖片</div>
-                        <div style="font-size:12px; color:#9CA3AF;">請從左側上傳圖片開始使用</div>
-                    </div>
-                    <div id="preview-active" style="display:none; width:100%; text-align:center;">
-                        <div class="preview-card">
-                            <img id="preview-compressed" class="preview-img">
-                            <div id="loading-overlay" class="loading-overlay" style="display:none;">
-                                <div class="spinner"></div>處理中...
+                        <div class="form-row mt-2">
+                            <div class="form-group">
+                                <label>寬度 (px)</label>
+                                <input type="number" id="custom-width" placeholder="原寬" oninput="runCompression()">
+                            </div>
+                            <div class="form-group">
+                                <label>高度 (px)</label>
+                                <input type="number" id="custom-height" placeholder="原高" oninput="runCompression()">
                             </div>
                         </div>
-                        <div class="result-stats">
-                            <div>原始：<span id="info-original">0 KB</span></div>
-                            <div style="color:#ccc;">➔</div>
-                            <div style="color:var(--success); font-weight:bold;">優化後：<span id="info-compressed">0 KB</span></div>
+                    </div>
+
+                    <div class="setting-group">
+                        <div class="setting-title">3. 壓縮設定</div>
+                        <div class="form-group">
+                            <label>壓縮品質: <span id="quality-val" style="color:var(--primary-color)">0.8</span></label>
+                            <input type="range" id="quality" min="0.1" max="1.0" step="0.1" value="0.8"
+                                oninput="updateQualityVal()">
                         </div>
-                        <button class="action-btn" onclick="downloadImage()" style="width:100%; justify-content:center; margin-top:15px;">
-                            下載圖片
-                        </button>
+                        <div class="form-group">
+                            <label>輸出格式</label>
+                            <select id="output-format" onchange="runCompression()">
+                                <option value="original">保持原格式</option>
+                                <option value="image/jpeg">JPEG (檔案最小)</option>
+                                <option value="image/png">PNG (支援透明)</option>
+                                <option value="image/webp">WebP (最佳比例)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="usage-hint">
-                ℹ️ <strong>使用提示：</strong> 圖片壓縮完全在您的瀏覽器中處理，不會上傳到伺服器。建議先選擇「廣告平台預設尺寸」可快速調整。
+
+                <div class="compress-right-panel">
+                    <div class="result-sticky-card">
+                        <div id="preview-empty" class="empty-state">
+                            <div class="empty-icon">⏳</div>
+                            <p>等待上傳圖片...</p>
+                        </div>
+
+                        <div id="preview-active" style="display:none; width:100%;">
+                            <div class="image-preview-box">
+                                <img id="preview-compressed" src="" alt="預覽">
+                                <div id="loading-overlay" class="mini-loader" style="display:none;">處理中...</div>
+                            </div>
+
+                            <div class="stats-container">
+                                <div class="stat-item">
+                                    <span class="stat-label">原始大小</span>
+                                    <span id="info-original" class="stat-value">0 KB</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="stat-label">優化後</span>
+                                    <span id="info-compressed" class="stat-value highlight">0 KB</span>
+                                </div>
+                            </div>
+
+                            <button class="action-btn" onclick="downloadImage()">下載優化圖片</button>
+                        </div>
+                    </div>
+                    <p class="usage-hint" style="text-align:center; margin-top:20px;">ℹ️ 圖片處理完全在本地完成</p>
+                </div>
             </div>
         </div>
 
         <div id="tab-ocr" class="tool-section">
-            <div class="ocr-dashboard">
+            <h2 class="section-title">OCR 名片辨識</h2>
+            <p class="section-subtitle">自動讀取名片資訊，並整理為結構化資料，支援匯出至 Notion 或試算表。</p>
+
+            <div class="ocr-layout-container">
                 <div class="ocr-left-panel">
-                    <div class="ocr-upload-box" id="ocr-drop-zone" onclick="document.getElementById('ocr-input').click()" ondrop="handleOcrDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleOcrDragLeave(event)">
-                        <div id="ocr-default-view">
-                            <div class="upload-icon" style="background:#E0E7FF; color:#4F46E5;">📷</div>
-                            <div style="font-weight:600; color:var(--primary); margin-top:10px;">拖放名片或點擊上傳</div>
-                            <div style="font-size:12px; color:#999; margin-top:5px;">支援 JPG, PNG, HEIC</div>
+                    <div class="setting-group">
+                        <div class="setting-title">1. 上傳名片影像</div>
+                        <div class="file-upload-card" id="ocr-drop-zone"
+                            onclick="document.getElementById('ocr-input').click()">
+                            <div id="ocr-default-view">
+                                <div class="upload-icon">📸</div>
+                                <div class="upload-text">掃描名片</div>
+                                <div class="upload-hint">請確保文字清晰無反光</div>
+                            </div>
+                            <img id="ocr-preview-img" class="ocr-preview-display" style="display:none;">
                         </div>
-                        <img id="ocr-preview-img" class="ocr-preview" style="display:none;">
-                        <div id="ocr-loading" class="loading-overlay" style="display:none;">
-                            <div class="spinner"></div>
-                            <div id="ocr-status-text" style="margin-top:10px; font-size:14px;">正在讀取文字...</div>
-                        </div>
+                        <input type="file" id="ocr-input" accept="image/*" style="display:none"
+                            onchange="processOcr(this.files[0])">
                     </div>
-                    <input type="file" id="ocr-input" accept="image/*" style="display:none" onchange="processOcr(this.files[0])">
-                    <div class="ocr-hint">
-                        ✨ <strong>提示：</strong> 請確保名片圖片清晰、光線充足，以獲得最佳辨識效果。支援中文及英文辨識。
+
+                    <div id="ocr-loading" class="status-indicator" style="display:none;">
+                        <div class="mini-spinner"></div>
+                        <span id="ocr-status-text">AI 正在讀取資訊...</span>
+                    </div>
+
+                    <div class="usage-hint mt-3">
+                        ✨ <strong>提示：</strong> 支援中、英文辨識。若辨識有誤，可直接在右側卡片手動修正。
                     </div>
                 </div>
+
                 <div class="ocr-right-panel">
-                    <div class="panel-header">
-                        <h3 style="margin:0; font-size:16px; color:var(--primary);">整理後資料</h3>
-                        <div class="header-actions">
-                            <button class="icon-btn" title="複製全部" onclick="copyAllOcr()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
-                            <button class="icon-btn" title="重新掃描" onclick="resetOcr()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></button>
+                    <div class="result-sticky-card">
+                        <div class="result-header">
+                            <span>整理後的聯絡資訊</span>
+                            <div class="header-actions">
+                                <button class="icon-btn" onclick="resetOcr()">🔄 重置</button>
+                            </div>
                         </div>
-                    </div>
-                    <hr style="border:0; border-top:1px solid #E5E7EB; margin:15px 0;">
-                    <div class="ocr-form">
-                        <div class="form-group"><label>👤 姓名</label><input type="text" id="ocr-name" placeholder="請輸入姓名"></div>
-                        <div class="form-group"><label>💼 職稱</label><input type="text" id="ocr-title" placeholder="請輸入職稱"></div>
-                        <div class="form-group"><label>🏢 公司</label><input type="text" id="ocr-company" placeholder="請輸入公司名稱"></div>
-                        <div class="form-group"><label>📞 電話</label><input type="text" id="ocr-phone" placeholder="請輸入電話號碼"></div>
-                        <div class="form-group"><label>✉️ Email</label><input type="text" id="ocr-email" placeholder="請輸入 Email"></div>
-                        <div class="form-group"><label>💬 LINE</label><input type="text" id="ocr-line" placeholder="請輸入 LINE ID"></div>
-                        <div class="form-group"><label>#️⃣ 統編</label><input type="text" id="ocr-tax" placeholder="請輸入統一編號"></div>
-                    </div>
-                    <div class="export-actions">
-                        <button class="export-btn dark" onclick="exportToCsv()">📄 Google Sheets</button>
-                        <button class="export-btn outline" onclick="copyNotionFormat()">📝 Notion</button>
-                        <button class="export-btn outline" onclick="exportToJson()">{} JSON</button>
-                    </div>
-                    <div style="text-align:center; margin-top:15px; font-size:11px; color:#999;">
-                        * Google Sheets: 下載 CSV 後匯入 | Notion: 複製後貼上表格
+
+                        <div class="ocr-data-form">
+                            <div class="form-item">
+                                <label>👤 姓名</label>
+                                <input type="text" id="ocr-name" placeholder="尚未讀取">
+                            </div>
+                            <div class="form-item">
+                                <label>💼 職稱</label>
+                                <input type="text" id="ocr-title" placeholder="尚未讀取">
+                            </div>
+                            <div class="form-item">
+                                <label>🏢 公司</label>
+                                <input type="text" id="ocr-company" placeholder="尚未讀取">
+                            </div>
+                            <div class="form-item">
+                                <label>📞 電話</label>
+                                <input type="text" id="ocr-phone" placeholder="尚未讀取">
+                            </div>
+                            <div class="form-item">
+                                <label>✉️ Email</label>
+                                <input type="text" id="ocr-email" placeholder="尚未讀取">
+                            </div>
+                        </div>
+
+                        <div class="export-actions">
+                            <button class="action-btn primary-btn" onclick="copyNotionFormat()">匯出至 Notion</button>
+                            <div class="secondary-actions">
+                                <button class="action-btn secondary-btn" onclick="exportToCsv()">CSV</button>
+                                <button class="action-btn secondary-btn" onclick="exportToJson()">JSON</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="tab-ads" class="tool-section">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
                 <h2 style="color:var(--primary); margin:0;">各大平台廣告規格速查</h2>
                 <select id="platformFilter" onchange="renderCards(this.value)" style="width:auto; max-width:200px;">
                     <option value="all">全部平台</option>
@@ -375,11 +440,12 @@
             <div id="gridContainer" class="ads-grid-container">
             </div>
 
-            <div style="margin-top:20px; padding:15px; background:#F0FDF4; border:1px solid #DCFCE7; border-radius:8px; font-size:13px; color:#444; display:flex; gap:10px;">
+            <div
+                style="margin-top:20px; padding:15px; background:#F0FDF4; border:1px solid #DCFCE7; border-radius:8px; font-size:13px; color:#444; display:flex; gap:10px;">
                 <span>ⓘ</span>
                 <div>提示：點擊右側複製按鈕可快速複製尺寸（如 1080x1080），方便在 PS 或 Canva 中使用。</div>
             </div>
-            
+
         </div>
 
         <div id="tab-emoji" class="tool-section">
@@ -405,17 +471,17 @@
                 <span>⚡</span>
                 <div>小技巧：點擊符號、Emoji 或顏文字即可自動複製，然後在任何地方使用 Ctrl+V (或 Cmd+V) 貼上。</div>
             </div>
-            
+
         </div>
 
     </div>
 
-<footer class="app-footer">
-    <a href="https://www.next-level-creative.com/" target="_blank" class="footer-link">
-        Made with ✨VincentGame✨ © 2026 整合行銷工具盒
-    </a>
-</footer>
-    
+    <footer class="app-footer">
+        <a href="https://www.next-level-creative.com/" target="_blank" class="footer-link">
+            Made with ✨VincentGame✨ © 2026 整合行銷工具盒
+        </a>
+    </footer>
+
     <script src="js/main.js"></script>
     <script src="js/qrcode.js"></script>
     <script src="js/utm.js"></script>
@@ -426,4 +492,5 @@
     <script src="js/emoji.js"></script>
 
 </body>
+
 </html>
