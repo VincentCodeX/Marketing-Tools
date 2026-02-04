@@ -1,49 +1,38 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
 
-/* === 1. 全域設定與CSS變數 === */
+/* === 1. Apple 規範全域變數 (Single Source of Truth) === */
 :root {
-    /* 主色調 */
-    --primary-color: #3B82F6;
-    --primary-hover: #2563EB;
-    --primary-light: #DBEAFE;
-
-    /* 語意色彩 */
-    --success-color: #10B981;
-    --error-color: #EF4444;
-    --warning-color: #F59E0B;
-    --info-color: #06B6D4;
-
-    /* 中性色 */
-    --text-primary: #1F2937;
-    --text-secondary: #6B7280;
-    --text-muted: #9CA3AF;
-    --border-color: #E5E7EB;
-    --bg-gray: #F9FAFB;
-    --bg-white: #FFFFFF;
-
-    /* 陰影 */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-
-    /* 圓角 */
-    --radius-sm: 6px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
-
-    /* 過渡時間 */
-    --transition-fast: 150ms;
-    --transition-normal: 250ms;
-    --transition-slow: 350ms;
-
-    /* 間距 */
-    --spacing-xs: 4px;
-    --spacing-sm: 8px;
-    --spacing-md: 16px;
-    --spacing-lg: 24px;
-    --spacing-xl: 32px;
+    /* 品牌色彩 */
+    --brand-blue: #0071e3;          /* Apple 官方藍 */
+    --brand-blue-hover: #0077ed;
+    
+    /* 文字色彩 */
+    --text-primary: #1d1d1f;        /* 主標題、內文黑 */
+    --text-secondary: #86868b;      /* 輔助灰、標籤 */
+    --text-on-blue: #ffffff;
+    
+    /* 背景與表面 */
+    --bg-main: #f5f5f7;             /* 全站背景灰 */
+    --bg-card: #ffffff;             /* 卡片白 */
+    --bg-input: #ffffff;
+    --bg-segmented: #eff1f5;        /* 分段控制器底色 */
+    
+    /* 邊框與陰影 */
+    --border-color: #d2d2d7;        /* 標準邊框 */
+    --border-light: #f2f2f7;        /* 極淡邊框 (用於列表) */
+    --shadow-subtle: 0 10px 40px rgba(0, 0, 0, 0.04);
+    --shadow-button: 0 4px 12px rgba(0, 113, 227, 0.2);
+    
+    /* 圓角規範 */
+    --radius-lg: 24px;              /* 大卡片 */
+    --radius-md: 12px;              /* 按鈕、輸入框 */
+    --radius-sm: 8px;               /* 小元件 */
+    --radius-pill: 980px;           /* 膠囊按鈕 */
+    
+    /* 間距規範 */
+    --spacing-xl: 60px;             /* 左右分欄間距 */
+    --spacing-lg: 32px;             /* 設定組間距 */
+    --spacing-md: 16px;             /* 標題與內容間距 */
 }
 
 /* === 2. 基礎重置 === */
