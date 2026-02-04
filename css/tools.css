@@ -1,182 +1,6 @@
-/* --- style.css (磨砂玻璃 Pro 版) --- */
-* {
-    box-sizing: border-box;
-}
+/* --- 4. 工具專用樣式 (tools.css) --- */
 
-:root {
-    /* 核心品牌色 */
-    --primary: #2C3E50;
-    --text: #374151;
-    --accent: #10B981;
-    --danger: #EF4444;
-    
-    /* 磨砂玻璃專用變數 */
-    --glass-bg: rgba(255, 255, 255, 0.70); /* 卡片背景透明度 */
-    --glass-border: 1px solid rgba(255, 255, 255, 0.6); /* 半透明白邊框 */
-    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); /* 柔和的彩色陰影 */
-    --blur-strength: blur(16px); /* 模糊強度 */
-    
-    /* 互動狀態 */
-    --active-bg: rgba(44, 62, 80, 0.85);
-    --active-text: #FFFFFF;
-    --input-bg: rgba(255, 255, 255, 0.5); /* 輸入框半透明 */
-}
-
-body {
-    font-family: 'Noto Sans TC', sans-serif;
-    /* 背景改為漸層，讓玻璃透出顏色 */
-    background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
-    background-attachment: fixed; /* 防止手機捲動時背景跑掉 */
-    color: var(--text);
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.header-title { 
-    font-size: 24px; 
-    font-weight: 700; 
-    margin-bottom: 20px; 
-    color: var(--primary); 
-    letter-spacing: 1px;
-    text-shadow: 0 2px 4px rgba(255,255,255,0.5); /* 標題增加一點光暈 */
-}
-
-/* --- 導覽列 (玻璃化) --- */
-.nav-container {
-    background: var(--glass-bg); 
-    backdrop-filter: var(--blur-strength); 
-    -webkit-backdrop-filter: var(--blur-strength); /* 支援 iPhone */
-    border: var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    
-    padding: 8px; 
-    border-radius: 16px; 
-    display: flex; 
-    gap: 8px; 
-    flex-wrap: wrap; 
-    justify-content: center; 
-    margin-bottom: 24px; 
-    max-width: 1000px; 
-    width: 100%;
-}
-
-.nav-btn {
-    border: none; 
-    background: transparent; 
-    padding: 10px 16px; 
-    border-radius: 12px; 
-    cursor: pointer;
-    font-size: 14px; 
-    font-weight: 600; 
-    color: #475569; 
-    display: flex; 
-    align-items: center; 
-    gap: 8px;
-    transition: all 0.2s; 
-    flex: 1; 
-    min-width: 110px; 
-    justify-content: center;
-}
-
-.nav-btn:hover { 
-    background-color: rgba(255, 255, 255, 0.5); 
-    color: var(--primary); 
-}
-
-.nav-btn.active { 
-    background-color: var(--active-bg); 
-    color: var(--active-text); 
-    box-shadow: 0 4px 10px rgba(44, 62, 80, 0.3); 
-}
-
-.nav-btn svg { 
-    width: 18px; 
-    height: 18px; 
-    stroke: currentColor; 
-    stroke-width: 2; 
-    fill: none; 
-}
-
-/* --- 主卡片區 (玻璃化) --- */
-.main-card {
-    background: rgba(255, 255, 255, 0.75); /* 主卡片稍微不透明一點，確保閱讀舒適 */
-    backdrop-filter: var(--blur-strength);
-    -webkit-backdrop-filter: var(--blur-strength);
-    border: var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    
-    width: 100%; 
-    max-width: 1000px; 
-    border-radius: 24px; 
-    padding: 32px;
-    min-height: 600px; 
-    box-sizing: border-box;
-    position: relative;
-}
-
-.tool-section { display: none; animation: fadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
-.tool-section.active { display: block; }
-
-@keyframes fadeIn { 
-    from { opacity: 0; transform: translateY(10px); } 
-    to { opacity: 1; transform: translateY(0); } 
-}
-
-/* --- 共用元件 --- */
-.setting-title { 
-    font-size: 14px; 
-    font-weight: 700; 
-    color: var(--primary); 
-    margin-bottom: 12px; 
-    border-left: 4px solid var(--primary); 
-    padding-left: 10px; 
-    display: flex; 
-    align-items: center; 
-}
-
-/* 輸入框玻璃化優化 */
-input[type="text"], input[type="url"], input[type="number"], select { 
-    width: 100%; 
-    padding: 10px 12px; 
-    border: 1px solid rgba(0,0,0,0.1); 
-    border-radius: 8px; 
-    font-size: 14px; 
-    box-sizing: border-box; 
-    background: var(--input-bg); 
-    transition: 0.2s;
-    backdrop-filter: blur(5px);
-}
-
-input:focus, select:focus { 
-    outline: none; 
-    border-color: var(--primary); 
-    background: rgba(255,255,255,0.9); /* 聚焦時變白 */
-    box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1); 
-}
-
-.action-btn { 
-    background: var(--primary); 
-    color: white; 
-    border: none; 
-    padding: 12px 24px; 
-    border-radius: 8px; 
-    font-weight: 600; 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    gap: 8px; 
-    transition: 0.2s; 
-    font-size: 14px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-.action-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
-.action-btn:disabled { background: #CBD5E1; cursor: not-allowed; transform: none; box-shadow: none; }
-
-/* --- Tab 1 & 2: QR & UTM --- */
+/* QR & UTM */
 .qr-layout, .utm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
 .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 .setting-group { margin-bottom: 24px; }
@@ -187,7 +11,7 @@ input:focus, select:focus {
 
 .preview-wrapper { 
     position: sticky; top: 20px; 
-    background: rgba(248, 250, 252, 0.5); /* 半透明預覽區 */
+    background: rgba(248, 250, 252, 0.5); 
     border: 1px dashed var(--glass-border); 
     border-radius: 12px; 
     display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -206,13 +30,11 @@ input:focus, select:focus {
 .result-link { word-break: break-all; color: var(--primary); font-family: 'Monaco', monospace; font-size: 13px; margin-bottom: 15px; display: block; line-height: 1.5; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.1); }
 .copy-success { color: var(--accent); font-size: 13px; margin-left: 10px; opacity: 0; transition: opacity 0.3s; font-weight: 600; }
 
-/* --- Tab 3: Short URL --- */
+/* Short URL */
 .url-result-container { display: none; background: rgba(236, 253, 245, 0.8); border: 1px solid #10B981; border-radius: 8px; padding: 30px; margin-top: 30px; text-align: center; }
 .short-url-display { font-size: 24px; font-weight: 700; color: var(--primary); margin: 15px 0; cursor: pointer; text-decoration: underline; }
-.loading-spinner { display: none; width: 16px; height: 16px; border: 2px solid #FFF; border-bottom-color: transparent; border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; }
-@keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* --- Tab 4: 圖片壓縮 Pro --- */
+/* Compress Tool */
 .info-banner {
     background: rgba(240, 253, 244, 0.7); 
     border: 1px solid #DCFCE7; border-radius: 12px; padding: 20px;
@@ -238,14 +60,6 @@ input:focus, select:focus {
 .upload-icon { font-size: 32px; margin-bottom: 4px; }
 .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 14px; color: #475569; }
 
-/* Toggle */
-.toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-.toggle-switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #CBD5E1; transition: .4s; border-radius: 34px; }
-.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-input:checked + .slider { background-color: var(--primary); }
-input:checked + .slider:before { transform: translateX(20px); }
-
 .compress-preview-area {
     background: rgba(248, 250, 252, 0.5); 
     border: 1px solid rgba(255,255,255,0.6); 
@@ -260,7 +74,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .spinner { width: 30px; height: 30px; border: 3px solid #E2E8F0; border-top-color: var(--primary); border-radius: 50%; animation: rotation 1s linear infinite; margin-bottom: 10px; }
 .usage-hint { margin-top: 30px; padding: 16px; background: rgba(241, 245, 249, 0.6); border-radius: 8px; font-size: 13px; color: #64748B; line-height: 1.6; }
 
-/* --- Tab 5: OCR (玻璃優化) --- */
+/* OCR Tool */
 .ocr-dashboard { display: grid; grid-template-columns: 320px 1fr; gap: 32px; align-items: start; }
 .ocr-left-panel { display: flex; flex-direction: column; gap: 20px; }
 .ocr-upload-box {
@@ -292,10 +106,10 @@ input:checked + .slider:before { transform: translateX(20px); }
 .export-btn.outline { background: rgba(255,255,255,0.5); color: var(--text); border: 1px solid #E2E8F0; }
 .export-btn.outline:hover { border-color: var(--primary); color: var(--primary); background: white; }
 
-/* --- Tab 6: 廣告規格 --- */
+/* Ads Tool */
 .ads-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
 .platform-card {
-    background: rgba(255, 255, 255, 0.85); /* 稍微不透明，字比較清楚 */
+    background: rgba(255, 255, 255, 0.85); 
     border: 1px solid rgba(255,255,255,0.5);
     border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -319,7 +133,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .copy-btn-small { background: rgba(255,255,255,0.5); border: 1px solid #e2e8f0; color: #94a3b8; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 .copy-btn-small:hover { border-color: var(--primary); color: var(--primary); background: white; }
 
-/* --- Tab 7: 符號工具 --- */
+/* Emoji Tool */
 .emoji-header-box {
     background: rgba(248, 250, 252, 0.4); 
     border: 1px solid rgba(255,255,255,0.6); border-radius: 12px; padding: 20px;
@@ -343,143 +157,3 @@ input:checked + .slider:before { transform: translateX(20px); }
 .symbol-btn:active { transform: scale(0.95); }
 .kaomoji-btn { font-family: "Arial", "Microsoft JhengHei", sans-serif; font-size: 13px; padding: 10px; background: rgba(248, 250, 252, 0.6); border-radius: 6px; }
 .kaomoji-btn:hover { background: #E2E8F0; transform: translateY(-2px); }
-
-/* --- RWD 手機版優化 (維持 3+3+1 佈局) --- */
-@media (max-width: 768px) {
-    body { padding: 10px; overflow-x: hidden; }
-    .header-title { font-size: 20px; margin-bottom: 15px; text-align: center; }
-    
-    /* 導覽列：3x3 網格 */
-    .nav-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        padding: 10px;
-        width: 100%;
-        box-sizing: border-box;
-        justify-content: center;
-        margin-bottom: 20px;
-        border-radius: 20px; /* 手機版圓角更大 */
-    }
-    
-    .nav-btn {
-        flex-direction: column;
-        gap: 6px;
-        padding: 12px 4px;
-        font-size: 13px;
-        min-width: 0;
-        width: 100%;
-        height: auto;
-        aspect-ratio: auto;
-        text-align: center;
-        white-space: nowrap;
-        background: rgba(255,255,255,0.4); /* 手機版預設給一點底色，比較好點 */
-    }
-    
-    .nav-btn svg { width: 24px; height: 24px; margin-bottom: 0; }
-    
-    /* 第 7 個按鈕 (最後一個) 橫式長條 */
-    .nav-btn:last-child {
-        grid-column: 1 / -1;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        padding: 12px;
-        background-color: rgba(241, 245, 249, 0.7);
-        font-weight: 700;
-        color: var(--primary);
-    }
-    
-    .nav-btn.active:last-child {
-        background-color: var(--active-bg);
-        color: var(--active-text);
-    }
-    
-    /* 內容區塊單欄化 */
-    .main-card { padding: 20px 15px; border-radius: 20px; }
-    .qr-layout, .utm-grid, .control-grid, .compress-dashboard, .ocr-dashboard, .export-actions, .ads-grid-container { 
-        grid-template-columns: 1fr !important; gap: 20px; 
-    }
-    .ocr-left-panel { width: 100%; }
-    .ocr-upload-box { min-height: 200px; }
-    
-    #qrcode-canvas, #qrcode-canvas svg, #qrcode-canvas canvas { max-width: 100% !important; height: auto !important; margin: 0 auto; }
-    .preview-wrapper { padding: 15px; min-height: 250px; overflow: hidden; }
-    input[type="text"], input[type="url"], input[type="number"], select { font-size: 16px; padding: 12px; }
-}
-
-/* --- 頁尾專用樣式 (文青質感版) --- */
-.app-footer {
-    margin-top: 40px;
-    margin-bottom: 20px;
-    padding: 8px 20px;
-    text-align: center;
-    
-    /* 文學感核心設定 */
-    font-family: "Songti TC", "Noto Serif TC", serif; /* 優先使用宋體或襯線體 */
-    font-size: 12px;            /* 字體縮小，更顯精緻 */
-    font-weight: 500;
-    color: rgba(44, 62, 80, 0.55); /* 顏色調淡，變成半透明的灰藍色 */
-    letter-spacing: 1.2px;      /* 字距拉開，營造呼吸感 */
-    font-style: italic;         /* 斜體，像手寫簽名的感覺 */
-    
-    /* 極淡的玻璃膠囊 */
-    background: rgba(255, 255, 255, 0.25); /* 背景更透明 */
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50px;
-    
-    /* 讓它不那麼搶眼，滑鼠放上去才清楚 */
-    transition: all 0.5s ease;
-    cursor: default;
-    user-select: none; /* 防止選取文字，保持美觀 */
-}
-
-/* 滑鼠移過去時，字體變清楚，稍微浮起 */
-.app-footer:hover {
-    background: rgba(255, 255, 255, 0.5);
-    color: var(--primary); /* 變回深色，確保想看時看得到 */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-@media (max-width: 768px) {
-    .app-footer {
-        width: auto;
-        font-size: 11px; /* 手機上再小一點 */
-        margin-top: 30px;
-    }
-}
-
-/* --- 彈跳通知訊息 (Toast Notification) --- */
-.toast-msg {
-    visibility: hidden; /* 預設隱藏 */
-    min-width: 250px; 
-    background-color: #333; /* 深色背景 */
-    color: #fff; /* 白色文字 */
-    text-align: center; 
-    border-radius: 50px; /* 圓角膠囊狀 */
-    padding: 16px; 
-    position: fixed; 
-    z-index: 9999; /* 確保在最上層 */
-    left: 50%; 
-    top: 30px; /* 距離頂部 30px */
-    transform: translateX(-50%); /* 絕對置中 */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* 陰影 */
-    font-size: 14px;
-    font-weight: 500;
-    opacity: 0;
-    transition: opacity 0.5s, top 0.5s; /* 淡入淡出動畫 */
-}
-
-/* 當加上 show 類別時顯示 */
-.toast-msg.show {
-    visibility: visible;
-    opacity: 1;
-    top: 50px; /* 稍微往下滑動一點的效果 */
-}
-
-/* 針對不同狀態的顏色微調 (可選) */
-.toast-msg.success { background-color: #10B981; } /* 綠色成功 */
-.toast-msg.error { background-color: #EF4444; } /* 紅色錯誤 */

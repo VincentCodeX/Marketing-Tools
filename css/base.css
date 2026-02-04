@@ -1,0 +1,46 @@
+/* --- 1. 基礎設定與變數 (base.css) --- */
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    /* 核心品牌色 */
+    --primary: #2C3E50;
+    --text: #374151;
+    --accent: #10B981;
+    --danger: #EF4444;
+    
+    /* 磨砂玻璃專用變數 */
+    --glass-bg: rgba(255, 255, 255, 0.70);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    --blur-strength: blur(16px);
+    
+    /* 互動狀態 */
+    --active-bg: rgba(44, 62, 80, 0.85);
+    --active-text: #FFFFFF;
+    --input-bg: rgba(255, 255, 255, 0.5);
+}
+
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(10px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+@keyframes rotation { 
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(360deg); } 
+}

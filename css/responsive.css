@@ -1,0 +1,67 @@
+/* --- 5. 手機版優化 (responsive.css) --- */
+@media (max-width: 768px) {
+    body { padding: 10px; overflow-x: hidden; }
+    .header-title { font-size: 20px; margin-bottom: 15px; text-align: center; }
+    
+    .nav-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        justify-content: center;
+        margin-bottom: 20px;
+        border-radius: 20px;
+    }
+    
+    .nav-btn {
+        flex-direction: column;
+        gap: 6px;
+        padding: 12px 4px;
+        font-size: 13px;
+        min-width: 0;
+        width: 100%;
+        height: auto;
+        aspect-ratio: auto;
+        text-align: center;
+        white-space: nowrap;
+        background: rgba(255,255,255,0.4);
+    }
+    
+    .nav-btn svg { width: 24px; height: 24px; margin-bottom: 0; }
+    
+    .nav-btn:last-child {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        background-color: rgba(241, 245, 249, 0.7);
+        font-weight: 700;
+        color: var(--primary);
+    }
+    
+    .nav-btn.active:last-child {
+        background-color: var(--active-bg);
+        color: var(--active-text);
+    }
+    
+    .main-card { padding: 20px 15px; border-radius: 20px; }
+    
+    .qr-layout, .utm-grid, .control-grid, .compress-dashboard, .ocr-dashboard, .export-actions, .ads-grid-container { 
+        grid-template-columns: 1fr !important; gap: 20px; 
+    }
+    .ocr-left-panel { width: 100%; }
+    .ocr-upload-box { min-height: 200px; }
+    
+    #qrcode-canvas, #qrcode-canvas svg, #qrcode-canvas canvas { max-width: 100% !important; height: auto !important; margin: 0 auto; }
+    .preview-wrapper { padding: 15px; min-height: 250px; overflow: hidden; }
+    input[type="text"], input[type="url"], input[type="number"], select { font-size: 16px; padding: 12px; }
+    
+    .app-footer {
+        width: auto;
+        font-size: 11px;
+        margin-top: 30px;
+    }
+}

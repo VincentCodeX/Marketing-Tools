@@ -1,0 +1,83 @@
+/* --- 3. 共用元件 (components.css) --- */
+.setting-title { 
+    font-size: 14px; 
+    font-weight: 700; 
+    color: var(--primary); 
+    margin-bottom: 12px; 
+    border-left: 4px solid var(--primary); 
+    padding-left: 10px; 
+    display: flex; 
+    align-items: center; 
+}
+
+input[type="text"], input[type="url"], input[type="number"], select { 
+    width: 100%; 
+    padding: 10px 12px; 
+    border: 1px solid rgba(0,0,0,0.1); 
+    border-radius: 8px; 
+    font-size: 14px; 
+    box-sizing: border-box; 
+    background: var(--input-bg); 
+    transition: 0.2s;
+    backdrop-filter: blur(5px);
+}
+
+input:focus, select:focus { 
+    outline: none; 
+    border-color: var(--primary); 
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1); 
+}
+
+.action-btn { 
+    background: var(--primary); 
+    color: white; 
+    border: none; 
+    padding: 12px 24px; 
+    border-radius: 8px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    transition: 0.2s; 
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.action-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+.action-btn:disabled { background: #CBD5E1; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Toggle Switch */
+.toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #CBD5E1; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--primary); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* Loading Spinner */
+.loading-spinner { display: none; width: 16px; height: 16px; border: 2px solid #FFF; border-bottom-color: transparent; border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; }
+
+/* Toast Notification */
+.toast-msg {
+    visibility: hidden;
+    min-width: 250px; 
+    background-color: #333;
+    color: #fff;
+    text-align: center; 
+    border-radius: 50px;
+    padding: 16px; 
+    position: fixed; 
+    z-index: 9999;
+    left: 50%; 
+    top: 30px;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.5s, top 0.5s;
+}
+.toast-msg.show { visibility: visible; opacity: 1; top: 50px; }
+.toast-msg.success { background-color: #10B981; }
+.toast-msg.error { background-color: #EF4444; }
