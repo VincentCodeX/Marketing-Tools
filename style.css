@@ -2161,3 +2161,47 @@ input[type="range"]::-webkit-slider-thumb {
         font-size: 16px !important;                       /* 防止 iOS 自動縮放畫面 */
     }
 }
+
+/* === 24. iPhone & 行動裝置最終修正 (QR Code 專區) === */
+/* 這段一定要放在檔案最後面，才能覆蓋掉電腦版的設定 */
+
+@media (max-width: 900px) {
+    /* 1. 將原本的左右分欄，強制改為上下垂直排列 */
+    .qr-layout {
+        display: flex !important;        /* 改用 Flex 佈局 */
+        flex-direction: column !important; /* 方向：由上而下 */
+        gap: 40px !important;             /* 設定區與 QR Code 區的間距 */
+        margin-top: 20px !important;
+    }
+
+    /* 2. 左側設定區：確保佔滿寬度 */
+    .controls {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    /* 3. 右側預覽卡片：取消「固定(Sticky)」效果，讓它自然排在下面 */
+    .preview-wrapper {
+        position: relative !important;    /* 關鍵：取消 sticky */
+        top: auto !important;
+        width: 100% !important;           /* 撐滿手機寬度 */
+        margin-top: 0 !important;         /* 移除多餘邊距 */
+        padding: 30px 20px !important;    /* 調整手機版的內距，舒服一點 */
+        
+        /* Apple 手機版美學：移除厚重外框，讓它融入背景 */
+        border: none !important;          
+        box-shadow: none !important;      
+        background: transparent !important;
+    }
+
+    /* 4. QR Code 畫布本體：保持乾淨的白底卡片感 */
+    #qrcode-canvas {
+        margin: 0 auto !important;        /* 確保置中 */
+        padding: 20px !important;
+        background: #ffffff !important;
+        border-radius: 16px !important;
+        /* 給一個極輕柔的 Apple 風格陰影，讓它浮起來 */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important; 
+        border: 1px solid #f5f5f7 !important;
+    }
+}
