@@ -2064,159 +2064,75 @@ input[type="range"]::-webkit-slider-thumb {
     margin: 0 4px;
 }
 
-/* === 23. iPhone 專屬：3-3-1 選單與內容自動換行優化 === */
-@media (max-width: 768px) {
+/* ==========================================================================
+    iOS Design System v3.0 (Native Feel)
+   修正重點：列表單行化、彈性截斷、物理回饋、視覺呼吸感
+   ========================================================================== */
 
-    /* 1. 選單容器：強制 3 欄網格佈局 */
+@media screen and (max-width: 900px) {
+
+    /* --- 1. 全域容器：模擬 App 視窗感 --- */
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 16px !important; /* iOS 標準：16px 邊距 */
+        padding-right: 16px !important;
+        margin: 0 !important;
+        overflow-x: hidden !important;
+    }
+
+    .main-content {
+        margin-top: 16px !important;
+    }
+
+    /* --- 2. 導覽列：更精緻的比例 --- */
     .nav-container {
         display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        /* 核心：3 欄排列 */
-        gap: 12px !important;
-        /* 增加間距，防止擠壓 */
-        padding: 15px !important;
-        background: transparent !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 8px !important;
+        padding: 8px 12px !important; /* 稍微縮減內距 */
     }
-
-    /* 2. 選單按鈕：縮小圖示，垂直排列 */
+    
     .nav-btn {
         flex-direction: column !important;
-        /* 圖示在上，文字在下 */
-        padding: 15px 5px !important;
-        border-radius: 18px !important;
-        /* 更有 App Icon 的感覺 */
-        background: rgba(255, 255, 255, 0.8) !important;
-        /* 淡淡的半透明白 */
-        backdrop-filter: blur(10px);
-        height: auto !important;
         justify-content: center !important;
+        padding: 10px 4px !important;
+        height: 68px !important;
+        border-radius: 14px !important;
+        background: rgba(255,255,255,0.75) !important; /* 增加通透感 */
+        backdrop-filter: blur(20px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02) !important;
     }
 
-    /* 解決圖示過大問題 (針對 SVG 與圖片) */
-    .nav-btn svg,
-    .nav-btn i,
-    .nav-btn span:first-child {
-        width: 24px !important;
-        /* 強制縮小圖示 */
-        height: 24px !important;
-        margin-right: 0 !important;
-        margin-bottom: 8px !important;
-        /* 與文字拉開距離 */
+    /* 點擊時的物理回饋 (縮小) */
+    .nav-btn:active {
+        transform: scale(0.96) !important;
+        background: rgba(255,255,255,0.9) !important;
+    }
+
+    .nav-btn svg {
+        width: 22px !important; /* 圖示微縮，更優雅 */
+        height: 22px !important;
+        margin-bottom: 5px !important;
     }
 
     .nav-btn span {
-        font-size: 11px !important;
-        /* 縮小文字，防止換行 */
-        font-weight: 600;
-        letter-spacing: -0.5px;
+        font-size: 10px !important; /* 縮小字體 */
+        font-weight: 600 !important; /* 加粗增強可讀性 */
+        letter-spacing: 0px;
+        opacity: 0.8; /* 降低對比度，讓圖示更突出 */
     }
 
-    /* 3. 關鍵：最後一個按鈕 (第 7 個) 變成長條置中 */
-    .nav-btn:last-child {
-        grid-column: span 3 !important;
-        /* 橫跨三欄 */
-        flex-direction: row !important;
-        /* 回歸橫向排列 */
-        padding: 15px !important;
-        font-size: 14px !important;
-        background: rgba(255, 255, 255, 0.9) !important;
-    }
-
-    /* 4. 內容區域：全自動符合螢幕與換行 */
-    .container,
-    .main-content {
+    /* --- 3. 卡片容器：連貫性優化 --- */
+    .tool-section {
+        padding: 20px 16px !important; /* 縮小內距，讓內容更寬 */
+        border-radius: 20px !important;
+        margin-bottom: 24px !important;
         width: 100% !important;
-        padding: 10px !important;
-        /* 縮小邊距，增加內容空間 */
-        box-sizing: border-box !important;
-        /* 確保寬度包含內距 */
-    }
-
-    /* 讓所有表格、輸入框、設定組自動垂直換行 */
-    .control-grid,
-    .form-row,
-    .utm-inputs,
-    .stats-container {
-        display: flex !important;
-        flex-direction: column !important;
-        /* 全部改為垂直排列 */
-        gap: 15px !important;
-    }
-
-    .setting-group {
-        width: 100% !important;
-        padding: 20px 15px !important;
-        box-sizing: border-box !important;
-    }
-
-    input,
-    select,
-    .file-upload,
-    .action-btn {
-        width: 100% !important;
-        /* 寬度撐滿手機螢幕 */
-        max-width: none !important;
-        font-size: 16px !important;
-        /* 防止 iOS 自動縮放畫面 */
-    }
-}
-
-/* === 24. iPhone & 行動裝置最終修正 (QR Code 專區) === */
-/* 這段一定要放在檔案最後面，才能覆蓋掉電腦版的設定 */
-
-@media (max-width: 900px) {
-
-    /* 1. 將原本的左右分欄，強制改為上下垂直排列 */
-    .qr-layout {
-        display: flex !important;
-        /* 改用 Flex 佈局 */
-        flex-direction: column !important;
-        /* 方向：由上而下 */
-        gap: 40px !important;
-        /* 設定區與 QR Code 區的間距 */
-        margin-top: 20px !important;
-    }
-
-    /* 2. 左側設定區：確保佔滿寬度 */
-    .controls {
-        width: 100% !important;
-        max-width: none !important;
-    }
-
-    /* 3. 右側預覽卡片：取消「固定(Sticky)」效果，讓它自然排在下面 */
-    .preview-wrapper {
-        position: relative !important;
-        /* 關鍵：取消 sticky */
-        top: auto !important;
-        width: 100% !important;
-        /* 撐滿手機寬度 */
-        margin-top: 0 !important;
-        /* 移除多餘邊距 */
-        padding: 30px 20px !important;
-        /* 調整手機版的內距，舒服一點 */
-
-        /* Apple 手機版美學：移除厚重外框，讓它融入背景 */
-        border: none !important;
-        box-shadow: none !important;
-        background: transparent !important;
-    }
-
-    /* 4. QR Code 畫布本體：保持乾淨的白底卡片感 */
-    #qrcode-canvas {
-        margin: 0 auto !important;
-        /* 確保置中 */
-        padding: 20px !important;
         background: #ffffff !important;
-        border-radius: 16px !important;
-        /* 給一個極輕柔的 Apple 風格陰影，讓它浮起來 */
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
-        border: 1px solid #f5f5f7 !important;
     }
-}
-/* === 25. 最終行動端救援與對稱性優化 (Final Mobile Fix) === */
-@media screen and (max-width: 1024px) {
-    
-    /* 1. 所有工具容器改為垂直堆疊並置中 */
+
+    /* 強制單欄排列 */
     .utm-layout-container,
     .shorten-layout-container,
     .compress-layout-container,
@@ -2225,72 +2141,114 @@ input[type="range"]::-webkit-slider-thumb {
     #gridContainer {
         display: flex !important;
         flex-direction: column !important;
-        align-items: center !important; /* 強制所有卡片水平置中 */
-        gap: 30px !important;
-        width: 100% !important;
+        gap: 24px !important; /* 縮小間距，視覺更緊湊 */
     }
 
-    /* 2. 修復全站容器邊距，確保兩邊等寬 (對稱感關鍵) */
-    .container {
-        padding-left: 20px !important;
-        padding-right: 20px !important;
-        width: 100% !important;
-        max-width: 100vw !important;
-        overflow-x: hidden !important;
-    }
-
-    /* 3. 廣告規格卡片：對稱性優化 */
+    /* --- 4. 廣告規格卡片：核心修正 (單行不換行) --- */
     .platform-card {
         width: 100% !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
         border-radius: 16px !important;
-        overflow: hidden !important;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.03) !important;
+        border: 1px solid rgba(0,0,0,0.04) !important;
     }
 
-    /* 4. 解決標題與規格內容的「靠左感」：左右撐開對齊 */
-    .card-header, 
+    .card-header {
+        padding: 14px 16px !important;
+        font-size: 16px !important;
+        font-weight: 700 !important;
+    }
+
+    /* 關鍵修正：Flex 不換行，確保左右對稱 */
     .spec-item {
-        padding-left: 20px !important;   /* 統一左邊距 */
-        padding-right: 20px !important;  /* 統一右邊距 */
-        width: 100% !important;
         display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important; /* 垂直置中 */
         justify-content: space-between !important;
-        align-items: center !important;
+        padding: 14px 16px !important;
+        flex-wrap: nowrap !important; /* ❌ 禁止換行 */
+        gap: 12px !important;
     }
 
-    /* 5. 資訊內容與標籤自動適配 */
+    /* 左側資訊區：彈性收縮 */
     .spec-info {
         flex: 1 !important;
-        text-align: left !important;
+        min-width: 0 !important; /* ✅ 關鍵：允許 Flex 子元素縮小 */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    .spec-title {
+        font-size: 15px !important;
+        margin-bottom: 4px !important;
+        color: #1d1d1f !important;
+        
+        /* 文字過長時自動變 ... */
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        width: 100% !important;
     }
 
     .spec-details {
+        font-size: 13px !important;
+        color: #86868b !important;
         display: flex !important;
-        flex-wrap: wrap !important;
+        flex-wrap: nowrap !important; /* 詳情也不換行 */
+        overflow: hidden !important; /* 超出隱藏 */
+        width: 100% !important;
         gap: 6px !important;
-        justify-content: flex-start !important;
     }
 
-    /* 6. 取消右側 Sticky 固定效果 (手機版不需要浮動) */
-    .utm-right-panel, .shorten-right-panel, .compress-right-panel, 
-    .ocr-right-panel, .preview-wrapper, .result-sticky-card {
+    /* 右側按鈕：固定大小，不會被擠壓 */
+    .copy-btn-small {
+        flex-shrink: 0 !important; /* ❌ 禁止被壓縮 */
+        width: 34px !important;
+        height: 34px !important;
+        border-radius: 50% !important;
+        background: #F2F2F7 !important;
+        color: #0071e3 !important;
+    }
+    
+    .copy-btn-small:active {
+        background: #E5E5EA !important;
+        transform: scale(0.9); /* 點擊縮小 */
+    }
+
+    /* --- 5. 輸入元件與按鈕：更適合手指 --- */
+    input, select, .action-btn, .file-upload {
+        height: 48px !important;
+        font-size: 16px !important;
+        border-radius: 10px !important;
+    }
+
+    /* --- 6. 修正結果卡片：去除多餘外框，融入背景 --- */
+    .result-sticky-card,
+    .preview-wrapper {
         position: relative !important;
-        top: auto !important;
+        top: 0 !important;
         width: 100% !important;
+        padding: 0 !important;
         border: none !important;
         box-shadow: none !important;
         background: transparent !important;
     }
 
-    /* 7. 結果區塊內容強制置中 */
-    .result-sticky-card > div, .preview-wrapper > div, #qrcode-canvas {
-        background: #ffffff !important;
-        border: 1px solid var(--border-light) !important;
+    .result-sticky-card > div,
+    .preview-wrapper > div,
+    #qrcode-canvas {
+        background: #fff !important;
+        border: 1px solid rgba(0,0,0,0.06) !important;
         border-radius: 16px !important;
         padding: 20px !important;
-        box-shadow: var(--shadow-sm) !important;
         width: 100% !important;
-        margin: 0 auto !important;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.03) !important;
+    }
+    
+    /* 修正 QR Code 畫布在手機上過大的問題 */
+    #qrcode-canvas canvas, 
+    #qrcode-canvas svg {
+        max-width: 100% !important;
+        height: auto !important;
     }
 }
