@@ -2286,4 +2286,31 @@ input[type="range"]::-webkit-slider-thumb {
         max-width: 100% !important;
         box-sizing: border-box !important;
     }
+
+    /* 讓顏色選擇器變漂亮 */
+    input[type="color"] {
+        -webkit-appearance: none;
+        border: none;
+        width: 36px !important;
+        /* 固定大小 */
+        height: 36px !important;
+        border-radius: 50% !important;
+        /* 變圓形 */
+        cursor: pointer;
+        background: none;
+        padding: 0;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        /* 增加立體感 */
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+        border: 2px solid #ffffff;
+        /* 內層白框 */
+        border-radius: 50%;
+    }
 }
