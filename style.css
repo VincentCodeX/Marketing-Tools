@@ -2075,7 +2075,8 @@ input[type="range"]::-webkit-slider-thumb {
     .container {
         width: 100% !important;
         max-width: 100% !important;
-        padding-left: 16px !important; /* iOS 標準：16px 邊距 */
+        padding-left: 16px !important;
+        /* iOS 標準：16px 邊距 */
         padding-right: 16px !important;
         margin: 0 !important;
         overflow-x: hidden !important;
@@ -2090,42 +2091,49 @@ input[type="range"]::-webkit-slider-thumb {
         display: grid !important;
         grid-template-columns: repeat(4, 1fr) !important;
         gap: 8px !important;
-        padding: 8px 12px !important; /* 稍微縮減內距 */
+        padding: 8px 12px !important;
+        /* 稍微縮減內距 */
     }
-    
+
     .nav-btn {
         flex-direction: column !important;
         justify-content: center !important;
         padding: 10px 4px !important;
         height: 68px !important;
         border-radius: 14px !important;
-        background: rgba(255,255,255,0.75) !important; /* 增加通透感 */
+        background: rgba(255, 255, 255, 0.75) !important;
+        /* 增加通透感 */
         backdrop-filter: blur(20px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02) !important;
     }
 
     /* 點擊時的物理回饋 (縮小) */
     .nav-btn:active {
         transform: scale(0.96) !important;
-        background: rgba(255,255,255,0.9) !important;
+        background: rgba(255, 255, 255, 0.9) !important;
     }
 
     .nav-btn svg {
-        width: 22px !important; /* 圖示微縮，更優雅 */
+        width: 22px !important;
+        /* 圖示微縮，更優雅 */
         height: 22px !important;
         margin-bottom: 5px !important;
     }
 
     .nav-btn span {
-        font-size: 10px !important; /* 縮小字體 */
-        font-weight: 600 !important; /* 加粗增強可讀性 */
+        font-size: 10px !important;
+        /* 縮小字體 */
+        font-weight: 600 !important;
+        /* 加粗增強可讀性 */
         letter-spacing: 0px;
-        opacity: 0.8; /* 降低對比度，讓圖示更突出 */
+        opacity: 0.8;
+        /* 降低對比度，讓圖示更突出 */
     }
 
     /* --- 3. 卡片容器：連貫性優化 --- */
     .tool-section {
-        padding: 20px 16px !important; /* 縮小內距，讓內容更寬 */
+        padding: 20px 16px !important;
+        /* 縮小內距，讓內容更寬 */
         border-radius: 20px !important;
         margin-bottom: 24px !important;
         width: 100% !important;
@@ -2141,15 +2149,16 @@ input[type="range"]::-webkit-slider-thumb {
     #gridContainer {
         display: flex !important;
         flex-direction: column !important;
-        gap: 24px !important; /* 縮小間距，視覺更緊湊 */
+        gap: 24px !important;
+        /* 縮小間距，視覺更緊湊 */
     }
 
     /* --- 4. 廣告規格卡片：核心修正 (單行不換行) --- */
     .platform-card {
         width: 100% !important;
         border-radius: 16px !important;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.03) !important;
-        border: 1px solid rgba(0,0,0,0.04) !important;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03) !important;
+        border: 1px solid rgba(0, 0, 0, 0.04) !important;
     }
 
     .card-header {
@@ -2162,17 +2171,20 @@ input[type="range"]::-webkit-slider-thumb {
     .spec-item {
         display: flex !important;
         flex-direction: row !important;
-        align-items: center !important; /* 垂直置中 */
+        align-items: center !important;
+        /* 垂直置中 */
         justify-content: space-between !important;
         padding: 14px 16px !important;
-        flex-wrap: nowrap !important; /* ❌ 禁止換行 */
+        flex-wrap: nowrap !important;
+        /* ❌ 禁止換行 */
         gap: 12px !important;
     }
 
     /* 左側資訊區：彈性收縮 */
     .spec-info {
         flex: 1 !important;
-        min-width: 0 !important; /* ✅ 關鍵：允許 Flex 子元素縮小 */
+        min-width: 0 !important;
+        /* ✅ 關鍵：允許 Flex 子元素縮小 */
         display: flex !important;
         flex-direction: column !important;
         align-items: flex-start !important;
@@ -2182,7 +2194,7 @@ input[type="range"]::-webkit-slider-thumb {
         font-size: 15px !important;
         margin-bottom: 4px !important;
         color: #1d1d1f !important;
-        
+
         /* 文字過長時自動變 ... */
         white-space: nowrap !important;
         overflow: hidden !important;
@@ -2194,29 +2206,36 @@ input[type="range"]::-webkit-slider-thumb {
         font-size: 13px !important;
         color: #86868b !important;
         display: flex !important;
-        flex-wrap: nowrap !important; /* 詳情也不換行 */
-        overflow: hidden !important; /* 超出隱藏 */
+        flex-wrap: nowrap !important;
+        /* 詳情也不換行 */
+        overflow: hidden !important;
+        /* 超出隱藏 */
         width: 100% !important;
         gap: 6px !important;
     }
 
     /* 右側按鈕：固定大小，不會被擠壓 */
     .copy-btn-small {
-        flex-shrink: 0 !important; /* ❌ 禁止被壓縮 */
+        flex-shrink: 0 !important;
+        /* ❌ 禁止被壓縮 */
         width: 34px !important;
         height: 34px !important;
         border-radius: 50% !important;
         background: #F2F2F7 !important;
         color: #0071e3 !important;
     }
-    
+
     .copy-btn-small:active {
         background: #E5E5EA !important;
-        transform: scale(0.9); /* 點擊縮小 */
+        transform: scale(0.9);
+        /* 點擊縮小 */
     }
 
     /* --- 5. 輸入元件與按鈕：更適合手指 --- */
-    input, select, .action-btn, .file-upload {
+    input,
+    select,
+    .action-btn,
+    .file-upload {
         height: 48px !important;
         font-size: 16px !important;
         border-radius: 10px !important;
@@ -2234,21 +2253,37 @@ input[type="range"]::-webkit-slider-thumb {
         background: transparent !important;
     }
 
-    .result-sticky-card > div,
-    .preview-wrapper > div,
+    .result-sticky-card>div,
+    .preview-wrapper>div,
     #qrcode-canvas {
         background: #fff !important;
-        border: 1px solid rgba(0,0,0,0.06) !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
         border-radius: 16px !important;
         padding: 20px !important;
         width: 100% !important;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.03) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
     }
-    
+
     /* 修正 QR Code 畫布在手機上過大的問題 */
-    #qrcode-canvas canvas, 
+    #qrcode-canvas canvas,
     #qrcode-canvas svg {
         max-width: 100% !important;
         height: auto !important;
+    }
+
+    .control-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+        /* 縮小間距 */
+        width: 100% !important;
+    }
+
+    /* 確保輸入框不會撐破容器 */
+    input[type="text"],
+    input[type="url"],
+    select {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 }
