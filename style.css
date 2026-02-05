@@ -468,7 +468,7 @@ body {
 /* 選取狀態：白色浮起按鈕 */
 .sub-nav-btn.active {
     background: #ffffff !important;
-    color: #0071e3 !important;
+    color: var(--brand-blue) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
 }
 
@@ -481,7 +481,7 @@ body {
     padding: 15px !important;
     font-size: 20px !important;
     /* 放大符號，易讀性提升 */
-    color: #1d1d1f !important;
+    color: var(--text-primary) !important;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -513,7 +513,7 @@ body {
 /* 4. 底部小提示 (提示文字 Apple 化) */
 .footer-note {
     text-align: center;
-    color: #86868b;
+    color: var(--text-secondary);
     font-size: 13px;
     margin-top: 50px;
     display: flex;
@@ -1202,7 +1202,7 @@ select:focus {
     /* 與下載按鈕一致的高度，增加易讀與點擊感 */
     background: #f5f5f7 !important;
     /* Apple 淺灰色背景 */
-    border: 1px solid #d2d2d7 !important;
+    border: 1px solid var(--border-color) !important;
     /* 細緻邊框 */
     border-radius: 12px !important;
     cursor: pointer;
@@ -1654,7 +1654,7 @@ textarea:focus-visible {
 .code-display {
     width: 100%;
     min-height: 100px;
-    background: #f5f5f7;
+    background: var(--bg-main);
     /* 淺灰底 */
     border: 1px solid #d2d2d7;
     border-radius: 12px;
