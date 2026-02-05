@@ -1,38 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
 
-/* === 1. Apple 規範全域變數 (Single Source of Truth) === */
+/* === 1. Apple 規範全域變數 (全能相容橋接版) === */
 :root {
-    /* 品牌色彩 */
-    --brand-blue: #0071e3;          /* Apple 官方藍 */
+    /* --- 1. 定義 Apple 標準色 --- */
+    --brand-blue: #0071e3;
     --brand-blue-hover: #0077ed;
-    
-    /* 文字色彩 */
-    --text-primary: #1d1d1f;        /* 主標題、內文黑 */
-    --text-secondary: #86868b;      /* 輔助灰、標籤 */
-    --text-on-blue: #ffffff;
-    
-    /* 背景與表面 */
-    --bg-main: #f5f5f7;             /* 全站背景灰 */
-    --bg-card: #ffffff;             /* 卡片白 */
-    --bg-input: #ffffff;
-    --bg-segmented: #eff1f5;        /* 分段控制器底色 */
-    
-    /* 邊框與陰影 */
-    --border-color: #d2d2d7;        /* 標準邊框 */
-    --border-light: #f2f2f7;        /* 極淡邊框 (用於列表) */
-    --shadow-subtle: 0 10px 40px rgba(0, 0, 0, 0.04);
+    --brand-green: #34C759;
+    --brand-red: #FF3B30;
+
+    /* --- 2. 建立橋接 (讓舊代碼指向新顏色) --- */
+    /* 這樣你下方 1000 多行的 var(--primary-color) 就不會失效 */
+    --primary-color: var(--brand-blue);
+    --primary: var(--brand-blue);
+    --primary-hover: var(--brand-blue-hover);
+    --primary-light: rgba(0, 113, 227, 0.1);
+
+    --success-color: var(--brand-green);
+    --error-color: var(--brand-red);
+
+    /* --- 3. 文字與背景系統 --- */
+    --text-primary: #1d1d1f;
+    --text-secondary: #86868b;
+    --bg-main: #f5f5f7;
+    --bg-gray: #f5f5f7;
+    /* 修正舊代碼找不到變數的問題 */
+    --bg-card: #ffffff;
+
+    /* --- 4. 圓角與陰影 (沿用 Apple 規範) --- */
+    --radius-lg: 24px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
     --shadow-button: 0 4px 12px rgba(0, 113, 227, 0.2);
-    
-    /* 圓角規範 */
-    --radius-lg: 24px;              /* 大卡片 */
-    --radius-md: 12px;              /* 按鈕、輸入框 */
-    --radius-sm: 8px;               /* 小元件 */
-    --radius-pill: 980px;           /* 膠囊按鈕 */
-    
-    /* 間距規範 */
-    --spacing-xl: 60px;             /* 左右分欄間距 */
-    --spacing-lg: 32px;             /* 設定組間距 */
-    --spacing-md: 16px;             /* 標題與內容間距 */
+
+    /* --- 5. 補足舊代碼缺失的動畫變數 --- */
+    --transition-normal: 0.3s;
+    --transition-fast: 0.2s;
 }
 
 /* === 2. 基礎重置 === */
@@ -2081,60 +2084,80 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* === 23. iPhone 專屬：3-3-1 選單與內容自動換行優化 === */
 @media (max-width: 768px) {
+
     /* 1. 選單容器：強制 3 欄網格佈局 */
     .nav-container {
         display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important; /* 核心：3 欄排列 */
-        gap: 12px !important;                             /* 增加間距，防止擠壓 */
+        grid-template-columns: repeat(3, 1fr) !important;
+        /* 核心：3 欄排列 */
+        gap: 12px !important;
+        /* 增加間距，防止擠壓 */
         padding: 15px !important;
         background: transparent !important;
     }
 
     /* 2. 選單按鈕：縮小圖示，垂直排列 */
     .nav-btn {
-        flex-direction: column !important;               /* 圖示在上，文字在下 */
+        flex-direction: column !important;
+        /* 圖示在上，文字在下 */
         padding: 15px 5px !important;
-        border-radius: 18px !important;                  /* 更有 App Icon 的感覺 */
-        background: rgba(255, 255, 255, 0.8) !important; /* 淡淡的半透明白 */
+        border-radius: 18px !important;
+        /* 更有 App Icon 的感覺 */
+        background: rgba(255, 255, 255, 0.8) !important;
+        /* 淡淡的半透明白 */
         backdrop-filter: blur(10px);
         height: auto !important;
         justify-content: center !important;
     }
 
     /* 解決圖示過大問題 (針對 SVG 與圖片) */
-    .nav-btn svg, .nav-btn i, .nav-btn span:first-child {
-        width: 24px !important;                          /* 強制縮小圖示 */
+    .nav-btn svg,
+    .nav-btn i,
+    .nav-btn span:first-child {
+        width: 24px !important;
+        /* 強制縮小圖示 */
         height: 24px !important;
         margin-right: 0 !important;
-        margin-bottom: 8px !important;                   /* 與文字拉開距離 */
+        margin-bottom: 8px !important;
+        /* 與文字拉開距離 */
     }
 
     .nav-btn span {
-        font-size: 11px !important;                      /* 縮小文字，防止換行 */
+        font-size: 11px !important;
+        /* 縮小文字，防止換行 */
         font-weight: 600;
         letter-spacing: -0.5px;
     }
 
     /* 3. 關鍵：最後一個按鈕 (第 7 個) 變成長條置中 */
     .nav-btn:last-child {
-        grid-column: span 3 !important;                  /* 橫跨三欄 */
-        flex-direction: row !important;                  /* 回歸橫向排列 */
+        grid-column: span 3 !important;
+        /* 橫跨三欄 */
+        flex-direction: row !important;
+        /* 回歸橫向排列 */
         padding: 15px !important;
         font-size: 14px !important;
         background: rgba(255, 255, 255, 0.9) !important;
     }
 
     /* 4. 內容區域：全自動符合螢幕與換行 */
-    .container, .main-content {
+    .container,
+    .main-content {
         width: 100% !important;
-        padding: 10px !important;                        /* 縮小邊距，增加內容空間 */
-        box-sizing: border-box !important;               /* 確保寬度包含內距 */
+        padding: 10px !important;
+        /* 縮小邊距，增加內容空間 */
+        box-sizing: border-box !important;
+        /* 確保寬度包含內距 */
     }
 
     /* 讓所有表格、輸入框、設定組自動垂直換行 */
-    .control-grid, .form-row, .utm-inputs, .stats-container {
+    .control-grid,
+    .form-row,
+    .utm-inputs,
+    .stats-container {
         display: flex !important;
-        flex-direction: column !important;               /* 全部改為垂直排列 */
+        flex-direction: column !important;
+        /* 全部改為垂直排列 */
         gap: 15px !important;
     }
 
@@ -2144,10 +2167,15 @@ input[type="range"]::-webkit-slider-thumb {
         box-sizing: border-box !important;
     }
 
-    input, select, .file-upload, .action-btn {
-        width: 100% !important;                          /* 寬度撐滿手機螢幕 */
+    input,
+    select,
+    .file-upload,
+    .action-btn {
+        width: 100% !important;
+        /* 寬度撐滿手機螢幕 */
         max-width: none !important;
-        font-size: 16px !important;                       /* 防止 iOS 自動縮放畫面 */
+        font-size: 16px !important;
+        /* 防止 iOS 自動縮放畫面 */
     }
 }
 
@@ -2155,11 +2183,15 @@ input[type="range"]::-webkit-slider-thumb {
 /* 這段一定要放在檔案最後面，才能覆蓋掉電腦版的設定 */
 
 @media (max-width: 900px) {
+
     /* 1. 將原本的左右分欄，強制改為上下垂直排列 */
     .qr-layout {
-        display: flex !important;        /* 改用 Flex 佈局 */
-        flex-direction: column !important; /* 方向：由上而下 */
-        gap: 40px !important;             /* 設定區與 QR Code 區的間距 */
+        display: flex !important;
+        /* 改用 Flex 佈局 */
+        flex-direction: column !important;
+        /* 方向：由上而下 */
+        gap: 40px !important;
+        /* 設定區與 QR Code 區的間距 */
         margin-top: 20px !important;
     }
 
@@ -2171,26 +2203,31 @@ input[type="range"]::-webkit-slider-thumb {
 
     /* 3. 右側預覽卡片：取消「固定(Sticky)」效果，讓它自然排在下面 */
     .preview-wrapper {
-        position: relative !important;    /* 關鍵：取消 sticky */
+        position: relative !important;
+        /* 關鍵：取消 sticky */
         top: auto !important;
-        width: 100% !important;           /* 撐滿手機寬度 */
-        margin-top: 0 !important;         /* 移除多餘邊距 */
-        padding: 30px 20px !important;    /* 調整手機版的內距，舒服一點 */
-        
+        width: 100% !important;
+        /* 撐滿手機寬度 */
+        margin-top: 0 !important;
+        /* 移除多餘邊距 */
+        padding: 30px 20px !important;
+        /* 調整手機版的內距，舒服一點 */
+
         /* Apple 手機版美學：移除厚重外框，讓它融入背景 */
-        border: none !important;          
-        box-shadow: none !important;      
+        border: none !important;
+        box-shadow: none !important;
         background: transparent !important;
     }
 
     /* 4. QR Code 畫布本體：保持乾淨的白底卡片感 */
     #qrcode-canvas {
-        margin: 0 auto !important;        /* 確保置中 */
+        margin: 0 auto !important;
+        /* 確保置中 */
         padding: 20px !important;
         background: #ffffff !important;
         border-radius: 16px !important;
         /* 給一個極輕柔的 Apple 風格陰影，讓它浮起來 */
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important; 
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
         border: 1px solid #f5f5f7 !important;
     }
 }
