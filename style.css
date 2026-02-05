@@ -468,30 +468,6 @@ body {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 選取狀態：白色浮起按鈕 */
-.sub-nav-btn.active {
-    background: #ffffff !important;
-    color: var(--brand-blue) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-}
-
-/* 2. 符號按鈕 (像巧克力塊一樣整齊) */
-.symbol-btn {
-    background: #ffffff !important;
-    border: 1px solid #d2d2d7 !important;
-    /* Apple 淺灰邊框 */
-    border-radius: 10px !important;
-    padding: 15px !important;
-    font-size: 20px !important;
-    /* 放大符號，易讀性提升 */
-    color: var(--text-primary) !important;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 /* 點擊與懸浮手感 */
 .symbol-btn:hover {
     background: #f5f5f7 !important;
@@ -757,12 +733,18 @@ body {
     align-items: center;
 }
 
+/* 尋找第 683 行附近 */
 .tag {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
+    padding: 2px 8px !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    background: var(--bg-main) !important;
+    /* 統一底色 */
+    color: var(--text-secondary) !important;
+    /* 統一文字顏色 */
+    border: 1px solid var(--border-light) !important;
 }
 
 .tag-ratio {
@@ -2231,75 +2213,84 @@ input[type="range"]::-webkit-slider-thumb {
         border: 1px solid #f5f5f7 !important;
     }
 }
-
-/* === 25. 最終行動端強制修復 (Mobile Rescue Block) === */
-/* 設定範圍為 1024px，包含直立的 iPad 與大尺寸手機 */
+/* === 25. 最終行動端救援與對稱性優化 (Final Mobile Fix) === */
 @media screen and (max-width: 1024px) {
-
-    /* 1. 強制所有「雙欄工具」變成「單欄垂直排列」 */
+    
+    /* 1. 所有工具容器改為垂直堆疊並置中 */
     .utm-layout-container,
     .shorten-layout-container,
     .compress-layout-container,
     .ocr-layout-container,
     .qr-layout,
-    /* QR Code 專用 */
     #gridContainer {
-        /* 廣告規格專用 */
         display: flex !important;
         flex-direction: column !important;
+        align-items: center !important; /* 強制所有卡片水平置中 */
         gap: 30px !important;
         width: 100% !important;
     }
 
-    /* 2. 修復內容貼邊與溢出問題 */
+    /* 2. 修復全站容器邊距，確保兩邊等寬 (對稱感關鍵) */
     .container {
         padding-left: 20px !important;
         padding-right: 20px !important;
         width: 100% !important;
         max-width: 100vw !important;
-        /* 防止橫向溢出 */
         overflow-x: hidden !important;
     }
 
-    .tool-section {
-        padding: 24px 20px !important;
-        /* 上下24，左右20，更舒適的邊距 */
-        margin-bottom: 30px !important;
+    /* 3. 廣告規格卡片：對稱性優化 */
+    .platform-card {
         width: 100% !important;
-        box-sizing: border-box !important;
-        /* 關鍵：確保內距不撐破寬度 */
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        border-radius: 16px !important;
+        overflow: hidden !important;
     }
 
-    /* 3. 取消右側結果欄的「固定 (Sticky)」效果 */
-    /* 讓它們乖乖排在輸入框下面，不要浮在半空中 */
-    .utm-right-panel,
-    .shorten-right-panel,
-    .compress-right-panel,
-    .ocr-right-panel,
-    .preview-wrapper,
-    .result-sticky-card {
+    /* 4. 解決標題與規格內容的「靠左感」：左右撐開對齊 */
+    .card-header, 
+    .spec-item {
+        padding-left: 20px !important;   /* 統一左邊距 */
+        padding-right: 20px !important;  /* 統一右邊距 */
+        width: 100% !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    /* 5. 資訊內容與標籤自動適配 */
+    .spec-info {
+        flex: 1 !important;
+        text-align: left !important;
+    }
+
+    .spec-details {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+        justify-content: flex-start !important;
+    }
+
+    /* 6. 取消右側 Sticky 固定效果 (手機版不需要浮動) */
+    .utm-right-panel, .shorten-right-panel, .compress-right-panel, 
+    .ocr-right-panel, .preview-wrapper, .result-sticky-card {
         position: relative !important;
         top: auto !important;
         width: 100% !important;
-        margin-top: 0 !important;
-        padding: 0 !important;
-        /* 移除多餘內距 */
         border: none !important;
         box-shadow: none !important;
         background: transparent !important;
     }
 
-    /* 4. 特別修復：結果卡片內部 */
-    /* 讓結果卡片在手機上看起來像一個獨立的小區塊 */
-    .result-sticky-card>div,
-    /* 針對內部容器 */
-    .preview-wrapper>div,
-    #qrcode-canvas {
+    /* 7. 結果區塊內容強制置中 */
+    .result-sticky-card > div, .preview-wrapper > div, #qrcode-canvas {
         background: #ffffff !important;
         border: 1px solid var(--border-light) !important;
         border-radius: 16px !important;
         padding: 20px !important;
         box-shadow: var(--shadow-sm) !important;
         width: 100% !important;
+        margin: 0 auto !important;
     }
 }
