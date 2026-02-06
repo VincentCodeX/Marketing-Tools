@@ -10,7 +10,7 @@ function handleDrop(e) {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) processImage(e.dataTransfer.files[0]);
 }
 
-async function processImage(file) {
+window.processImage = async function(file) {
     if (!file.type.match('image.*')) { alert("請上傳圖片檔案"); return; }
     currentFile = file;
     document.getElementById('preview-empty').style.display = 'none';
@@ -24,24 +24,24 @@ async function processImage(file) {
         }
     };
     document.getElementById('info-original').innerText = formatSize(file.size);
-    runCompression();
+    window.runCompression();
 }
 
-function applyPreset() {
+window.applyPreset = function() {
     const preset = document.getElementById('preset-select').value;
     const wInput = document.getElementById('custom-width');
     const hInput = document.getElementById('custom-height');
     if (preset === 'custom') { } else if (preset === '800xauto') { wInput.value = 800; hInput.value = ''; } else { const [w, h] = preset.split('x'); wInput.value = w; hInput.value = h; }
-    runCompression();
+    window.runCompression();
 }
 
-function updateQualityVal() {
+window.updateQualityVal = function() {
     document.getElementById('quality-val').innerText = document.getElementById('quality').value;
     if(this.timer) clearTimeout(this.timer);
     this.timer = setTimeout(() => { runCompression(); }, 500);
 }
 
-async function runCompression() {
+window.runCompression = async function() {
     if (!currentFile) return;
     document.getElementById('loading-overlay').style.display = 'flex';
     const quality = parseFloat(document.getElementById('quality').value);
@@ -61,7 +61,7 @@ async function runCompression() {
     finally { document.getElementById('loading-overlay').style.display = 'none'; }
 }
 
-function downloadImage() {
+window.downloadImage = function() {
     if(!compressedBlob) return;
     const link = document.createElement('a');
     link.href = URL.createObjectURL(compressedBlob);

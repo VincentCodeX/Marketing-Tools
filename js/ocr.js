@@ -4,10 +4,10 @@ function handleOcrDragLeave(e) { e.preventDefault(); document.getElementById('oc
 function handleOcrDrop(e) {
     e.preventDefault();
     document.getElementById('ocr-drop-zone').style.borderColor = '#E2E8F0';
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) processOcr(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) window.processOcr(e.dataTransfer.files[0]);
 }
 
-async function processOcr(file) {
+window.processOcr = async function(file) {
     if (!file) return;
     
     const imgUrl = URL.createObjectURL(file);

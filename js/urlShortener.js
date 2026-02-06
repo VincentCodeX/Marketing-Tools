@@ -1,5 +1,5 @@
 // --- Short URL (is.gd) ---
-async function generateShortUrl() {
+window.generateShortUrl = async function() {
     const longUrl = document.getElementById('long-url').value.trim();
     const resultBox = document.getElementById('short-result');
     const linkDisplay = document.getElementById('short-link');
@@ -12,7 +12,7 @@ async function generateShortUrl() {
 
     try {
         const apiUrl = `https://is.gd/create.php?format=simple&url=${encodeURIComponent(longUrl)}`;
-        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`;
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
         const response = await fetch(proxyUrl);
         if (response.ok) {
             const shortUrl = await response.text();
@@ -21,7 +21,8 @@ async function generateShortUrl() {
     } catch (error) { console.error(error); alert("連線錯誤，請稍後再試。"); } 
     finally { btnText.style.display = 'inline'; btnLoader.style.display = 'none'; shortenBtn.disabled = false; }
 }
-function copyShortUrl() {
+
+window.copyShortUrl = function() {
     const urlText = document.getElementById('short-link').innerText;
     navigator.clipboard.writeText(urlText).then(() => { const msg = document.getElementById('short-copy-msg'); msg.style.opacity = 1; setTimeout(() => { msg.style.opacity = 0; }, 2000); });
 }

@@ -582,6 +582,9 @@ function showToast(message, type = 'success') {
     MarketingTools.showToast(message, type);
 }
 
+// 暴露到 window 對象，供其他模組使用
+window.showToast = showToast;
+
 // === 5. 性能監控（開發用）===
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     window.addEventListener('load', () => {

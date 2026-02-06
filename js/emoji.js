@@ -6,40 +6,54 @@ const kaomojiData = [ { title: "打招呼 / 開心", items: ["(o´・_・)o", "(
 // 渲染緩存 - 防止重複渲染
 const renderCache = { symbols: false, emojis: false, kaomoji: false };
 
-function renderSymbolSection(containerId, data, gridClass, btnClass = 'symbol-btn') {
+// 分批渲染 - 防止一次性渲染過多元素導致卡頓
+function renderSymbolSectionInBatches(containerId, data, gridClass, btnClass = 'symbol-btn', batchSize = 5) {
     const container = document.getElementById(containerId);
     if (!container || container.children.length > 0) return; // 如果已渲染，跳過
     
-    // 使用 DocumentFragment 提高性能（一次性 DOM 操作）
-    const fragment = document.createDocumentFragment();
+    let groupIndex = 0;
     
-    data.forEach(group => {
-        const card = document.createElement('div');
-        card.className = 'symbol-group-card';
+    function renderNextBatch() {
+        if (groupIndex >= data.length) return; // 全部渲染完成
         
-        // 標題
-        const header = document.createElement('div');
-        header.className = 'symbol-card-header';
-        header.textContent = group.title;
-        card.appendChild(header);
+        const endIndex = Math.min(groupIndex + batchSize, data.length);
         
-        // 按鈕網格
-        const grid = document.createElement('div');
-        grid.className = `symbol-grid ${gridClass}`;
+        for (let i = groupIndex; i < endIndex; i++) {
+            const group = data[i];
+            const card = document.createElement('div');
+            card.className = 'symbol-group-card';
+            
+            // 標題
+            const header = document.createElement('div');
+            header.className = 'symbol-card-header';
+            header.textContent = group.title;
+            card.appendChild(header);
+            
+            // 按鈕網格
+            const grid = document.createElement('div');
+            grid.className = `symbol-grid ${gridClass}`;
+            
+            group.items.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = btnClass;
+                btn.textContent = item;
+                btn.dataset.symbol = item;
+                grid.appendChild(btn);
+            });
+            
+            card.appendChild(grid);
+            container.appendChild(card);
+        }
         
-        group.items.forEach(item => {
-            const btn = document.createElement('button');
-            btn.className = btnClass;
-            btn.textContent = item;
-            btn.dataset.symbol = item; // 使用 data 屬性代替 onclick
-            grid.appendChild(btn);
-        });
+        groupIndex = endIndex;
         
-        card.appendChild(grid);
-        fragment.appendChild(card);
-    });
+        // 使用 requestAnimationFrame 保持高幀率
+        if (groupIndex < data.length) {
+            requestAnimationFrame(renderNextBatch);
+        }
+    }
     
-    container.appendChild(fragment);
+    renderNextBatch();
 }
 
 function switchSubTab(tabName) {
@@ -53,13 +67,13 @@ function switchSubTab(tabName) {
     
     // 首次訪問該分頁時才渲染（懶加載）
     if (tabName === 'symbols' && !renderCache.symbols) {
-        renderSymbolSection('view-symbols', symbolsData, 'grid-cols-8');
+        renderSymbolSectionInBatches('view-symbols', symbolsData, 'grid-cols-8', 'symbol-btn', 5);
         renderCache.symbols = true;
     } else if (tabName === 'emojis' && !renderCache.emojis) {
-        renderSymbolSection('view-emojis', emojisData, 'grid-cols-emoji');
+        renderSymbolSectionInBatches('view-emojis', emojisData, 'grid-cols-emoji', 'symbol-btn', 5);
         renderCache.emojis = true;
     } else if (tabName === 'kaomoji' && !renderCache.kaomoji) {
-        renderSymbolSection('view-kaomoji', kaomojiData, 'grid-cols-kaomoji', 'symbol-btn kaomoji-btn');
+        renderSymbolSectionInBatches('view-kaomoji', kaomojiData, 'grid-cols-kaomoji', 'symbol-btn kaomoji-btn', 3);
         renderCache.kaomoji = true;
     }
     
@@ -79,7 +93,7 @@ document.addEventListener('click', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 只預先渲染第一個分頁（標點符號）
-    renderSymbolSection('view-symbols', symbolsData, 'grid-cols-8');
+    // 只預先渲染第一個分頁（標點符號），使用分批渲染
+    renderSymbolSectionInBatches('view-symbols', symbolsData, 'grid-cols-8', 'symbol-btn', 5);
     renderCache.symbols = true;
 });
