@@ -11,6 +11,11 @@ function checkDependencies() {
     return true;
 }
 
+// 檢測是否移動設備
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 function handleDragOver(e) { 
     e.preventDefault(); 
     e.stopPropagation();
@@ -30,19 +35,38 @@ function handleDrop(e) {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) window.processImage(e.dataTransfer.files[0]);
 }
 
-// 添加拖拽事件監聽器
+// 添加拖拽事件監聽器（僅在非移動設備上）
 document.addEventListener('DOMContentLoaded', () => {
     const dropZone = document.getElementById('drop-zone');
     if (dropZone) {
-        dropZone.addEventListener('dragover', handleDragOver);
-        dropZone.addEventListener('dragleave', handleDragLeave);
-        dropZone.addEventListener('drop', handleDrop);
+        // 根據設備類型更新上傳提示
+        const uploadText = dropZone.querySelector('.upload-text');
+        if (uploadText) {
+            if (isMobileDevice()) {
+                uploadText.textContent = '點擊選擇圖片';
+            }
+        }
+        
+        // 只在非移動設備上添加拖拽事件
+        if (!isMobileDevice()) {
+            dropZone.addEventListener('dragover', handleDragOver);
+            dropZone.addEventListener('dragleave', handleDragLeave);
+            dropZone.addEventListener('drop', handleDrop);
+        }
+        
+        // 所有設備都支持點擊上傳
+        dropZone.addEventListener('click', () => {
+            document.getElementById('img-input').click();
+        });
     }
 });
 
 window.processImage = async function(file) {
     if (!file) return;
-    if (!file.type.match('image.*')) { alert("請上傳圖片檔案"); return; }
+    if (!file.type.match('image.*')) { 
+        alert("請上傳圖片檔案"); 
+        return; 
+    }
     
     currentFile = file;
     document.getElementById('preview-empty').style.display = 'none';
@@ -50,20 +74,31 @@ window.processImage = async function(file) {
     
     // 獲取圖片尺寸，用於設定寬高輸入框的初始值
     const img = new Image();
-    img.src = URL.createObjectURL(file);
     img.onload = () => {
         const widthInput = document.getElementById('custom-width');
         const heightInput = document.getElementById('custom-height');
+        
+        // 在移動設備上自動縮放到合理尺寸
+        let defaultWidth = img.width;
+        if (isMobileDevice() && defaultWidth > 1920) {
+            defaultWidth = Math.floor(defaultWidth / 2);
+        }
+        
         if(!widthInput.value) {
-            widthInput.value = img.width;
+            widthInput.value = defaultWidth;
         }
         if(!heightInput.value) {
             heightInput.value = img.height;
         }
+        window.showToast(`圖片已上傳 (${formatSize(file.size)})`, 'success');
     };
     img.onerror = () => {
-        alert("無法讀取圖片信息");
+        alert("無法讀取圖片信息，請嘗試其他圖片");
+        window.showToast('圖片讀取失敗', 'error');
     };
+    
+    // 使用 Blob 創建 URL 而不是直接使用 file，以提高兼容性
+    img.src = URL.createObjectURL(file);
     
     // 顯示原始文件大小
     document.getElementById('info-original').innerText = formatSize(file.size);
@@ -88,40 +123,68 @@ window.updateQualityVal = function() {
 
 window.runCompression = async function() {
     if (!currentFile) {
-        alert('請先上傳圖片');
+        window.showToast('請先上傳圖片', 'error');
         return;
     }
     
     if (!checkDependencies()) {
-        alert('圖片壓縮庫加載中，請稍候...');
+        window.showToast('圖片壓縮庫加載中，請稍候...', 'warning');
         return;
     }
     
     document.getElementById('loading-overlay').style.display = 'flex';
-    const quality = parseFloat(document.getElementById('quality').value);
-    const targetW = document.getElementById('custom-width').value;
-    const format = document.getElementById('output-format').value;
-    const options = { maxSizeMB: 50, useWebWorker: true, initialQuality: quality };
-    if (targetW) options.maxWidthOrHeight = parseInt(targetW);
     
-    // 正確處理輸出格式
-    if (format !== 'original') {
-        // 轉換 MIME 類型為 browser-image-compression 支持的格式
-        if (format === 'image/jpeg') options.fileType = 'jpg';
-        else if (format === 'image/webp') options.fileType = 'webp';
-        else if (format === 'image/png') options.fileType = 'png';
-    }
-
     try {
+        const quality = parseFloat(document.getElementById('quality').value) / 100;
+        const targetW = document.getElementById('custom-width').value;
+        const targetH = document.getElementById('custom-height').value;
+        const format = document.getElementById('output-format').value;
+        
+        // 根據設備調整最大文件大小
+        let maxSizeMB = 5;
+        if (isMobileDevice()) {
+            maxSizeMB = 0.5; // 移動設備上降低到 500KB
+        }
+        
+        const options = { 
+            maxSizeMB: maxSizeMB, 
+            useWebWorker: true, 
+            initialQuality: quality
+        };
+        
+        // 設置尺寸限制
+        if (targetW && targetH) {
+            options.maxWidthOrHeight = Math.max(parseInt(targetW), parseInt(targetH));
+        } else if (targetW) {
+            options.maxWidthOrHeight = parseInt(targetW);
+        }
+        
+        // 正確處理輸出格式
+        if (format !== 'original') {
+            // 轉換 MIME 類型為 browser-image-compression 支持的格式
+            if (format === 'image/jpeg') options.fileType = 'jpg';
+            else if (format === 'image/webp') options.fileType = 'webp';
+            else if (format === 'image/png') options.fileType = 'png';
+        }
+
         compressedBlob = await imageCompression(currentFile, options);
-        document.getElementById('preview-compressed').src = URL.createObjectURL(compressedBlob);
+        
+        // 更新預覽圖
+        const previewUrl = URL.createObjectURL(compressedBlob);
+        const previewImg = document.getElementById('preview-compressed');
+        if (previewImg) {
+            previewImg.src = previewUrl;
+        }
+        
+        // 計算壓縮率
         const saved = ((currentFile.size - compressedBlob.size) / currentFile.size * 100).toFixed(1);
-        let color = saved > 0 ? '#10B981' : '#666';
+        const color = saved > 0 ? '#10B981' : '#666';
         document.getElementById('info-compressed').innerHTML = `${formatSize(compressedBlob.size)} <span style="font-size:12px; color:${color};">(${saved > 0 ? '-' : ''}${Math.abs(saved)}%)</span>`;
+        
         window.showToast('圖片壓縮完成', 'success');
     } catch (error) { 
         console.error('壓縮錯誤:', error); 
-        alert("壓縮發生錯誤: " + error.message); 
+        window.showToast(`壓縮發生錯誤: ${error.message}`, 'error');
     } 
     finally { 
         document.getElementById('loading-overlay').style.display = 'none'; 
@@ -129,19 +192,48 @@ window.runCompression = async function() {
 }
 
 window.downloadImage = function() {
-    if(!compressedBlob) { alert('請先上傳並壓縮圖片'); return; }
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(compressedBlob);
-    let ext = currentFile.name.split('.').pop();
-    const format = document.getElementById('output-format').value;
-    if(format === 'image/jpeg') ext = 'jpg';
-    if(format === 'image/png') ext = 'png';
-    if(format === 'image/webp') ext = 'webp';
-    link.download = currentFile.name.replace(/\.[^/.]+$/, "") + '-opt.' + ext;
-    link.click();
+    if(!compressedBlob) { 
+        window.showToast('請先上傳並壓縮圖片', 'error');
+        return; 
+    }
     
-    // 下载成功后提示
-    window.showToast('圖片已下載', 'success');
+    try {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(compressedBlob);
+        let ext = currentFile.name.split('.').pop();
+        const format = document.getElementById('output-format').value;
+        
+        if(format === 'image/jpeg') ext = 'jpg';
+        if(format === 'image/png') ext = 'png';
+        if(format === 'image/webp') ext = 'webp';
+        
+        link.download = currentFile.name.replace(/\.[^/.]+$/, "") + '-opt.' + ext;
+        
+        // 在移動設備上使用不同的下載方式
+        if (isMobileDevice()) {
+            // 移動設備：使用 iOS/Android 的分享菜單或直接打開
+            try {
+                link.click();
+                // 延遲後檢查下載是否完成
+                setTimeout(() => {
+                    URL.revokeObjectURL(link.href);
+                }, 1000);
+            } catch (e) {
+                // 輔助方案：如果直接下載失敗，嘗試打開圖片
+                window.open(link.href);
+            }
+        } else {
+            // 桌面設備：標準下載
+            link.click();
+            // 立即清理 URL
+            URL.revokeObjectURL(link.href);
+        }
+        
+        window.showToast('圖片已下載', 'success');
+    } catch(error) {
+        console.error('下載錯誤:', error);
+        window.showToast(`下載失敗: ${error.message}`, 'error');
+    }
 }
 
 function formatSize(bytes) {

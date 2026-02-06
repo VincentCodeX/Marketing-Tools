@@ -1,14 +1,60 @@
 // --- OCR 名片掃描邏輯 (Tesseract v5) ---
 
-function handleOcrDragLeave(e) { e.preventDefault(); document.getElementById('ocr-drop-zone').style.borderColor = '#E2E8F0'; }
+// 檢測是否移動設備
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function handleOcrDragOver(e) { 
+    e.preventDefault(); 
+    e.stopPropagation();
+    document.getElementById('ocr-drop-zone').classList.add('dragover'); 
+}
+
+function handleOcrDragLeave(e) { 
+    e.preventDefault(); 
+    e.stopPropagation();
+    document.getElementById('ocr-drop-zone').classList.remove('dragover'); 
+}
+
 function handleOcrDrop(e) {
     e.preventDefault();
-    document.getElementById('ocr-drop-zone').style.borderColor = '#E2E8F0';
+    e.stopPropagation();
+    document.getElementById('ocr-drop-zone').classList.remove('dragover');
     if (e.dataTransfer.files && e.dataTransfer.files[0]) window.processOcr(e.dataTransfer.files[0]);
 }
 
+// 添加 OCR 拖拽事件監聽器（僅在非移動設備上）
+document.addEventListener('DOMContentLoaded', () => {
+    const ocrDropZone = document.getElementById('ocr-drop-zone');
+    if (ocrDropZone) {
+        // 根據設備類型更新上傳提示
+        const uploadText = ocrDropZone.querySelector('.upload-text');
+        if (uploadText && isMobileDevice()) {
+            uploadText.textContent = '點擊選擇名片圖片';
+        }
+        
+        // 只在非移動設備上添加拖拽事件
+        if (!isMobileDevice()) {
+            ocrDropZone.addEventListener('dragover', handleOcrDragOver);
+            ocrDropZone.addEventListener('dragleave', handleOcrDragLeave);
+            ocrDropZone.addEventListener('drop', handleOcrDrop);
+        }
+        
+        // 所有設備都支持點擊上傳
+        ocrDropZone.addEventListener('click', () => {
+            document.getElementById('ocr-input').click();
+        });
+    }
+});
+
 window.processOcr = async function(file) {
     if (!file) return;
+    
+    if (!file.type.match('image.*')) {
+        window.showToast('請上傳圖片檔案', 'error');
+        return;
+    }
     
     const imgUrl = URL.createObjectURL(file);
     document.getElementById('ocr-preview-img').src = imgUrl;
@@ -21,6 +67,11 @@ window.processOcr = async function(file) {
 
     let worker = null;
     try {
+        // 在移動設備上可能需要更長的時間初始化
+        if (isMobileDevice()) {
+            document.getElementById('ocr-status-text').innerText = "初始化中... (移動設備可能較慢)";
+        }
+        
         // 初始化 Worker (chi_tra + eng)
         worker = await Tesseract.createWorker('chi_tra+eng', 1, {
             logger: m => {
@@ -44,10 +95,12 @@ window.processOcr = async function(file) {
         document.getElementById('ocr-email').value = parsedData.email;
         document.getElementById('ocr-tax').value = parsedData.tax;
         document.getElementById('ocr-line').value = parsedData.line;
+        
+        window.showToast('名片辨識完成', 'success');
 
     } catch (error) {
         console.error(error);
-        alert("辨識發生錯誤，請稍後再試或檢查圖片。");
+        window.showToast(`辨識發生錯誤: ${error.message || '請稍後再試或檢查圖片。'}`, 'error');
     } finally {
         if (worker) await worker.terminate();
         document.getElementById('ocr-loading').style.display = 'none';
@@ -127,7 +180,12 @@ window.copyAllOcr = function() {
     const line = document.getElementById('ocr-line').value;
     const tax = document.getElementById('ocr-tax').value;
     const text = `姓名: ${name}\n職稱: ${title}\n公司: ${company}\n電話: ${phone}\nEmail: ${email}\nLINE: ${line}\n統編: ${tax}`;
-    navigator.clipboard.writeText(text).then(() => alert('已複製全部資料'));
+    navigator.clipboard.writeText(text).then(() => {
+        window.showToast('已複製全部資料', 'success');
+    }).catch(err => {
+        console.error('複製失敗:', err);
+        window.showToast('複製失敗，請重試', 'error');
+    });
 }
 // 重置 OCR
 window.resetOcr = function() {
