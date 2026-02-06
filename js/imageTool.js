@@ -56,7 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- 修正後的 processImage ---
-// 重點：移除了 setTimeout 強制執行的邏輯，避免雙重運算
+// 重點1：極速壓縮 - 立即執行壓縮，不等待圖片預覽加載
+// 重點2：背景加載圖片尺寸資訊，異步更新 UI
 window.processImage = async function(file) {
     if (!file) {
         console.warn('processImage called with no file');
@@ -78,46 +79,42 @@ window.processImage = async function(file) {
     document.getElementById('info-original').innerText = formatSize(file.size);
     document.getElementById('info-compressed').innerHTML = '準備中...';
     
-    const img = new Image();
+    // 【重要】立即執行壓縮，不等待圖片尺寸讀取
+    console.log('🚀 立即開始壓縮，不等待圖片尺寸...');
+    window.runCompression();
     
-    // 1. 圖片讀取成功時
-    img.onload = () => {
-        console.log('Image loaded:', img.width, 'x', img.height);
+    // 【背景任務】異步加載圖片尺寸，僅用於填入默認值和預覽
+    (async () => {
+        const img = new Image();
         
-        const widthInput = document.getElementById('custom-width');
-        const heightInput = document.getElementById('custom-height');
+        // 1. 圖片讀取成功時
+        img.onload = () => {
+            console.log('Image preview loaded:', img.width, 'x', img.height);
+            
+            const widthInput = document.getElementById('custom-width');
+            const heightInput = document.getElementById('custom-height');
+            
+            // 自動填入寬高(僅當輸入框為空時)
+            if(!widthInput.value) widthInput.value = img.width;
+            if(!heightInput.value) heightInput.value = img.height;
+            
+            // 顯示成功訊息(不阻塞壓縮進程)
+            window.showToast(`圖片已載入 (${formatSize(file.size)})`, 'success');
+        };
         
-        // 自動填入寬高
-        let defaultWidth = img.width;
-        // 如果是超大圖片，在手機上視覺預設值可以縮小，但不影響實際壓縮邏輯(除非用戶不改)
-        if (isMobileDevice() && defaultWidth > 1920) {
-            defaultWidth = Math.floor(defaultWidth / 2); 
+        // 2. 圖片讀取失敗時 (不影響壓縮)
+        img.onerror = (err) => {
+            console.warn('Image preview failed (format support?), but compression continues:', err);
+        };
+        
+        // 載入圖片資料
+        try {
+            const blobUrl = URL.createObjectURL(file);
+            img.src = blobUrl;
+        } catch (err) {
+            console.error('Blob URL creation failed:', err);
         }
-        
-        if(!widthInput.value) widthInput.value = defaultWidth;
-        if(!heightInput.value) heightInput.value = img.height;
-        
-        window.showToast(`圖片已載入 (${formatSize(file.size)})`, 'success');
-        
-        // 確保寬高數據都準備好後，才執行壓縮
-        window.runCompression();
-    };
-    
-    // 2. 圖片讀取失敗時 (例如某些 HEIC 瀏覽器無法直接預覽)
-    img.onerror = (err) => {
-        console.warn('Image preview failed (format support?), attempting compression anyway:', err);
-        // 即使預覽失敗，browser-image-compression 庫可能仍能處理檔案，所以嘗試執行
-        window.runCompression();
-    };
-    
-    // 載入圖片資料
-    try {
-        const blobUrl = URL.createObjectURL(file);
-        img.src = blobUrl;
-    } catch (err) {
-        console.error('Blob URL creation failed:', err);
-        window.showToast('圖片載入失敗', 'error');
-    }
+    })();
 }
 
 window.applyPreset = function() {
@@ -135,17 +132,12 @@ window.updateQualityVal = function() {
 }
 
 // --- 修正後的 runCompression ---
-// 重點：修正了品質計算 (/100 的錯誤) 和手機版參數
+// 重點：加入手機版安全尺寸限制，防止 OOM (記憶體不足)
 window.runCompression = async function() {
-    console.log('runCompression called');
-    
-    if (!currentFile) {
-        // 避免無檔案時報錯
-        return; 
-    }
+    if (!currentFile) return;
     
     if (!checkDependencies()) {
-        window.showToast('元件載入中，請稍後...', 'warning');
+        window.showToast('壓縮元件載入中...', 'warning');
         return;
     }
     
@@ -153,65 +145,65 @@ window.runCompression = async function() {
     if (loadingOverlay) loadingOverlay.style.display = 'flex';
     
     try {
-        // [修正點 1] 移除 / 100。因為 input value 已經是 0.1 ~ 1.0
-        const qualityInput = document.getElementById('quality').value;
-        const quality = parseFloat(qualityInput);
-        
+        const quality = parseFloat(document.getElementById('quality').value);
         const targetW = document.getElementById('custom-width').value;
         const targetH = document.getElementById('custom-height').value;
         const format = document.getElementById('output-format').value;
         
-        // [修正點 2] 手機版參數優化
-        let maxSizeMB = 5;
+        // 手機版記憶體保護策略
+        let maxSizeMB = 10; // 電腦版預設
         if (isMobileDevice()) {
-            maxSizeMB = 2; // 手機設為 2MB 上限，避免記憶體不足
+            maxSizeMB = 2; // 手機版限制 2MB，避免崋激
         }
         
         const options = { 
             maxSizeMB: maxSizeMB, 
-            useWebWorker: true, // [修正點 3] 手機必須開啟 WebWorker 避免卡死
+            useWebWorker: true, // 手機務必開啟 WebWorker
             initialQuality: quality
         };
         
-        // 尺寸設定
-        if (targetW && targetH) {
-            options.maxWidthOrHeight = Math.max(parseInt(targetW), parseInt(targetH));
-        } else if (targetW) {
-            options.maxWidthOrHeight = parseInt(targetW);
+        // 尺寸設定邏輯
+        if (targetW || targetH) {
+            // 如果使用者 (或 processImage 背景任務) 已經填入了寬高，就使用該數值
+            if (targetW) options.maxWidthOrHeight = parseInt(targetW);
+            if (targetW && targetH) options.maxWidthOrHeight = Math.max(parseInt(targetW), parseInt(targetH));
+        } else if (isMobileDevice()) {
+            // 【關鍵修改】如果輸入框是空的 (代訜圖片還沒讀取完)，且是手機
+            // 強制給予一個安全寬度 (1920px)，防止手機試圖壓縮 8K 解析度原圖導致當機
+            console.log('Mobile safety mode: limiting to 1920px');
+            options.maxWidthOrHeight = 1920;
         }
         
-        // 格式轉換
+        // 格式處理
         if (format !== 'original') {
             if (format === 'image/jpeg') options.fileType = 'jpg';
             else if (format === 'image/webp') options.fileType = 'webp';
             else if (format === 'image/png') options.fileType = 'png';
         }
         
-        console.log('Starting compression with options:', options);
+        console.log('Starting compression:', options);
 
-        // 執行壓縮
+        // 開始壓縮
         compressedBlob = await imageCompression(currentFile, options);
-        console.log('Compression complete:', formatSize(compressedBlob.size));
         
-        // 更新結果預覽
+        // 顯示結果
         const previewUrl = URL.createObjectURL(compressedBlob);
         const previewImg = document.getElementById('preview-compressed');
         if (previewImg) {
+            previewImg.onload = () => URL.revokeObjectURL(previewImg.src); // 釋放舊記憶體
             previewImg.src = previewUrl;
-            // 釋放舊記憶體 (可選)
-            previewImg.onload = () => URL.revokeObjectURL(previewUrl); 
         }
         
-        // 計算壓縮率數據
+        // 計算數據
         const saved = ((currentFile.size - compressedBlob.size) / currentFile.size * 100).toFixed(1);
         const color = saved > 0 ? '#10B981' : '#666';
         document.getElementById('info-compressed').innerHTML = `${formatSize(compressedBlob.size)} <span style="font-size:12px; color:${color};">(${saved > 0 ? '-' : ''}${Math.abs(saved)}%)</span>`;
         
-        window.showToast('壓縮完成', 'success');
+        window.showToast('壓縮完成！', 'success');
         
     } catch (error) { 
-        console.error('壓縮錯誤:', error); 
-        window.showToast(`壓縮失敗: ${error.message || '記憶體不足或格式不支援'}`, 'error');
+        console.error('壓縮失敗:', error); 
+        window.showToast(`壓縮失敗: ${error.message || '記憶體不足'}`, 'error');
     } finally { 
         if (loadingOverlay) loadingOverlay.style.display = 'none'; 
     }
