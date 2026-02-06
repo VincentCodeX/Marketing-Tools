@@ -76,17 +76,12 @@ window.processImage = async function(file) {
     document.getElementById('preview-empty').style.display = 'none';
     document.getElementById('preview-active').style.display = 'block';
     document.getElementById('info-original').innerText = formatSize(file.size);
-    document.getElementById('info-compressed').innerHTML = '0 KB';
+    document.getElementById('info-compressed').innerHTML = '計算中...';
     
     // 獲取圖片尺寸，用於設定寬高輸入框的初始值
     const img = new Image();
-    let loadTimeout = setTimeout(() => {
-        console.warn('圖片加載超時（3秒），嘗試直接壓縮');
-        window.runCompression();
-    }, 3000);
     
     img.onload = () => {
-        clearTimeout(loadTimeout);
         console.log('Image loaded:', img.width, 'x', img.height);
         
         const widthInput = document.getElementById('custom-width');
@@ -107,16 +102,15 @@ window.processImage = async function(file) {
         }
         
         window.showToast(`圖片已上傳 (${formatSize(file.size)})`, 'success');
-        console.log('Toast shown, starting compression');
+        console.log('Image dimensions set, starting compression');
         
-        // 圖片加載完成後才開始壓縮
+        // 確保寬高有值後再開始壓縮
         window.runCompression();
     };
     
     img.onerror = (err) => {
-        clearTimeout(loadTimeout);
         console.error('Image load error:', err);
-        window.showToast('圖片讀取失敗，請嘗試其他圖片', 'error');
+        window.showToast('圖片讀取失敗，可能是格式不支援', 'error');
     };
     
     // 使用 Blob URL 創建對象 URL
@@ -148,12 +142,10 @@ window.runCompression = async function() {
     console.log('runCompression called, currentFile:', currentFile ? currentFile.name : 'none');
     
     if (!currentFile) {
-        window.showToast('請先上傳圖片', 'error');
         return;
     }
     
     if (!checkDependencies()) {
-        window.showToast('圖片壓縮庫加載中，請稍候...', 'warning');
         return;
     }
     
@@ -166,7 +158,9 @@ window.runCompression = async function() {
     loadingOverlay.style.display = 'flex';
     
     try {
-        const quality = parseFloat(document.getElementById('quality').value) / 100;
+        // ✅ 修正：移除 / 100，quality 直接用原始值（0-100）
+        const qualityInput = document.getElementById('quality').value;
+        const quality = parseFloat(qualityInput);
         const targetW = document.getElementById('custom-width').value;
         const targetH = document.getElementById('custom-height').value;
         const format = document.getElementById('output-format').value;
@@ -190,7 +184,7 @@ window.runCompression = async function() {
             maxSizeMB: maxSizeMB, 
             // 重要：始終開啟 useWebWorker，手機必須用 WebWorker 避免 UI 卡死
             useWebWorker: true,
-            initialQuality: quality
+            initialQuality: quality / 100  // 轉換為 0-1 的範圍給壓縮庫
         };
         
         // 設置尺寸限制
