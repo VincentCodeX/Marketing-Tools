@@ -36,6 +36,60 @@
     /* --- 5. 補足舊代碼缺失的動畫變數 --- */
     --transition-normal: 0.3s;
     --transition-fast: 0.2s;
+
+    /* --- 6. 補充灰度與邊框系統 (減少硬編碼值) --- */
+    --gray-0: #ffffff;
+    --gray-1: #f5f5f7;
+    --gray-2: #eff1f5;
+    --gray-3: #e8e8ed;
+    --gray-4: #d2d2d7;
+    --gray-5: #f2f2f7;
+    --gray-6: #86868b;
+    --border-color: #d2d2d7;
+    --border-light: #f2f2f7;
+    
+    /* --- 7. UI 淺色系統 (淺色背景) --- */
+    --light-blue-bg: #e0e7ff;
+    --light-cyan-bg: #dbeafe;
+    --light-red-bg: #fee2e2;
+
+    /* --- 8. 社交媒體平台色系 --- */
+    --facebook-primary: #1877F2;
+    --facebook-secondary: #0C63D4;
+    --instagram-primary: #E4405F;
+    --instagram-secondary: #C13584;
+    --instagram-tertiary: #833AB4;
+    --google-primary: #4285F4;
+    --google-secondary: #34A853;
+    --line-primary: #06C755;
+    --line-secondary: #00B900;
+    --youtube-primary: #FF0000;
+    --youtube-secondary: #CC0000;
+    --threads-primary: #000000;
+    --threads-secondary: #333333;
+
+    /* --- 9. 文本標籤色系 --- */
+    --tag-blue-bg: #E0E7FF;
+    --tag-blue-text: #4338CA;
+    --tag-cyan-bg: #DBEAFE;
+    --tag-cyan-text: #1E40AF;
+    --tag-red-bg: #FEE2E2;
+    --tag-red-text: #991B1B;
+
+    /* --- 10. 漸層方案 (減少重複定義) --- */
+    --gradient-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-facebook: linear-gradient(135deg, #1877F2, #0C63D4);
+    --gradient-instagram: linear-gradient(135deg, #E4405F, #C13584, #833AB4);
+    --gradient-google: linear-gradient(135deg, #4285F4, #34A853);
+    --gradient-line: linear-gradient(135deg, #06C755, #00B900);
+    --gradient-youtube: linear-gradient(135deg, #FF0000, #CC0000);
+    --gradient-threads: linear-gradient(135deg, #000000, #333333);
+    --gradient-page-bg: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+
+    /* --- 11. 其他常用顏色 --- */
+    --color-success-light: #10b981;
+    --color-warning-light: #F0FDF4;
+    --color-warning-border: #DCFCE7;
 }
 
 /* === 2. 基礎重置 === */
@@ -48,7 +102,7 @@
 body {
     /* 背景色 */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-    background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+    background: var(--gradient-page-bg);
     /* 建議加上這行，讓背景固定不動，滑動時更有質感 */
     background-attachment: fixed;
     color: var(--text-primary);
@@ -158,7 +212,7 @@ body {
 .brand {
     font-size: 24px;
     font-weight: 800;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--gradient-purple);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -197,7 +251,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--gradient-purple);
     opacity: 0;
     transition: opacity var(--transition-normal);
     z-index: -1;
@@ -257,22 +311,6 @@ body {
 }
 
 /* 剛才定義過的動畫，確保它存在 */
-@keyframes scaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.tool-section.active {
-    display: block;
-}
-
 @keyframes scaleIn {
     from {
         opacity: 0;
@@ -614,13 +652,6 @@ body {
 }
 
 /* === 修正手機版響應式 (避免手機也變兩欄) === */
-@media (max-width: 900px) {
-    #gridContainer {
-        grid-template-columns: 1fr;
-        /* 手機或平板時回到單欄 */
-    }
-}
-
 @keyframes slideInLeft {
     from {
         opacity: 0;
@@ -668,27 +699,27 @@ body {
 }
 
 .card-header.facebook {
-    background: linear-gradient(135deg, #1877F2, #0C63D4);
+    background: var(--gradient-facebook);
 }
 
 .card-header.instagram {
-    background: linear-gradient(135deg, #E4405F, #C13584, #833AB4);
+    background: var(--gradient-instagram);
 }
 
 .card-header.google {
-    background: linear-gradient(135deg, #4285F4, #34A853);
+    background: var(--gradient-google);
 }
 
 .card-header.line {
-    background: linear-gradient(135deg, #06C755, #00B900);
+    background: var(--gradient-line);
 }
 
 .card-header.youtube {
-    background: linear-gradient(135deg, #FF0000, #CC0000);
+    background: var(--gradient-youtube);
 }
 
 .card-header.threads {
-    background: linear-gradient(135deg, #000000, #333333);
+    background: var(--gradient-threads);
 }
 
 .spec-count {
@@ -748,18 +779,18 @@ body {
 }
 
 .tag-ratio {
-    background: #E0E7FF;
-    color: #4338CA;
+    background: var(--tag-blue-bg);
+    color: var(--tag-blue-text);
 }
 
 .tag-img {
-    background: #DBEAFE;
-    color: #1E40AF;
+    background: var(--tag-cyan-bg);
+    color: var(--tag-cyan-text);
 }
 
 .tag-video {
-    background: #FEE2E2;
-    color: #991B1B;
+    background: var(--tag-red-bg);
+    color: var(--tag-red-text);
 }
 
 .copy-btn-small {
@@ -1176,46 +1207,46 @@ select:focus {
 
 .file-upload {
     /* 1. 建立實體盒子感 */
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 12px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
     /* 圖示與文字的距離 */
 
-    width: 100% !important;
-    height: 52px !important;
+    width: 100%;
+    height: 52px;
     /* 與下載按鈕一致的高度，增加易讀與點擊感 */
-    background: #f5f5f7 !important;
+    background: #f5f5f7;
     /* Apple 淺灰色背景 */
-    border: 1px solid var(--border-color) !important;
+    border: 1px solid var(--border-color);
     /* 細緻邊框 */
-    border-radius: 12px !important;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
     /* 2. 文字樣式優化 */
-    font-family: 'Noto Sans TC', sans-serif !important;
-    font-size: 15px !important;
-    font-weight: 600 !important;
-    color: #1d1d1f !important;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d1d1f;
 }
 
 /* 3. 懸浮反饋 (滑鼠移上去時) */
 .file-upload:hover {
-    background: #e8e8ed !important;
+    background: #e8e8ed;
     /* 顏色稍微變深 */
-    border-color: #86868b !important;
+    border-color: #86868b;
     transform: translateY(-1px);
     /* 輕微浮起感 */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* 4. 點擊反饋 (按下去時) */
 .file-upload:active {
-    background: #d2d2d7 !important;
+    background: #d2d2d7;
     transform: translateY(0);
     /* 壓下的物理感 */
-    box-shadow: none !important;
+    box-shadow: none;
 }
 
 /* 5. 狀態更新後的樣式 (例如已上傳 Logo 時) */
@@ -1388,13 +1419,6 @@ select:focus {
     .toast-msg {
         min-width: 280px;
         font-size: 14px;
-    }
-}
-
-@media (max-width: 900px) {
-    #gridContainer {
-        grid-template-columns: 1fr;
-        /* 手機時自動變回單欄 */
     }
 }
 
@@ -1625,7 +1649,7 @@ textarea:focus-visible {
 
 .copy-status {
     font-size: 12px;
-    color: #10b981;
+    color: var(--color-success-light);
     opacity: 0;
     /* 預設隱藏 */
     transition: opacity 0.3s;
@@ -1831,6 +1855,7 @@ textarea:focus-visible {
 /* 2. 滑動條樣式優化 */
 input[type="range"] {
     -webkit-appearance: none;
+    appearance: none;
     width: 100%;
     height: 6px;
     background: #d2d2d7;
@@ -1896,7 +1921,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .stat-value.highlight {
-    color: #10b981;
+    color: var(--color-success-light);
 }
 
 .stat-divider {
@@ -2009,9 +2034,9 @@ input[type="range"]::-webkit-slider-thumb {
     justify-content: center;
     gap: 10px;
     padding: 15px;
-    background: #e0e7ff;
+    background: var(--light-blue-bg);
     border-radius: 10px;
-    color: #4338ca;
+    color: var(--tag-blue-text);
     font-weight: 600;
 }
 
@@ -2019,7 +2044,7 @@ input[type="range"]::-webkit-slider-thumb {
     width: 18px;
     height: 18px;
     border: 2px solid #ffffff;
-    border-top-color: #4338ca;
+    border-top-color: var(--tag-blue-text);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -2041,10 +2066,10 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .footer-link {
-    font-family: 'Noto Sans TC', sans-serif !important;
-    font-size: 12px !important;
-    color: #86868b !important;
-    text-decoration: none !important;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 12px;
+    color: #86868b;
+    text-decoration: none;
     letter-spacing: 0.5px;
     font-weight: 400;
 
@@ -2054,7 +2079,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* 4. 懸浮效果：輕微變深即可，不加底線 */
 .footer-link:hover {
-    color: #1d1d1f !important;
+    color: #1d1d1f;
     /* 變回深灰色 */
 }
 
@@ -2290,6 +2315,7 @@ input[type="range"]::-webkit-slider-thumb {
     /* 讓顏色選擇器變漂亮 */
     input[type="color"] {
         -webkit-appearance: none;
+        appearance: none;
         border: none;
         width: 36px !important;
         /* 固定大小 */
@@ -2312,5 +2338,11 @@ input[type="range"]::-webkit-slider-thumb {
         border: 2px solid #ffffff;
         /* 內層白框 */
         border-radius: 50%;
+    }
+
+    /* 廣告規格卡片：回到單欄 */
+    #gridContainer {
+        grid-template-columns: 1fr;
+        /* 手機或平板時回到單欄 */
     }
 }
