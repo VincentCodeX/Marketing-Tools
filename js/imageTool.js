@@ -64,17 +64,25 @@ document.addEventListener('DOMContentLoaded', () => {
 window.processImage = async function(file) {
     if (!file) return;
     if (!file.type.match('image.*')) { 
-        alert("請上傳圖片檔案"); 
+        window.showToast('請上傳圖片檔案', 'error');
         return; 
     }
     
     currentFile = file;
     document.getElementById('preview-empty').style.display = 'none';
     document.getElementById('preview-active').style.display = 'block';
+    document.getElementById('info-original').innerText = formatSize(file.size);
+    document.getElementById('info-compressed').innerHTML = '0 KB';
     
     // 獲取圖片尺寸，用於設定寬高輸入框的初始值
     const img = new Image();
+    let loadTimeout = setTimeout(() => {
+        console.warn('圖片加載超時，嘗試直接壓縮');
+        window.runCompression();
+    }, 3000);
+    
     img.onload = () => {
+        clearTimeout(loadTimeout);
         const widthInput = document.getElementById('custom-width');
         const heightInput = document.getElementById('custom-height');
         
@@ -91,20 +99,21 @@ window.processImage = async function(file) {
             heightInput.value = img.height;
         }
         window.showToast(`圖片已上傳 (${formatSize(file.size)})`, 'success');
+        // 圖片加載完成後才開始壓縮
+        window.runCompression();
     };
     img.onerror = () => {
-        alert("無法讀取圖片信息，請嘗試其他圖片");
-        window.showToast('圖片讀取失敗', 'error');
+        clearTimeout(loadTimeout);
+        window.showToast('圖片讀取失敗，請嘗試其他圖片', 'error');
     };
     
-    // 使用 Blob 創建 URL 而不是直接使用 file，以提高兼容性
-    img.src = URL.createObjectURL(file);
-    
-    // 顯示原始文件大小
-    document.getElementById('info-original').innerText = formatSize(file.size);
-    
-    // 自動開始壓縮
-    window.runCompression();
+    // 使用 Blob URL 創建對象 URL
+    try {
+        img.src = URL.createObjectURL(file);
+    } catch (err) {
+        console.error('創建 Blob URL 失敗:', err);
+        window.showToast('圖片加載失敗', 'error');
+    }
 }
 
 window.applyPreset = function() {
@@ -148,7 +157,7 @@ window.runCompression = async function() {
         
         const options = { 
             maxSizeMB: maxSizeMB, 
-            useWebWorker: true, 
+            useWebWorker: !isMobileDevice(), // 在移動設備上禁用 Web Worker
             initialQuality: quality
         };
         

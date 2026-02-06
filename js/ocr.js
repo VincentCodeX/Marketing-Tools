@@ -56,53 +56,59 @@ window.processOcr = async function(file) {
         return;
     }
     
-    const imgUrl = URL.createObjectURL(file);
-    document.getElementById('ocr-preview-img').src = imgUrl;
-    document.getElementById('ocr-preview-img').style.display = 'block';
-    document.getElementById('ocr-default-view').style.display = 'none';
-    document.getElementById('ocr-loading').style.display = 'flex';
-    document.getElementById('ocr-status-text').innerText = "初始化引擎中...";
-    
-    clearOcrForm();
-
-    let worker = null;
     try {
-        // 在移動設備上可能需要更長的時間初始化
-        if (isMobileDevice()) {
-            document.getElementById('ocr-status-text').innerText = "初始化中... (移動設備可能較慢)";
-        }
+        const imgUrl = URL.createObjectURL(file);
+        document.getElementById('ocr-preview-img').src = imgUrl;
+        document.getElementById('ocr-preview-img').style.display = 'block';
+        document.getElementById('ocr-default-view').style.display = 'none';
+        document.getElementById('ocr-loading').style.display = 'flex';
+        document.getElementById('ocr-status-text').innerText = "初始化引擎中...";
         
-        // 初始化 Worker (chi_tra + eng)
-        worker = await Tesseract.createWorker('chi_tra+eng', 1, {
-            logger: m => {
-                if(m.status === 'recognizing text') {
-                    document.getElementById('ocr-status-text').innerText = `辨識中... ${Math.round(m.progress * 100)}%`;
-                } else {
-                    document.getElementById('ocr-status-text').innerText = `${translateStatus(m.status)} (${Math.round(m.progress * 100)}%)`;
-                }
+        clearOcrForm();
+    
+        let worker = null;
+        try {
+            // 在移動設備上可能需要更長的時間初始化
+            if (isMobileDevice()) {
+                document.getElementById('ocr-status-text').innerText = "初始化中... (移動設備可能較慢，請耐心等待)";
             }
-        });
+            
+            // 初始化 Worker (chi_tra + eng)
+            worker = await Tesseract.createWorker('chi_tra+eng', 1, {
+                logger: m => {
+                    if(m.status === 'recognizing text') {
+                        document.getElementById('ocr-status-text').innerText = `辨識中... ${Math.round(m.progress * 100)}%`;
+                    } else {
+                        document.getElementById('ocr-status-text').innerText = `${translateStatus(m.status)} (${Math.round(m.progress * 100)}%)`;
+                    }
+                }
+            });
 
-        const { data: { text } } = await worker.recognize(file);
-        console.log("OCR 辨識結果:", text);
-        
-        const parsedData = parseOcrResult(text);
-        
-        document.getElementById('ocr-name').value = parsedData.name;
-        document.getElementById('ocr-title').value = parsedData.title;
-        document.getElementById('ocr-company').value = parsedData.company;
-        document.getElementById('ocr-phone').value = parsedData.phone;
-        document.getElementById('ocr-email').value = parsedData.email;
-        document.getElementById('ocr-tax').value = parsedData.tax;
-        document.getElementById('ocr-line').value = parsedData.line;
-        
-        window.showToast('名片辨識完成', 'success');
-
+            const { data: { text } } = await worker.recognize(file);
+            console.log("OCR 辨識結果:", text);
+            
+            const parsedData = parseOcrResult(text);
+            
+            document.getElementById('ocr-name').value = parsedData.name;
+            document.getElementById('ocr-title').value = parsedData.title;
+            document.getElementById('ocr-company').value = parsedData.company;
+            document.getElementById('ocr-phone').value = parsedData.phone;
+            document.getElementById('ocr-email').value = parsedData.email;
+            document.getElementById('ocr-tax').value = parsedData.tax;
+            document.getElementById('ocr-line').value = parsedData.line;
+            
+            window.showToast('名片辨識完成', 'success');
+    
+        } catch (error) {
+            console.error('辨識錯誤:', error);
+            window.showToast(`辨識發生錯誤: ${error.message || '請稍後再試或檢查圖片。'}`, 'error');
+        } finally {
+            if (worker) await worker.terminate();
+            document.getElementById('ocr-loading').style.display = 'none';
+        }
     } catch (error) {
-        console.error(error);
-        window.showToast(`辨識發生錯誤: ${error.message || '請稍後再試或檢查圖片。'}`, 'error');
-    } finally {
-        if (worker) await worker.terminate();
+        console.error('未知錯誤:', error);
+        window.showToast('發生未知錯誤，請重試', 'error');
         document.getElementById('ocr-loading').style.display = 'none';
     }
 }
