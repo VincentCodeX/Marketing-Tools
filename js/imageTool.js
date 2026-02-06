@@ -35,10 +35,9 @@ function handleDrop(e) {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) window.processImage(e.dataTransfer.files[0]);
 }
 
-// 添加拖拽事件監聽器（僅在非移動設備上）及文件輸入監聽
+// 添加拖拽事件監聽器（僅在非移動設備上）
 document.addEventListener('DOMContentLoaded', () => {
     const dropZone = document.getElementById('drop-zone');
-    const imgInput = document.getElementById('img-input');
     
     if (dropZone) {
         // 根據設備類型更新上傳提示
@@ -54,25 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dropZone.addEventListener('drop', handleDrop);
         }
     }
-    
-    // 直接綁定文件輸入的 change 事件（確保在所有設備上都能正確觸發，特別是 iOS）
-    if (imgInput) {
-        imgInput.addEventListener('change', (e) => {
-            const file = e.target.files?.[0];
-            console.log('img-input change event fired:', file ? file.name : 'no file');
-            if (file) {
-                console.log('File details:', {
-                    name: file.name,
-                    type: file.type,
-                    size: file.size,
-                    lastModified: file.lastModified
-                });
-                window.processImage?.(file);
-            }
-            // 清空 input，允許重複選擇同一文件
-            e.target.value = '';
-        }, { once: false });
-    }
 });
 
 window.processImage = async function(file) {
@@ -81,14 +61,13 @@ window.processImage = async function(file) {
         return;
     }
     
-    console.log('Processing image:', file.name);
+    console.log('Processing image:', file.name, 'Type:', file.type, 'Size:', file.size);
     
-    // iOS 上 file.type 可能為空，需要通過文件名判斷
-    const isImage = file.type.match('image.*') || /\.(jpg|jpeg|png|webp|gif|bmp)$/i.test(file.name);
-    if (!isImage) {
-        console.error('Invalid file type:', file.type, 'Filename:', file.name);
-        window.showToast('請上傳圖片檔案 (JPG, PNG, WEBP 等)', 'error');
-        return; 
+    // iOS 上 file.type 可能為空，需要通過文件名判斷，但為了相容性，先嘗試處理所有文件
+    const isLikelyImage = file.type.match('image.*') || /\.(jpg|jpeg|png|webp|gif|bmp|heic|heif)$/i.test(file.name);
+    if (!isLikelyImage && !file.type) {
+        // 如果看起來像圖片，或是沒有 type，先嘗試處理
+        console.log('File type unclear, but attempting to process'); 
     }
     
     currentFile = file;

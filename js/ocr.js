@@ -24,10 +24,9 @@ function handleOcrDrop(e) {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) window.processOcr(e.dataTransfer.files[0]);
 }
 
-// 添加 OCR 拖拽事件監聽器（僅在非移動設備上）及文件輸入監聽
+// 添加 OCR 拖拽事件監聽器（僅在非移動設備上）
 document.addEventListener('DOMContentLoaded', () => {
     const ocrDropZone = document.getElementById('ocr-drop-zone');
-    const ocrInput = document.getElementById('ocr-input');
     
     if (ocrDropZone) {
         // 根據設備類型更新上傳提示
@@ -42,25 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ocrDropZone.addEventListener('dragleave', handleOcrDragLeave);
             ocrDropZone.addEventListener('drop', handleOcrDrop);
         }
-    }
-    
-    // 直接綁定文件輸入的 change 事件（確保在所有設備上都能正確觸發，特別是 iOS）
-    if (ocrInput) {
-        ocrInput.addEventListener('change', (e) => {
-            const file = e.target.files?.[0];
-            console.log('ocr-input change event fired:', file ? file.name : 'no file');
-            if (file) {
-                console.log('OCR File details:', {
-                    name: file.name,
-                    type: file.type,
-                    size: file.size,
-                    lastModified: file.lastModified
-                });
-                window.processOcr?.(file);
-            }
-            // 清空 input，允許重複選擇同一文件
-            e.target.value = '';
-        }, { once: false });
     }
 });
 
