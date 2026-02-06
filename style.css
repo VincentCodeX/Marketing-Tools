@@ -440,37 +440,19 @@ body {
     border-radius: var(--radius-md);
     cursor: pointer;
     font-size: 20px;
-    transition: all var(--transition-fast) cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background 0.15s ease, border-color 0.15s ease;
     position: relative;
     overflow: hidden;
 }
 
-.symbol-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: var(--primary-light);
-    transform: translate(-50%, -50%);
-    transition: width 0.4s, height 0.4s;
-}
-
 .symbol-btn:hover {
-    transform: translateY(-3px) scale(1.05);
+    background: #f5f5f7;
     border-color: var(--primary-color);
-    box-shadow: var(--shadow-md);
-}
-
-.symbol-btn:hover::before {
-    width: 100%;
-    height: 100%;
 }
 
 .symbol-btn:active {
-    transform: translateY(-1px) scale(0.98);
+    background: #efefef;
+    border-color: var(--primary-color);
 }
 
 .kaomoji-btn {
@@ -503,21 +485,13 @@ body {
     font-weight: 600 !important;
     border-radius: 8px !important;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
-/* 點擊與懸浮手感 */
-.symbol-btn:hover {
-    background: #f5f5f7 !important;
-    border-color: #0071e3 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-}
-
-.symbol-btn:active {
-    transform: translateY(0) scale(0.95);
-    /* 點擊時縮小的物理反饋 */
-    background: #e8e8ed !important;
+.sub-nav-btn.active {
+    background: white !important;
+    color: var(--primary-color) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 /* 3. 顏文字 (Kaomoji) 專屬：寬度自動調整 */

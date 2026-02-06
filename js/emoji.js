@@ -3,36 +3,83 @@ const symbolsData = [ { title: "常用標點", items: ["、", "。", "，", "；
 const emojisData = [ { title: "表情 / 心情", items: ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤗", "🤔", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱", "😴", "🤤", "😪", "😵", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿", "💀", "👻", "💩", "🤡"] }, { title: "手勢 / 人物", items: ["👋", "🤚", "🖐", "✋", "🖖", "👌", "🤌", "🤏", "✌️", "🤞", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "💪", "💅", "🤳", "🙇", "💁", "🙅", "🙆", "🙋"] }, { title: "愛心 / 裝飾", items: ["❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔", "❣️", "💕", "💞", "💓", "💗", "💖", "💘", "💝", "💟", "✨", "⭐️", "🌟", "💫", "⚡️", "🔥", "💥", "💢", "💦", "💨"] } ];
 const kaomojiData = [ { title: "打招呼 / 開心", items: ["(o´・_・)o", "(=ﾟωﾟ)ﾉ", "( ´ ▽ ` )ﾉ", "o(ww)o", "(≧∇≦)/", "(*^▽^*)", "\\(★ω★)/", "(☆▽☆)", "(o^ ^o)", "(￣▽￣)"] }, { title: "可愛 / 撒嬌", items: ["(・ω<)", "(*≧ω≦)", "(///▽///)", "(◕‿◕)", "(つ✧ω✧)つ", "(づ￣ ³￣)づ", "(｡･ω･｡)ﾉ♡", "♡(> ਊ <)♡", "(*♡∀♡)"] }, { title: "生氣 / 翻桌", items: ["(╬ Ò ‸ Ó)", "(＃`Д´)", "( ` ω ´ )", "(ノಠ益ಠ)ノ", "(/ﾟДﾟ)/", "┻━┻ ︵ ヽ(°□°ヽ)", "(╯°□°）╯︵ ┻━┻", "(ノ｀Д´)ノ彡┻━┻", "ಠ_ಠ"] }, { title: "無奈 / 傷心", items: ["(￣ω￣;)", "(;´・`)>", "(T_T)", "(;´༎ຶД༎ຶ`)", "(ToT)", "(╥_╥)", "(´-﹏-`；)", "┐(‘～`；)┌", "(can_t help)"] } ];
 
+// 渲染緩存 - 防止重複渲染
+const renderCache = { symbols: false, emojis: false, kaomoji: false };
+
 function renderSymbolSection(containerId, data, gridClass, btnClass = 'symbol-btn') {
     const container = document.getElementById(containerId);
-    if (!container) return;
-    container.innerHTML = '';
+    if (!container || container.children.length > 0) return; // 如果已渲染，跳過
+    
+    // 使用 DocumentFragment 提高性能（一次性 DOM 操作）
+    const fragment = document.createDocumentFragment();
+    
     data.forEach(group => {
-        const card = document.createElement('div'); card.className = 'symbol-group-card';
-        const btnsHtml = group.items.map(item => `<button class="${btnClass}" onclick="copySymbol('${item}')">${item}</button>`).join('');
-        card.innerHTML = `<div class="symbol-card-header">${group.title}</div><div class="symbol-grid ${gridClass}">${btnsHtml}</div>`;
-        container.appendChild(card);
+        const card = document.createElement('div');
+        card.className = 'symbol-group-card';
+        
+        // 標題
+        const header = document.createElement('div');
+        header.className = 'symbol-card-header';
+        header.textContent = group.title;
+        card.appendChild(header);
+        
+        // 按鈕網格
+        const grid = document.createElement('div');
+        grid.className = `symbol-grid ${gridClass}`;
+        
+        group.items.forEach(item => {
+            const btn = document.createElement('button');
+            btn.className = btnClass;
+            btn.textContent = item;
+            btn.dataset.symbol = item; // 使用 data 屬性代替 onclick
+            grid.appendChild(btn);
+        });
+        
+        card.appendChild(grid);
+        fragment.appendChild(card);
     });
+    
+    container.appendChild(fragment);
 }
+
 function switchSubTab(tabName) {
+    // 更新按鈕活跃态
     document.querySelectorAll('.sub-nav-btn').forEach(btn => btn.classList.remove('active'));
-    // 找到對應的按鈕並添加 active 類
     const activeBtn = Array.from(document.querySelectorAll('.sub-nav-btn')).find(b => b.dataset.value === tabName);
     if (activeBtn) activeBtn.classList.add('active');
+    
+    // 隱藏所有視圖并顯示目標視圖
     document.querySelectorAll('.sub-view').forEach(view => view.classList.remove('active'));
-    if (tabName === 'symbols') document.getElementById('view-symbols').classList.add('active');
-    else if (tabName === 'emojis') document.getElementById('view-emojis').classList.add('active');
-    else if (tabName === 'kaomoji') document.getElementById('view-kaomoji').classList.add('active');
+    
+    // 首次訪問該分頁時才渲染（懶加載）
+    if (tabName === 'symbols' && !renderCache.symbols) {
+        renderSymbolSection('view-symbols', symbolsData, 'grid-cols-8');
+        renderCache.symbols = true;
+    } else if (tabName === 'emojis' && !renderCache.emojis) {
+        renderSymbolSection('view-emojis', emojisData, 'grid-cols-emoji');
+        renderCache.emojis = true;
+    } else if (tabName === 'kaomoji' && !renderCache.kaomoji) {
+        renderSymbolSection('view-kaomoji', kaomojiData, 'grid-cols-kaomoji', 'symbol-btn kaomoji-btn');
+        renderCache.kaomoji = true;
+    }
+    
+    // 顯示對應的視圖
+    const viewMap = { symbols: 'view-symbols', emojis: 'view-emojis', kaomoji: 'view-kaomoji' };
+    const viewId = viewMap[tabName];
+    if (viewId) document.getElementById(viewId).classList.add('active');
 }
-// 修改後的複製函式 (呼叫共用彈跳視窗)
-function copySymbol(text) {
-    navigator.clipboard.writeText(text).then(() => { 
-        // 呼叫 main.js 裡的共用函式，並顯示「已複製：(符號)」
-        showToast(`已複製：${text}`);
-    });
-}
+
+// 事件委托複製（避免每個按鈕都有個 onclick）
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('symbol-btn') && e.target.dataset.symbol) {
+        navigator.clipboard.writeText(e.target.dataset.symbol).then(() => {
+            showToast(`已複製：${e.target.dataset.symbol}`);
+        });
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
+    // 只預先渲染第一個分頁（標點符號）
     renderSymbolSection('view-symbols', symbolsData, 'grid-cols-8');
-    renderSymbolSection('view-emojis', emojisData, 'grid-cols-emoji');
-    renderSymbolSection('view-kaomoji', kaomojiData, 'grid-cols-kaomoji', 'symbol-btn kaomoji-btn');
+    renderCache.symbols = true;
 });
