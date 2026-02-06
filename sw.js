@@ -2,7 +2,7 @@
 // Service Worker - 离线支持 + 缓存策略
 // ==========================================
 
-const CACHE_NAME = 'marketing-tools-v1';
+const CACHE_NAME = 'marketing-tools-v1.2'; // 每次修改 JS 需要更新此版本号
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -37,6 +37,15 @@ self.addEventListener('install', (event) => {
                 console.warn('⚠️ 某些资源缓存失败（可能是外部资源）:', error);
                 // 继续，不让安装失败
                 return Promise.resolve();
+            }).then(() => {
+                // 【重要】也要缓存外部 CDN 资源，确保离线或网络差时仍可用
+                return caches.open('external-cache-v1').then((externalCache) => {
+                    console.log('📦 缓存外部 CDN 资源');
+                    return externalCache.addAll(EXTERNAL_CACHE).catch((error) => {
+                        console.warn('⚠️ CDN 资源缓存可能失败（离线状态）:', error);
+                        return Promise.resolve();
+                    });
+                });
             });
         })
     );
