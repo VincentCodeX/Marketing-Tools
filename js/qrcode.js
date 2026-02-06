@@ -30,7 +30,9 @@ function setQRType(type) {
     const input = document.getElementById('qr-text');
     const btns = document.querySelectorAll('.type-btn');
     btns.forEach(b => b.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    // 找到對應的按鈕並添加 active 類
+    const activeBtn = Array.from(btns).find(b => b.dataset.value === type);
+    if (activeBtn) activeBtn.classList.add('active');
     input.placeholder = type === 'url' ? "https://example.com" : "請輸入任何文字...";
 }
 function downloadQR() { qrCodeObj.download({ name: "qrcode", extension: "png" }); }
