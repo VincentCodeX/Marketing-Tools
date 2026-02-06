@@ -1,0 +1,93 @@
+{
+    "name": "整合行銷工具盒",
+    "short_name": "行銷工具",
+    "description": "一站式行銷工具集合：QR Code生成、GTM追蹤、短網址、圖片壓縮、OCR辨識、廣告規格及特殊符號",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#ffffff",
+    "theme_color": "#0071e3",
+    "icons": [
+        {
+            "src": "/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "categories": ["productivity", "utilities"],
+    "keywords": ["QR Code", "GTM追蹤", "短網址", "圖片壓縮", "OCR", "行銷工具"],
+    "screenshots": [
+        {
+            "src": "/favicon.png",
+            "sizes": "540x720",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon.png",
+            "sizes": "1080x1440",
+            "type": "image/png"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "QR Code 生成",
+            "short_name": "QR Code",
+            "description": "快速生成 QR Code",
+            "url": "/?tab=qr",
+            "icons": [
+                {
+                    "src": "/favicon.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "GTM 追蹤",
+            "short_name": "GTM",
+            "description": "生成 GTM 追蹤連結",
+            "url": "/?tab=utm",
+            "icons": [
+                {
+                    "src": "/favicon.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "短網址",
+            "short_name": "短網址",
+            "description": "縮短您的網址",
+            "url": "/?tab=shorten",
+            "icons": [
+                {
+                    "src": "/favicon.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
+    "share_target": {
+        "action": "/share",
+        "method": "POST",
+        "enctype": "application/x-www-form-urlencoded",
+        "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url"
+        }
+    }
+}

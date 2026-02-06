@@ -2346,3 +2346,138 @@ input[type="range"]::-webkit-slider-thumb {
         /* 手機或平板時回到單欄 */
     }
 }
+
+/* === 25. 新增實用類別 (替換內聯樣式) === */
+
+/* 1. 文字顏色 */
+.text-danger {
+    color: var(--error-color);
+}
+
+.text-secondary-sm {
+    font-size: 12px;
+    color: var(--gray-6);
+}
+
+.text-success {
+    color: var(--color-success-light);
+}
+
+/* 2. 間距與佈局 */
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.gap-sm {
+    gap: 10px;
+}
+
+.gap-md {
+    gap: 15px;
+}
+
+.mt-md {
+    margin-top: 20px;
+}
+
+.mb-md {
+    margin-bottom: 20px;
+}
+
+.ml-sm {
+    margin-left: 10px;
+}
+
+/* 3. 背景與邊框 */
+.bg-success-light {
+    background: var(--color-warning-light);
+}
+
+.border-success {
+    border: 1px solid var(--color-warning-border);
+}
+
+.hint-box {
+    padding: 15px;
+    background: var(--color-warning-light);
+    border: 1px solid var(--color-warning-border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: #444;
+    display: flex;
+    gap: 10px;
+}
+
+.hint-box-icon {
+    flex-shrink: 0;
+}
+
+.hint-box-content {
+    flex: 1;
+}
+
+/* 4. 表單相關 */
+.label-required {
+    color: var(--error-color);
+}
+
+.label-secondary {
+    font-size: 12px;
+    color: var(--gray-6);
+    display: block;
+}
+
+/* 5. 標題 */
+.title-main {
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.title-sub {
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: #666;
+}
+
+/* 6. 寬度控制 */
+.w-full {
+    width: 100%;
+}
+
+.max-w-sm {
+    max-width: 200px;
+}
+
+/* 7. Header 區塊 */
+.header-with-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-select {
+    width: auto;
+    max-width: 200px;
+}
+
+/* 8. 預覽區文本 */
+.preview-hint {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-top: 15px;
+}

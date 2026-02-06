@@ -6,12 +6,93 @@
 // === 1. 應用程式主物件 ===
 const MarketingTools = {
     // 初始化
-    init() {
+    async init() {
         this.setupNavigation();
+        this.setupEventDelegation();
         this.setupToast();
         this.addLoadingEffects();
         this.setupAccessibility();
+        await CacheManager.init(); // 初始化 IndexedDB 快取
         console.log('✅ Marketing Tools 已載入');
+    },
+
+    // === 事件委托系統（統一處理 data-action 屬性）===
+    setupEventDelegation() {
+        // 事件動作映射表
+        const actionMap = {
+            'setQRType': (target) => window.setQRType?.(target.dataset.value),
+            'updateQR': () => window.updateQR?.(),
+            'downloadQR': () => window.downloadQR?.(),
+            'handleLogoUpload': (target) => {
+                const file = target.files?.[0];
+                if (file) window.handleLogoUpload?.(target);
+            },
+            'triggerFileInput': (target) => document.getElementById(target.dataset.target)?.click(),
+            'generateUTM': () => window.generateUTM?.(),
+            'copyUTM': () => window.copyUTM?.(),
+            'generateShortUrl': () => window.generateShortUrl?.(),
+            'copyShortUrl': () => window.copyShortUrl?.(),
+            'runCompression': () => window.runCompression?.(),
+            'updateQualityVal': () => window.updateQualityVal?.(),
+            'downloadImage': () => window.downloadImage?.(),
+            'processImage': (target) => {
+                const file = target.files?.[0];
+                if (file) window.processImage?.(file);
+            },
+            'applyPreset': () => window.applyPreset?.(),
+            'processOcr': (target) => {
+                const file = target.files?.[0];
+                if (file) window.processOcr?.(file);
+            },
+            'resetOcr': () => window.resetOcr?.(),
+            'copyNotionFormat': () => window.copyNotionFormat?.(),
+            'exportToCsv': () => window.exportToCsv?.(),
+            'exportToJson': () => window.exportToJson?.(),
+            'renderCards': (target) => window.renderCards?.(target.value),
+            'switchSubTab': (target) => window.switchSubTab?.(target.dataset.value),
+        };
+
+        // 委托點擊事件
+        document.addEventListener('click', (e) => {
+            const action = e.target.closest('[data-action]');
+            if (action && action.tagName !== 'INPUT' && action.tagName !== 'SELECT' && action.tagName !== 'TEXTAREA') {
+                const actionName = action.dataset.action;
+                const handler = actionMap[actionName];
+                if (handler) {
+                    handler(action);
+                }
+            }
+        });
+
+        // 委托選擇變更事件
+        document.addEventListener('change', (e) => {
+            const action = e.target.closest('[data-action]');
+            if (action && (action.tagName === 'SELECT' || action.tagName === 'INPUT')) {
+                const actionName = action.dataset.action;
+                const handler = actionMap[actionName];
+                if (handler) {
+                    handler(action);
+                }
+            }
+        });
+
+        // 委托輸入事件（用於實時更新）
+        document.addEventListener('input', (e) => {
+            const action = e.target.closest('[data-action]');
+            if (action && (action.tagName === 'INPUT' || action.tagName === 'SELECT') && !action.type.match(/button|submit|checkbox|radio|file/)) {
+                const actionName = action.dataset.action;
+                const handler = actionMap[actionName];
+                if (handler) {
+                    // 使用節流避免過度觸發
+                    clearTimeout(action._inputTimeout);
+                    action._inputTimeout = setTimeout(() => {
+                        handler(action);
+                    }, 100);
+                }
+            }
+        });
+
+        console.log('✅ 事件委托系統已初始化');
     },
 
     // === 導航系統 ===
@@ -31,6 +112,9 @@ const MarketingTools = {
 
     // 切換分頁（帶動畫）
     switchTab(tabId, currentBtn) {
+        // 按需加载对应模块
+        ModuleLoader.loadModuleForTab(tabId);
+        
         // 移除所有按鈕的 active
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.classList.remove('active');
@@ -240,13 +324,259 @@ const injectAnimations = () => {
 document.addEventListener('DOMContentLoaded', () => {
     MarketingTools.init();
     injectAnimations();
+    setupLazyLoading();
+    registerServiceWorker();
 });
 
-// === 4. 向後兼容的全域函式 ===
-// 保留舊的 switchTab 和 showToast 函式名稱
-function switchTab(tabId, currentBtn) {
-    MarketingTools.switchTab(tabId, currentBtn);
-}
+// === 3.5 Lazy Loading 支持 ===
+const setupLazyLoading = () => {
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    if (img.dataset.srcset) {
+                        img.srcset = img.dataset.srcset;
+                        img.removeAttribute('data-srcset');
+                    }
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '50px',
+            threshold: 0.01
+        });
+
+        document.querySelectorAll('img[data-src]').forEach((img) => {
+            imageObserver.observe(img);
+        });
+    } else {
+        // 回退：立即加載所有圖片
+        document.querySelectorAll('img[data-src]').forEach((img) => {
+            img.src = img.dataset.src;
+        });
+    }
+};
+
+// === 3.6 Service Worker 註冊 ===
+const registerServiceWorker = () => {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('✅ Service Worker 已註冊:', registration);
+                
+                // 檢查更新
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // 新版本可用
+                            console.log('📦 新版本已準備好，刷新頁面以更新');
+                            // 可選：顯示通知讓用戶更新
+                        }
+                    });
+                });
+            })
+            .catch((error) => {
+                console.warn('⚠️ Service Worker 註冊失敗:', error);
+            });
+        
+        // 監聽 Controller 變化
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('🔄 Service Worker 已更新');
+            // 頁面已被新 Service Worker 接管
+        });
+    }
+};
+
+// === 8. IndexedDB 快取管理系統（API 響應緩存）===
+const CacheManager = {
+    dbName: 'MarketingTools',
+    storeName: 'api-cache',
+    db: null,
+    
+    // 初始化 IndexedDB
+    async init() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.dbName, 1);
+            
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+                this.db = request.result;
+                console.log('✅ IndexedDB 已初始化');
+                resolve(true);
+            };
+            
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains(this.storeName)) {
+                    const store = db.createObjectStore(this.storeName, { keyPath: 'key' });
+                    store.createIndex('timestamp', 'timestamp', { unique: false });
+                    console.log('✅ IndexedDB 表已建立');
+                }
+            };
+        });
+    },
+    
+    // 保存快取
+    async set(key, value, ttl = 3600000) { // 默認 1 小時
+        if (!this.db) await this.init();
+        
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            
+            const data = {
+                key,
+                value,
+                timestamp: Date.now(),
+                expiry: Date.now() + ttl
+            };
+            
+            const request = store.put(data);
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+                console.log(`💾 快取已保存: ${key}`);
+                resolve(true);
+            };
+        });
+    },
+    
+    // 取得快取
+    async get(key) {
+        if (!this.db) await this.init();
+        
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([this.storeName], 'readonly');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.get(key);
+            
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+                const data = request.result;
+                
+                if (!data) {
+                    resolve(null);
+                    return;
+                }
+                
+                // 檢查過期時間
+                if (data.expiry && Date.now() > data.expiry) {
+                    this.delete(key);
+                    resolve(null);
+                } else {
+                    console.log(`📥 快取已取得: ${key}`);
+                    resolve(data.value);
+                }
+            };
+        });
+    },
+    
+    // 刪除快取
+    async delete(key) {
+        if (!this.db) await this.init();
+        
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.delete(key);
+            
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+                console.log(`🗑️ 快取已刪除: ${key}`);
+                resolve(true);
+            };
+        });
+    },
+    
+    // 清空所有快取
+    async clear() {
+        if (!this.db) await this.init();
+        
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.clear();
+            
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+                console.log('🗑️ 所有快取已清空');
+                resolve(true);
+            };
+        });
+    }
+};
+
+// === 7. 模組動態加載系統（代碼分割）===
+const ModuleLoader = {
+    loadedModules: new Set(),
+    
+    // 模組對應表（按需加載）
+    moduleMap: {
+        'qrcode': '/js/qrcode.js',
+        'utm': '/js/utm.js',
+        'shortener': '/js/urlShortener.js',
+        'image': '/js/imageTool.js',
+        'ocr': '/js/ocr.js',
+        'ads': '/js/ads.js',
+        'emoji': '/js/emoji.js'
+    },
+    
+    // 異步加載指定模組
+    async loadModule(moduleName) {
+        if (this.loadedModules.has(moduleName)) {
+            console.log(`📦 模組已加載: ${moduleName}`);
+            return true;
+        }
+        
+        const scriptUrl = this.moduleMap[moduleName];
+        if (!scriptUrl) {
+            console.warn(`⚠️ 未知模組: ${moduleName}`);
+            return false;
+        }
+        
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = scriptUrl;
+            script.async = true;
+            script.onload = () => {
+                this.loadedModules.add(moduleName);
+                console.log(`✅ 模組已加載: ${moduleName}`);
+                resolve(true);
+            };
+            script.onerror = () => {
+                console.error(`❌ 模組加載失敗: ${moduleName}`);
+                reject(false);
+            };
+            document.head.appendChild(script);
+        });
+    },
+    
+    // 根據 Tab 頁籤按需加載
+    loadModuleForTab(tabId) {
+        const tabModuleMap = {
+            'qr': 'qrcode',
+            'utm': 'utm',
+            'shorten': 'shortener',
+            'compress': 'image',
+            'ocr': 'ocr',
+            'ads': 'ads',
+            'emoji': 'emoji'
+        };
+        
+        const moduleName = tabModuleMap[tabId];
+        if (moduleName && !this.loadedModules.has(moduleName)) {
+            this.loadModule(moduleName).catch(() => {
+                MarketingTools.showToast(`${moduleName} 模組加載失敗，請重試`, 'error');
+            });
+        }
+    }
+};
 
 function showToast(message, type = 'success') {
     MarketingTools.showToast(message, type);

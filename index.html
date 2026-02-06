@@ -4,16 +4,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的專案：行銷工具盒</title>
+    <meta name="description" content="整合行銷工具盒 - 提供 QR Code、GTM 追蹤、短網址、圖片壓縮、OCR 辨識、廣告規格及特殊符號等一站式行銷工具">
+    <meta name="keywords" content="QR Code, GTM 追蹤, 短網址, 圖片壓縮, OCR 辨識, 廣告規格, 行銷工具">
+    <meta name="theme-color" content="#0071e3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="dark-content">
+    <title>整合行銷工具盒 - QR Code & 行銷工具集合</title>
     <link rel="icon" href="favicon.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap"
-        rel="stylesheet">
-    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-    <script type="text/javascript"
-        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js" defer></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
 
-    <link rel="stylesheet" href="style.css">
+    <!-- 關鍵 CSS（內聯首屏必需樣式，提升首繪速度）-->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+        
+        :root {
+            --brand-blue: #0071e3;
+            --brand-blue-hover: #0077ed;
+            --primary-color: #0071e3;
+            --primary: #0071e3;
+            --primary-light: rgba(0, 113, 227, 0.1);
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --bg-main: #f5f5f7;
+            --bg-gray: #f5f5f7;
+            --bg-card: #ffffff;
+            --radius-lg: 24px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition-normal: 0.3s;
+            --transition-fast: 0.2s;
+            --gradient-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-page-bg: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+            background: var(--gradient-page-bg);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+        
+        .header-title {
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 36px;
+            font-weight: 900;
+            color: white;
+            letter-spacing: 0.2em;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .top-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: var(--spacing-md) var(--spacing-lg);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+        
+        .brand {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--gradient-purple);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-btn.active {
+            color: white;
+            background: var(--brand-blue);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .main-content {
+            margin-top: var(--spacing-xl);
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .tool-section {
+            display: none;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            margin-bottom: 50px;
+            animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .tool-section.active {
+            display: block;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+    
+    <!-- 完整樣式表（異步加載） -->
+    <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="style.css"></noscript>
 </head>
 
 <body>
@@ -99,20 +286,20 @@
                     <div class="setting-group">
                         <div class="setting-title">選擇類型</div>
                         <div class="type-toggle">
-                            <button class="type-btn active" onclick="setQRType('url')">🔗 網址 (URL)</button>
-                            <button class="type-btn" onclick="setQRType('text')">📝 純文字</button>
+                            <button class="type-btn active" data-action="setQRType" data-value="url">🔗 網址 (URL)</button>
+                            <button class="type-btn" data-action="setQRType" data-value="text">📝 純文字</button>
                         </div>
                     </div>
                     <div class="setting-group">
                         <div class="setting-title">輸入內容</div>
-                        <input type="text" id="qr-text" placeholder="https://example.com" oninput="updateQR()">
+                        <input type="text" id="qr-text" placeholder="https://example.com" data-action="updateQR">
                     </div>
                     <div class="setting-group">
                         <div class="setting-title">外觀設定</div>
                         <div class="control-grid">
                             <div>
-                                <label style="font-size:12px; color:#666;">容錯率 (密度)</label>
-                                <select id="qr-correction" onchange="updateQR()">
+                                <label class="label-secondary">容錯率 (密度)</label>
+                                <select id="qr-correction" data-action="updateQR">
                                     <option value="L">低 (Low)</option>
                                     <option value="M">中 (Medium)</option>
                                     <option value="Q">高 (Quartile)</option>
@@ -120,9 +307,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label style="font-size:12px; color:#666;">顏色</label>
-                                <input type="color" id="qr-color" class="color-picker" value="#2C3E50"
-                                    oninput="updateQR()">
+                                <label class="label-secondary">顏色</label>
+                                <input type="color" id="qr-color" class="color-picker" value="#2C3E50" data-action="updateQR">
                             </div>
                         </div>
                     </div>
@@ -130,8 +316,8 @@
                         <div class="setting-title">樣式微調</div>
                         <div class="control-grid">
                             <div>
-                                <label style="font-size:12px; color:#666;">點的形狀</label>
-                                <select id="qr-dots-type" onchange="updateQR()">
+                                <label class="label-secondary">點的形狀</label>
+                                <select id="qr-dots-type" data-action="updateQR">
                                     <option value="square">方塊 (Square)</option>
                                     <option value="dots">圓點 (Dots)</option>
                                     <option value="rounded">圓角 (Rounded)</option>
@@ -139,8 +325,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label style="font-size:12px; color:#666;">角落形狀</label>
-                                <select id="qr-corner-type" onchange="updateQR()">
+                                <label class="label-secondary">角落形狀</label>
+                                <select id="qr-corner-type" data-action="updateQR">
                                     <option value="square">直角 (Square)</option>
                                     <option value="dot">圓點 (Dot)</option>
                                     <option value="extra-rounded">圓滑 (Extra Rounded)</option>
@@ -150,17 +336,16 @@
                     </div>
                     <div class="setting-group">
                         <div class="setting-title">品牌 Logo</div>
-                        <input type="file" id="qr-logo" accept="image/*" style="display:none"
-                            onchange="handleLogoUpload(this)">
-                        <div class="file-upload" onclick="document.getElementById('qr-logo').click()">
+                        <input type="file" id="qr-logo" accept="image/*" style="display:none" data-action="handleLogoUpload">
+                        <div class="file-upload" data-action="triggerFileInput" data-target="qr-logo">
                             <span id="logo-status">📤 點擊上傳 Logo (置中顯示)</span>
                         </div>
                     </div>
                 </div>
                 <div class="preview-wrapper">
                     <div id="qrcode-canvas"></div>
-                    <p style="color:#9CA3AF; font-size:13px; margin-top:15px;">即時預覽中...</p>
-                    <button class="action-btn" onclick="downloadQR()">下載 QR Code</button>
+                    <p class="preview-hint">即時預覽中...</p>
+                    <button class="action-btn" data-action="downloadQR">下載 QR Code</button>
                 </div>
             </div>
         </div>
@@ -173,29 +358,29 @@
 
                 <div class="utm-left-panel">
                     <div class="form-group full-width">
-                        <label>1. 目標網址 (Website URL) <span style="color:#ef4444">*</span></label>
-                        <input type="url" id="utm-url" placeholder="https://www.example.com" oninput="generateUTM()">
+                        <label>1. 目標網址 (Website URL) <span class="label-required">*</span></label>
+                        <input type="url" id="utm-url" placeholder="https://www.example.com" data-action="generateUTM">
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>2. 來源 (Source) <span style="color:#ef4444">*</span></label>
-                            <input type="text" id="utm-source" placeholder="google, facebook" oninput="generateUTM()">
+                            <label>2. 來源 (Source) <span class="label-required">*</span></label>
+                            <input type="text" id="utm-source" placeholder="google, facebook" data-action="generateUTM">
                         </div>
                         <div class="form-group">
-                            <label>3. 媒介 (Medium) <span style="color:#ef4444">*</span></label>
-                            <input type="text" id="utm-medium" placeholder="cpc, banner" oninput="generateUTM()">
+                            <label>3. 媒介 (Medium) <span class="label-required">*</span></label>
+                            <input type="text" id="utm-medium" placeholder="cpc, banner" data-action="generateUTM">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label>4. 活動名稱 (Campaign)</label>
-                            <input type="text" id="utm-campaign" placeholder="summer_sale" oninput="generateUTM()">
+                            <input type="text" id="utm-campaign" placeholder="summer_sale" data-action="generateUTM">
                         </div>
                         <div class="form-group">
                             <label>5. 內容 (Content)</label>
-                            <input type="text" id="utm-content" placeholder="button_a" oninput="generateUTM()">
+                            <input type="text" id="utm-content" placeholder="button_a" data-action="generateUTM">
                         </div>
                     </div>
                 </div>
@@ -209,7 +394,7 @@
                         <div class="code-display">
                             <code id="final-url">請輸入左側資料...</code>
                         </div>
-                        <button class="action-btn" onclick="copyUTM()">複製連結</button>
+                        <button class="action-btn" data-action="copyUTM">複製連結</button>
                     </div>
                 </div>
 
@@ -227,7 +412,7 @@
                         <input type="url" id="long-url" placeholder="https://www.example.com/very-long-link"
                             style="width: 100%;">
                     </div>
-                    <button class="action-btn secondary-btn" id="shorten-btn" onclick="generateShortUrl()">
+                    <button class="action-btn secondary-btn" id="shorten-btn" data-action="generateShortUrl">
                         <span id="btn-text">產生短網址</span>
                         <div id="btn-loader" class="loading-spinner" style="display:none;"></div>
                     </button>
@@ -245,7 +430,7 @@
                             <a id="short-link" href="#" target="_blank">https://is.gd/xyz</a>
                         </div>
 
-                        <button class="action-btn primary-btn" onclick="copyShortUrl()">
+                        <button class="action-btn primary-btn" data-action="copyShortUrl">
                             複製短網址
                         </button>
                     </div>
@@ -263,20 +448,20 @@
                     <div class="setting-group">
                         <div class="setting-title">1. 上傳圖片</div>
                         <div class="file-upload-card" id="drop-zone"
-                            onclick="document.getElementById('img-input').click()">
+                            data-action="triggerFileInput" data-target="img-input">
                             <div class="upload-icon">🖼️</div>
                             <div class="upload-text">點擊或拖放圖片至此</div>
                             <div class="upload-hint">支援 JPG, PNG, WEBP</div>
                         </div>
                         <input type="file" id="img-input" accept="image/*" style="display:none"
-                            onchange="processImage(this.files[0])">
+                            data-action="processImage">
                     </div>
 
                     <div class="setting-group">
                         <div class="setting-title">2. 尺寸調整</div>
                         <div class="form-group">
                             <label>平台預設規格</label>
-                            <select id="preset-select" onchange="applyPreset()">
+                            <select id="preset-select" data-action="applyPreset">
                                 <option value="custom">自訂尺寸 (保持原樣)</option>
                                 <option value="1200x630">Facebook 貼文 (1200x630)</option>
                                 <option value="1080x1080">Instagram 貼文 (1080x1080)</option>
@@ -286,11 +471,11 @@
                         <div class="form-row mt-2">
                             <div class="form-group">
                                 <label>寬度 (px)</label>
-                                <input type="number" id="custom-width" placeholder="原寬" oninput="runCompression()">
+                                <input type="number" id="custom-width" placeholder="原寶" data-action="runCompression">
                             </div>
                             <div class="form-group">
                                 <label>高度 (px)</label>
-                                <input type="number" id="custom-height" placeholder="原高" oninput="runCompression()">
+                                <input type="number" id="custom-height" placeholder="原高" data-action="runCompression">
                             </div>
                         </div>
                     </div>
@@ -300,11 +485,11 @@
                         <div class="form-group">
                             <label>壓縮品質: <span id="quality-val" style="color:var(--primary-color)">0.8</span></label>
                             <input type="range" id="quality" min="0.1" max="1.0" step="0.1" value="0.8"
-                                oninput="updateQualityVal()">
+                                data-action="updateQualityVal">
                         </div>
                         <div class="form-group">
                             <label>輸出格式</label>
-                            <select id="output-format" onchange="runCompression()">
+                            <select id="output-format" data-action="runCompression">
                                 <option value="original">保持原格式</option>
                                 <option value="image/jpeg">JPEG (檔案最小)</option>
                                 <option value="image/png">PNG (支援透明)</option>
@@ -339,7 +524,7 @@
                                 </div>
                             </div>
 
-                            <button class="action-btn" onclick="downloadImage()">下載優化圖片</button>
+                            <button class="action-btn" data-action="downloadImage">下載優化圖片</button>
                         </div>
                     </div>
                     <p class="usage-hint" style="text-align:center; margin-top:20px;">ℹ️ 圖片處理完全在本地完成</p>
@@ -356,7 +541,7 @@
                     <div class="setting-group">
                         <div class="setting-title">1. 上傳名片影像</div>
                         <div class="file-upload-card" id="ocr-drop-zone"
-                            onclick="document.getElementById('ocr-input').click()">
+                            data-action="triggerFileInput" data-target="ocr-input">
                             <div id="ocr-default-view">
                                 <div class="upload-icon">📸</div>
                                 <div class="upload-text">掃描名片</div>
@@ -365,7 +550,7 @@
                             <img id="ocr-preview-img" class="ocr-preview-display" style="display:none;">
                         </div>
                         <input type="file" id="ocr-input" accept="image/*" style="display:none"
-                            onchange="processOcr(this.files[0])">
+                            data-action="processOcr">
                     </div>
 
                     <div id="ocr-loading" class="status-indicator" style="display:none;">
@@ -383,7 +568,7 @@
                         <div class="result-header">
                             <span>整理後的聯絡資訊</span>
                             <div class="header-actions">
-                                <button class="icon-btn" onclick="resetOcr()">🔄 重置</button>
+                                <button class="icon-btn" data-action="resetOcr">🔄 重置</button>
                             </div>
                         </div>
 
@@ -411,10 +596,10 @@
                         </div>
 
                         <div class="export-actions">
-                            <button class="action-btn primary-btn" onclick="copyNotionFormat()">匯出至 Notion</button>
+                            <button class="action-btn primary-btn" data-action="copyNotionFormat">專出至 Notion</button>
                             <div class="secondary-actions">
-                                <button class="action-btn secondary-btn" onclick="exportToCsv()">CSV</button>
-                                <button class="action-btn secondary-btn" onclick="exportToJson()">JSON</button>
+                                <button class="action-btn secondary-btn" data-action="exportToCsv">CSV</button>
+                                <button class="action-btn secondary-btn" data-action="exportToJson">JSON</button>
                             </div>
                         </div>
                     </div>
@@ -423,10 +608,9 @@
         </div>
 
         <div id="tab-ads" class="tool-section">
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
-                <h2 style="color:var(--primary); margin:0;">各大平台廣告規格速查</h2>
-                <select id="platformFilter" onchange="renderCards(this.value)" style="width:auto; max-width:200px;">
+            <div class="header-with-filter">
+                <h2 class="title-main">各大平台廣告規格速查</h2>
+                <select id="platformFilter" data-action="renderCards" class="filter-select">
                     <option value="all">全部平台</option>
                     <option value="Facebook">Facebook</option>
                     <option value="Instagram">Instagram</option>
@@ -440,10 +624,9 @@
             <div id="gridContainer" class="ads-grid-container">
             </div>
 
-            <div
-                style="margin-top:20px; padding:15px; background:#F0FDF4; border:1px solid #DCFCE7; border-radius:8px; font-size:13px; color:#444; display:flex; gap:10px;">
-                <span>ⓘ</span>
-                <div>提示：點擊右側複製按鈕可快速複製尺寸（如 1080x1080），方便在 PS 或 Canva 中使用。</div>
+            <div class="hint-box mt-md">
+                <span class="hint-box-icon">ⓘ</span>
+                <div class="hint-box-content">提示：點擊右側複製按鈕可快速複製尺寸（如 1080x1080），方便在 PS 或 Canva 中使用。</div>
             </div>
 
         </div>
@@ -458,16 +641,16 @@
             </div>
 
             <div class="sub-nav-container">
-                <button class="sub-nav-btn active" onclick="switchSubTab('symbols')">T 標點符號</button>
-                <button class="sub-nav-btn" onclick="switchSubTab('emojis')">☺ Emoji</button>
-                <button class="sub-nav-btn" onclick="switchSubTab('kaomoji')">ʕ•ᴥ•ʔ 顏文字</button>
+                <button class="sub-nav-btn active" data-action="switchSubTab" data-value="symbols">T 標點符號</button>
+                <button class="sub-nav-btn" data-action="switchSubTab" data-value="emojis">☺ Emoji</button>
+                <button class="sub-nav-btn" data-action="switchSubTab" data-value="kaomoji">˕•ᴥ•˕ 顏文字</button>
             </div>
 
             <div id="view-symbols" class="sub-view active"></div>
             <div id="view-emojis" class="sub-view"></div>
             <div id="view-kaomoji" class="sub-view"></div>
 
-            <div class="footer-note" style="margin-top:30px;">
+            <div class="footer-note mt-md">
                 <span>⚡</span>
                 <div>小技巧：點擊符號、Emoji 或顏文字即可自動複製，然後在任何地方使用 Ctrl+V (或 Cmd+V) 貼上。</div>
             </div>
@@ -490,6 +673,18 @@
     <script src="js/ocr.js"></script>
     <script src="js/ads.js"></script>
     <script src="js/emoji.js"></script>
+    
+    <!-- 應用初始化 -->
+    <script>
+        // DOMContentLoaded 時初始化應用
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                MarketingTools.init();
+            });
+        } else {
+            MarketingTools.init();
+        }
+    </script>
 
 </body>
 
