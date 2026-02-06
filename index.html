@@ -678,18 +678,7 @@
 
     <!-- 【修复】只加载 main.js，所有工具脚本由 main.js 的 ModuleLoader 系统动态加载 -->
     <script src="js/main.js" defer></script>
-    
-    <!-- 應用初始化 -->
-    <script defer>
-        // DOMContentLoaded 時初始化應用
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                MarketingTools.init();
-            });
-        } else {
-            MarketingTools.init();
-        }
-    </script>
+
 
 </body>
 
