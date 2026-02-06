@@ -21,7 +21,7 @@
 
     <!-- 關鍵 CSS（內聯首屏必需樣式，提升首繪速度）-->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
         
         :root {
             --brand-blue: #0071e3;
@@ -78,7 +78,7 @@
             text-align: center;
             margin-top: 50px;
             margin-bottom: 30px;
-            font-family: 'Noto Serif TC', serif;
+            font-family: 'Noto Sans TC', sans-serif;
             font-size: 36px;
             font-weight: 900;
             color: white;
@@ -198,9 +198,20 @@
         }
     </style>
     
-    <!-- 完整樣式表（異步加載） -->
-    <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="style.css"></noscript>
+    <!-- 完整樣式表（同步加載） -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 防止未加載前的 Flash - 樣式加載後立即顯示 */
+        html { visibility: hidden; opacity: 0; }
+        html.stylesheet-loaded { visibility: visible; opacity: 1; }
+    </style>
+    <script>
+        // 在 CSS 加載後立即顯示（防止 FOUC - Flash of Unstyled Content）
+        document.documentElement.classList.add('stylesheet-loaded');
+    </script>
+
+
+
 </head>
 
 <body>
@@ -665,17 +676,17 @@
         </a>
     </footer>
 
-    <script src="js/main.js"></script>
-    <script src="js/qrcode.js"></script>
-    <script src="js/utm.js"></script>
-    <script src="js/urlShortener.js"></script>
-    <script src="js/imageTool.js"></script>
-    <script src="js/ocr.js"></script>
-    <script src="js/ads.js"></script>
-    <script src="js/emoji.js"></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/qrcode.js" defer></script>
+    <script src="js/utm.js" defer></script>
+    <script src="js/urlShortener.js" defer></script>
+    <script src="js/imageTool.js" defer></script>
+    <script src="js/ocr.js" defer></script>
+    <script src="js/ads.js" defer></script>
+    <script src="js/emoji.js" defer></script>
     
     <!-- 應用初始化 -->
-    <script>
+    <script defer>
         // DOMContentLoaded 時初始化應用
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {

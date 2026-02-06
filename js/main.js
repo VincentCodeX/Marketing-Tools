@@ -12,7 +12,8 @@ const MarketingTools = {
         this.setupToast();
         this.addLoadingEffects();
         this.setupAccessibility();
-        await CacheManager.init(); // 初始化 IndexedDB 快取
+        // 將 CacheManager 初始化放在後台，不阻塞主流程
+        CacheManager.init().catch(err => console.warn('快取初始化失敗:', err));
         console.log('✅ Marketing Tools 已載入');
     },
 
@@ -214,11 +215,11 @@ const MarketingTools = {
 
     // === 載入效果 ===
     addLoadingEffects() {
-        // 為卡片添加進場動畫
+        // 為卡片添加進場動畫（使用 CSS 類避免重排）
         const cards = document.querySelectorAll('.platform-card, .symbol-group-card');
         cards.forEach((card, index) => {
-            card.style.opacity = '0';
-            card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.05}s`;
+            card.style.setProperty('animation-delay', `${index * 0.05}s`);
+            card.classList.add('fade-in-up');
         });
     },
 

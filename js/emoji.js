@@ -47,13 +47,14 @@ function renderSymbolSectionInBatches(containerId, data, gridClass, btnClass = '
         
         groupIndex = endIndex;
         
-        // 使用 requestAnimationFrame 保持高幀率
+        // 使用 requestAnimationFrame 保持高幀率，避免卡頓
         if (groupIndex < data.length) {
             requestAnimationFrame(renderNextBatch);
         }
     }
     
-    renderNextBatch();
+    // 延遲開始渲染，避免搶占主線程的關鍵操作
+    setTimeout(renderNextBatch, 50);
 }
 
 function switchSubTab(tabName) {

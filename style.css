@@ -289,6 +289,11 @@ body {
     }
 }
 
+/* 進場動畫類 */
+.fade-in-up {
+    animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
 /* --- 修改：加入隱藏與顯示邏輯 --- */
 .tool-section {
     display: none;
