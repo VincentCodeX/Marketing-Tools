@@ -180,14 +180,16 @@ window.runCompression = async function() {
         });
         
         // 根據設備調整最大文件大小
+        // 修正：手機照片像素高，0.5MB 太激進，改為 1-2MB 避免運算過久
         let maxSizeMB = 5;
         if (isMobileDevice()) {
-            maxSizeMB = 0.5; // 移動設備上降低到 500KB
+            maxSizeMB = 2; // 改為 2MB，減輕運算壓力
         }
         
         const options = { 
             maxSizeMB: maxSizeMB, 
-            useWebWorker: !isMobileDevice(), // 在移動設備上禁用 Web Worker
+            // 重要：始終開啟 useWebWorker，手機必須用 WebWorker 避免 UI 卡死
+            useWebWorker: true,
             initialQuality: quality
         };
         
