@@ -48,24 +48,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ocrInput) {
         ocrInput.addEventListener('change', (e) => {
             const file = e.target.files?.[0];
+            console.log('ocr-input change event fired:', file ? file.name : 'no file');
             if (file) {
-                console.log('OCR file selected:', file.name, file.type, file.size);
+                console.log('OCR File details:', {
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    lastModified: file.lastModified
+                });
                 window.processOcr?.(file);
             }
+            // 清空 input，允許重複選擇同一文件
+            e.target.value = '';
         }, { once: false });
     }
 });
 
 window.processOcr = async function(file) {
-    if (!file) return;
+    if (!file) {
+        console.warn('processOcr called with no file');
+        return;
+    }
     
-    if (!file.type.match('image.*')) {
-        window.showToast('請上傳圖片檔案', 'error');
+    console.log('Processing OCR file:', file.name);
+    
+    // iOS 上 file.type 可能為空，需要通過文件名判斷
+    const isImage = file.type.match('image.*') || /\.(jpg|jpeg|png|webp|gif|bmp)$/i.test(file.name);
+    if (!isImage) {
+        console.error('Invalid file type for OCR:', file.type, 'Filename:', file.name);
+        window.showToast('請上傳圖片檔案 (JPG, PNG, WEBP 等)', 'error');
         return;
     }
     
     try {
         const imgUrl = URL.createObjectURL(file);
+        console.log('OCR Blob URL created');
+        
         document.getElementById('ocr-preview-img').src = imgUrl;
         document.getElementById('ocr-preview-img').style.display = 'block';
         document.getElementById('ocr-default-view').style.display = 'none';
@@ -81,9 +99,11 @@ window.processOcr = async function(file) {
                 document.getElementById('ocr-status-text').innerText = "初始化中... (移動設備可能較慢，請耐心等待)";
             }
             
+            console.log('Creating Tesseract worker...');
             // 初始化 Worker (chi_tra + eng)
             worker = await Tesseract.createWorker('chi_tra+eng', 1, {
                 logger: m => {
+                    console.log('Tesseract progress:', m.status, Math.round(m.progress * 100) + '%');
                     if(m.status === 'recognizing text') {
                         document.getElementById('ocr-status-text').innerText = `辨識中... ${Math.round(m.progress * 100)}%`;
                     } else {
@@ -91,11 +111,13 @@ window.processOcr = async function(file) {
                     }
                 }
             });
-
+            
+            console.log('Starting OCR recognition...');
             const { data: { text } } = await worker.recognize(file);
-            console.log("OCR 辨識結果:", text);
+            console.log("OCR 辨識結果:", text.substring(0, 100));
             
             const parsedData = parseOcrResult(text);
+            console.log('Parsed OCR data:', parsedData);
             
             document.getElementById('ocr-name').value = parsedData.name;
             document.getElementById('ocr-title').value = parsedData.title;
@@ -108,14 +130,17 @@ window.processOcr = async function(file) {
             window.showToast('名片辨識完成', 'success');
     
         } catch (error) {
-            console.error('辨識錯誤:', error);
+            console.error('OCR 辨識錯誤:', error);
             window.showToast(`辨識發生錯誤: ${error.message || '請稍後再試或檢查圖片。'}`, 'error');
         } finally {
-            if (worker) await worker.terminate();
+            if (worker) {
+                console.log('Terminating Tesseract worker...');
+                await worker.terminate();
+            }
             document.getElementById('ocr-loading').style.display = 'none';
         }
     } catch (error) {
-        console.error('未知錯誤:', error);
+        console.error('OCR 未知錯誤:', error);
         window.showToast('發生未知錯誤，請重試', 'error');
         document.getElementById('ocr-loading').style.display = 'none';
     }

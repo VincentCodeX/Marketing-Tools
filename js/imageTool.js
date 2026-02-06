@@ -59,22 +59,41 @@ document.addEventListener('DOMContentLoaded', () => {
     if (imgInput) {
         imgInput.addEventListener('change', (e) => {
             const file = e.target.files?.[0];
+            console.log('img-input change event fired:', file ? file.name : 'no file');
             if (file) {
-                console.log('Image file selected:', file.name, file.type, file.size);
+                console.log('File details:', {
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    lastModified: file.lastModified
+                });
                 window.processImage?.(file);
             }
+            // 清空 input，允許重複選擇同一文件
+            e.target.value = '';
         }, { once: false });
     }
 });
 
 window.processImage = async function(file) {
-    if (!file) return;
-    if (!file.type.match('image.*')) { 
-        window.showToast('請上傳圖片檔案', 'error');
+    if (!file) {
+        console.warn('processImage called with no file');
+        return;
+    }
+    
+    console.log('Processing image:', file.name);
+    
+    // iOS 上 file.type 可能為空，需要通過文件名判斷
+    const isImage = file.type.match('image.*') || /\.(jpg|jpeg|png|webp|gif|bmp)$/i.test(file.name);
+    if (!isImage) {
+        console.error('Invalid file type:', file.type, 'Filename:', file.name);
+        window.showToast('請上傳圖片檔案 (JPG, PNG, WEBP 等)', 'error');
         return; 
     }
     
     currentFile = file;
+    console.log('Current file set:', file.name);
+    
     document.getElementById('preview-empty').style.display = 'none';
     document.getElementById('preview-active').style.display = 'block';
     document.getElementById('info-original').innerText = formatSize(file.size);
@@ -83,12 +102,14 @@ window.processImage = async function(file) {
     // 獲取圖片尺寸，用於設定寬高輸入框的初始值
     const img = new Image();
     let loadTimeout = setTimeout(() => {
-        console.warn('圖片加載超時，嘗試直接壓縮');
+        console.warn('圖片加載超時（3秒），嘗試直接壓縮');
         window.runCompression();
     }, 3000);
     
     img.onload = () => {
         clearTimeout(loadTimeout);
+        console.log('Image loaded:', img.width, 'x', img.height);
+        
         const widthInput = document.getElementById('custom-width');
         const heightInput = document.getElementById('custom-height');
         
@@ -96,6 +117,7 @@ window.processImage = async function(file) {
         let defaultWidth = img.width;
         if (isMobileDevice() && defaultWidth > 1920) {
             defaultWidth = Math.floor(defaultWidth / 2);
+            console.log('Mobile device detected, resizing width to:', defaultWidth);
         }
         
         if(!widthInput.value) {
@@ -104,21 +126,28 @@ window.processImage = async function(file) {
         if(!heightInput.value) {
             heightInput.value = img.height;
         }
+        
         window.showToast(`圖片已上傳 (${formatSize(file.size)})`, 'success');
+        console.log('Toast shown, starting compression');
+        
         // 圖片加載完成後才開始壓縮
         window.runCompression();
     };
-    img.onerror = () => {
+    
+    img.onerror = (err) => {
         clearTimeout(loadTimeout);
+        console.error('Image load error:', err);
         window.showToast('圖片讀取失敗，請嘗試其他圖片', 'error');
     };
     
     // 使用 Blob URL 創建對象 URL
     try {
-        img.src = URL.createObjectURL(file);
+        const blobUrl = URL.createObjectURL(file);
+        console.log('Blob URL created successfully');
+        img.src = blobUrl;
     } catch (err) {
         console.error('創建 Blob URL 失敗:', err);
-        window.showToast('圖片加載失敗', 'error');
+        window.showToast('圖片加載失敗，請重試', 'error');
     }
 }
 
@@ -137,6 +166,8 @@ window.updateQualityVal = function() {
 }
 
 window.runCompression = async function() {
+    console.log('runCompression called, currentFile:', currentFile ? currentFile.name : 'none');
+    
     if (!currentFile) {
         window.showToast('請先上傳圖片', 'error');
         return;
@@ -147,13 +178,27 @@ window.runCompression = async function() {
         return;
     }
     
-    document.getElementById('loading-overlay').style.display = 'flex';
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (!loadingOverlay) {
+        console.error('loading-overlay element not found');
+        return;
+    }
+    
+    loadingOverlay.style.display = 'flex';
     
     try {
         const quality = parseFloat(document.getElementById('quality').value) / 100;
         const targetW = document.getElementById('custom-width').value;
         const targetH = document.getElementById('custom-height').value;
         const format = document.getElementById('output-format').value;
+        
+        console.log('Compression settings:', {
+            quality: quality,
+            targetW: targetW,
+            targetH: targetH,
+            format: format,
+            isMobile: isMobileDevice()
+        });
         
         // 根據設備調整最大文件大小
         let maxSizeMB = 5;
@@ -181,8 +226,11 @@ window.runCompression = async function() {
             else if (format === 'image/webp') options.fileType = 'webp';
             else if (format === 'image/png') options.fileType = 'png';
         }
+        
+        console.log('Starting compression with options:', options);
 
         compressedBlob = await imageCompression(currentFile, options);
+        console.log('Compression complete:', formatSize(compressedBlob.size));
         
         // 更新預覽圖
         const previewUrl = URL.createObjectURL(compressedBlob);
@@ -202,7 +250,7 @@ window.runCompression = async function() {
         window.showToast(`壓縮發生錯誤: ${error.message}`, 'error');
     } 
     finally { 
-        document.getElementById('loading-overlay').style.display = 'none'; 
+        loadingOverlay.style.display = 'none'; 
     }
 }
 
