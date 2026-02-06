@@ -35,16 +35,16 @@ function handleDrop(e) {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) window.processImage(e.dataTransfer.files[0]);
 }
 
-// 添加拖拽事件監聽器（僅在非移動設備上）
+// 添加拖拽事件監聽器（僅在非移動設備上）及文件輸入監聽
 document.addEventListener('DOMContentLoaded', () => {
     const dropZone = document.getElementById('drop-zone');
+    const imgInput = document.getElementById('img-input');
+    
     if (dropZone) {
         // 根據設備類型更新上傳提示
         const uploadText = dropZone.querySelector('.upload-text');
-        if (uploadText) {
-            if (isMobileDevice()) {
-                uploadText.textContent = '點擊選擇圖片';
-            }
+        if (uploadText && isMobileDevice()) {
+            uploadText.textContent = '點擊選擇圖片';
         }
         
         // 只在非移動設備上添加拖拽事件
@@ -53,11 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
             dropZone.addEventListener('dragleave', handleDragLeave);
             dropZone.addEventListener('drop', handleDrop);
         }
-        
-        // 所有設備都支持點擊上傳
-        dropZone.addEventListener('click', () => {
-            document.getElementById('img-input').click();
-        });
+    }
+    
+    // 直接綁定文件輸入的 change 事件（確保在所有設備上都能正確觸發，特別是 iOS）
+    if (imgInput) {
+        imgInput.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+                console.log('Image file selected:', file.name, file.type, file.size);
+                window.processImage?.(file);
+            }
+        }, { once: false });
     }
 });
 

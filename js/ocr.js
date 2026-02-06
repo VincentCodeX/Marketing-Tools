@@ -24,9 +24,11 @@ function handleOcrDrop(e) {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) window.processOcr(e.dataTransfer.files[0]);
 }
 
-// 添加 OCR 拖拽事件監聽器（僅在非移動設備上）
+// 添加 OCR 拖拽事件監聽器（僅在非移動設備上）及文件輸入監聽
 document.addEventListener('DOMContentLoaded', () => {
     const ocrDropZone = document.getElementById('ocr-drop-zone');
+    const ocrInput = document.getElementById('ocr-input');
+    
     if (ocrDropZone) {
         // 根據設備類型更新上傳提示
         const uploadText = ocrDropZone.querySelector('.upload-text');
@@ -40,11 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
             ocrDropZone.addEventListener('dragleave', handleOcrDragLeave);
             ocrDropZone.addEventListener('drop', handleOcrDrop);
         }
-        
-        // 所有設備都支持點擊上傳
-        ocrDropZone.addEventListener('click', () => {
-            document.getElementById('ocr-input').click();
-        });
+    }
+    
+    // 直接綁定文件輸入的 change 事件（確保在所有設備上都能正確觸發，特別是 iOS）
+    if (ocrInput) {
+        ocrInput.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+                console.log('OCR file selected:', file.name, file.type, file.size);
+                window.processOcr?.(file);
+            }
+        }, { once: false });
     }
 });
 
