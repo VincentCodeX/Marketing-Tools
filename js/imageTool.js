@@ -36,7 +36,8 @@ function handleDrop(e) {
 }
 
 // 添加拖拽事件監聽器（僅在非移動設備上）
-document.addEventListener('DOMContentLoaded', () => {
+// 初始化图片工具（支持动态加载）
+function initImageTool() {
     const dropZone = document.getElementById('drop-zone');
     
     if (dropZone) {
@@ -52,8 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
             dropZone.addEventListener('dragleave', handleDragLeave);
             dropZone.addEventListener('drop', handleDrop);
         }
+        console.log('✅ 圖片工具已初始化');
     }
-});
+}
+
+// 页面加载时初始化
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initImageTool);
+} else {
+    // DOM 已加载，立即初始化
+    initImageTool();
+}
 
 // --- 修正後的 processImage ---
 // 重點1：極速壓縮 - 立即執行壓縮，不等待圖片預覽加載

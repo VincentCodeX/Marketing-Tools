@@ -1,15 +1,28 @@
 // --- QR Code 邏輯 ---
 let qrCodeObj;
-document.addEventListener('DOMContentLoaded', function() {
-    if(document.getElementById("qrcode-canvas")) {
-        qrCodeObj = new QRCodeStyling({
-            width: 300, height: 300, type: "svg", data: "https://github.com", image: "",
-            dotsOptions: { color: "#2C3E50", type: "square" }, backgroundOptions: { color: "#ffffff" },
-            imageOptions: { crossOrigin: "anonymous", margin: 10 }
-        });
-        qrCodeObj.append(document.getElementById("qrcode-canvas"));
+
+// 初始化 QR Code（支持動態載入和同步載入）
+function initQRCode() {
+    if(document.getElementById("qrcode-canvas") && typeof QRCodeStyling !== 'undefined') {
+        if (!qrCodeObj) {
+            qrCodeObj = new QRCodeStyling({
+                width: 300, height: 300, type: "svg", data: "https://github.com", image: "",
+                dotsOptions: { color: "#2C3E50", type: "square" }, backgroundOptions: { color: "#ffffff" },
+                imageOptions: { crossOrigin: "anonymous", margin: 10 }
+            });
+            qrCodeObj.append(document.getElementById("qrcode-canvas"));
+            console.log('✅ QR Code 已初始化');
+        }
     }
-});
+}
+
+// 頁面加載時初始化
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initQRCode);
+} else {
+    // DOM 已加載，立即初始化
+    initQRCode();
+}
 
 function updateQR() {
     const text = document.getElementById('qr-text').value || "https://github.com";

@@ -93,8 +93,18 @@ document.addEventListener('click', (e) => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+// 初始化 Emoji 工具（支持动态加载）
+function initEmojiTool() {
     // 只預先渲染第一個分頁（標點符號），使用分批渲染
     renderSymbolSectionInBatches('view-symbols', symbolsData, 'grid-cols-8', 'symbol-btn', 5);
     renderCache.symbols = true;
-});
+    console.log('✅ Emoji 工具已初始化');
+}
+
+// 页面加载时初始化
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEmojiTool);
+} else {
+    // DOM 已加载，立即初始化
+    initEmojiTool();
+}

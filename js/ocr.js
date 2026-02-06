@@ -25,7 +25,8 @@ function handleOcrDrop(e) {
 }
 
 // 添加 OCR 拖拽事件監聽器（僅在非移動設備上）
-document.addEventListener('DOMContentLoaded', () => {
+// 初始化 OCR 工具（支持动态加载）
+function initOcrTool() {
     const ocrDropZone = document.getElementById('ocr-drop-zone');
     
     if (ocrDropZone) {
@@ -41,8 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
             ocrDropZone.addEventListener('dragleave', handleOcrDragLeave);
             ocrDropZone.addEventListener('drop', handleOcrDrop);
         }
+        console.log('✅ OCR 工具已初始化');
     }
-});
+}
+
+// 页面加载时初始化
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initOcrTool);
+} else {
+    // DOM 已加载，立即初始化
+    initOcrTool();
+}
 
 window.processOcr = async function(file) {
     if (!file) {

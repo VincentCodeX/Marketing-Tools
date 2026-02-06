@@ -37,4 +37,16 @@ function copyAdSize(text) {
     });
 }
 // 初始化
-document.addEventListener('DOMContentLoaded', () => { renderCards('all'); });
+// 初始化广告规格工具（支持动态加载）
+function initAdsTool() {
+    renderCards('all');
+    console.log('✅ 廣告規格工具已初始化');
+}
+
+// 页面加载时初始化
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAdsTool);
+} else {
+    // DOM 已加载，立即初始化
+    initAdsTool();
+}
