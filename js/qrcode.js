@@ -3,7 +3,9 @@ let qrCodeObj;
 
 // 初始化 QR Code（支持動態載入和同步載入）
 function initQRCode() {
-    if(document.getElementById("qrcode-canvas") && typeof QRCodeStyling !== 'undefined') {
+    if (!document.getElementById("qrcode-canvas")) return;
+
+    if (typeof QRCodeStyling !== 'undefined') {
         if (!qrCodeObj) {
             qrCodeObj = new QRCodeStyling({
                 width: 300, height: 300, type: "svg", data: "https://github.com", image: "",
@@ -13,6 +15,10 @@ function initQRCode() {
             qrCodeObj.append(document.getElementById("qrcode-canvas"));
             console.log('✅ QR Code 已初始化');
         }
+    } else {
+        // 若函式庫尚未載入，延遲重試
+        console.log('⏳ QR Code Library 尚未載入，等待中...');
+        setTimeout(initQRCode, 500);
     }
 }
 

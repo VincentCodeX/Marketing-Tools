@@ -8,6 +8,7 @@ const MarketingTools = {
     // 初始化
     async init() {
         this.setupNavigation();
+        this.loadActiveTabModule(); // 預先加載當前分頁的模組
         this.setupEventDelegation();
         this.setupToast();
         this.addLoadingEffects();
@@ -99,11 +100,11 @@ const MarketingTools = {
     // === 導航系統 ===
     setupNavigation() {
         const navBtns = document.querySelectorAll('.nav-btn');
-        
+
         navBtns.forEach((btn, index) => {
             // 添加進場動畫延遲
             btn.style.animationDelay = `${index * 0.05}s`;
-            
+
             btn.addEventListener('click', (e) => {
                 const targetId = btn.getAttribute('data-target');
                 this.switchTab(targetId, e.currentTarget);
@@ -111,41 +112,51 @@ const MarketingTools = {
         });
     },
 
+    // 預先加載當前分頁的模組
+    loadActiveTabModule() {
+        const activeBtn = document.querySelector('.nav-btn.active');
+        if (activeBtn) {
+            const targetId = activeBtn.getAttribute('data-target');
+            ModuleLoader.loadModuleForTab(targetId);
+        }
+    },
+
     // 切換分頁（帶動畫）
     switchTab(tabId, currentBtn) {
         // 按需加载对应模块
         ModuleLoader.loadModuleForTab(tabId);
-        
+
         // 移除所有按鈕的 active
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.classList.remove('active');
         });
-        
+
         // 隱藏所有內容區塊（帶淡出效果）
         document.querySelectorAll('.tool-section').forEach(section => {
             if (section.classList.contains('active')) {
-                section.style.animation = 'fadeOut 0.2s ease';
+                section.style.animation = 'fadeOut 0.15s ease'; // 加快淡出
                 setTimeout(() => {
                     section.classList.remove('active');
                     section.style.animation = '';
-                }, 200);
+                }, 150); // 縮短等待時間
             }
         });
-        
+
         // 激活當前按鈕
         if (currentBtn) {
             currentBtn.classList.add('active');
             this.createRipple(currentBtn);
         }
-        
+
         // 顯示對應內容（帶淡入效果）
+        // 稍微縮短延遲，讓互動更即時
         setTimeout(() => {
             const target = document.getElementById('tab-' + tabId);
             if (target) {
                 target.classList.add('active');
                 this.scrollToTop();
             }
-        }, 200);
+        }, 150);
     },
 
     // === Toast 通知系統（改進版）===
@@ -176,9 +187,9 @@ const MarketingTools = {
             <span style="font-size: 18px;">${icons[type] || '✓'}</span>
             <span>${message}</span>
         `;
-        
+
         toast.className = `toast-msg ${type}`;
-        
+
         // 觸發顯示動畫
         requestAnimationFrame(() => {
             toast.classList.add('show');
@@ -195,7 +206,7 @@ const MarketingTools = {
         const ripple = document.createElement('span');
         const rect = element.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height);
-        
+
         ripple.style.width = ripple.style.height = size + 'px';
         ripple.style.left = '50%';
         ripple.style.top = '50%';
@@ -205,11 +216,11 @@ const MarketingTools = {
         ripple.style.background = 'rgba(255, 255, 255, 0.6)';
         ripple.style.pointerEvents = 'none';
         ripple.style.animation = 'ripple-effect 0.6s ease-out';
-        
+
         element.style.position = 'relative';
         element.style.overflow = 'hidden';
         element.appendChild(ripple);
-        
+
         setTimeout(() => ripple.remove(), 600);
     },
 
@@ -239,7 +250,7 @@ const MarketingTools = {
             if (e.key === 'Tab') {
                 document.body.classList.add('keyboard-nav');
             }
-            
+
             // Escape 關閉 Toast
             if (e.key === 'Escape') {
                 const toast = document.getElementById('global-toast');
@@ -370,7 +381,7 @@ const registerServiceWorker = () => {
         navigator.serviceWorker.register('/sw.js')
             .then((registration) => {
                 console.log('✅ Service Worker 已註冊:', registration);
-                
+
                 // 檢查更新
                 registration.addEventListener('updatefound', () => {
                     const newWorker = registration.installing;
@@ -386,7 +397,7 @@ const registerServiceWorker = () => {
             .catch((error) => {
                 console.warn('⚠️ Service Worker 註冊失敗:', error);
             });
-        
+
         // 監聽 Controller 變化
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             console.log('🔄 Service Worker 已更新');
@@ -400,19 +411,19 @@ const CacheManager = {
     dbName: 'MarketingTools',
     storeName: 'api-cache',
     db: null,
-    
+
     // 初始化 IndexedDB
     async init() {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open(this.dbName, 1);
-            
+
             request.onerror = () => reject(request.error);
             request.onsuccess = () => {
                 this.db = request.result;
                 console.log('✅ IndexedDB 已初始化');
                 resolve(true);
             };
-            
+
             request.onupgradeneeded = (event) => {
                 const db = event.target.result;
                 if (!db.objectStoreNames.contains(this.storeName)) {
@@ -423,22 +434,22 @@ const CacheManager = {
             };
         });
     },
-    
+
     // 保存快取
     async set(key, value, ttl = 3600000) { // 默認 1 小時
         if (!this.db) await this.init();
-        
+
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], 'readwrite');
             const store = transaction.objectStore(this.storeName);
-            
+
             const data = {
                 key,
                 value,
                 timestamp: Date.now(),
                 expiry: Date.now() + ttl
             };
-            
+
             const request = store.put(data);
             request.onerror = () => reject(request.error);
             request.onsuccess = () => {
@@ -447,25 +458,25 @@ const CacheManager = {
             };
         });
     },
-    
+
     // 取得快取
     async get(key) {
         if (!this.db) await this.init();
-        
+
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], 'readonly');
             const store = transaction.objectStore(this.storeName);
             const request = store.get(key);
-            
+
             request.onerror = () => reject(request.error);
             request.onsuccess = () => {
                 const data = request.result;
-                
+
                 if (!data) {
                     resolve(null);
                     return;
                 }
-                
+
                 // 檢查過期時間
                 if (data.expiry && Date.now() > data.expiry) {
                     this.delete(key);
@@ -477,16 +488,16 @@ const CacheManager = {
             };
         });
     },
-    
+
     // 刪除快取
     async delete(key) {
         if (!this.db) await this.init();
-        
+
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], 'readwrite');
             const store = transaction.objectStore(this.storeName);
             const request = store.delete(key);
-            
+
             request.onerror = () => reject(request.error);
             request.onsuccess = () => {
                 console.log(`🗑️ 快取已刪除: ${key}`);
@@ -494,16 +505,16 @@ const CacheManager = {
             };
         });
     },
-    
+
     // 清空所有快取
     async clear() {
         if (!this.db) await this.init();
-        
+
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], 'readwrite');
             const store = transaction.objectStore(this.storeName);
             const request = store.clear();
-            
+
             request.onerror = () => reject(request.error);
             request.onsuccess = () => {
                 console.log('🗑️ 所有快取已清空');
@@ -516,7 +527,7 @@ const CacheManager = {
 // === 7. 模組動態加載系統（代碼分割）===
 const ModuleLoader = {
     loadedModules: new Set(),
-    
+
     // 模組對應表（按需加載）
     moduleMap: {
         'qrcode': '/js/qrcode.js',
@@ -527,20 +538,20 @@ const ModuleLoader = {
         'ads': '/js/ads.js',
         'emoji': '/js/emoji.js'
     },
-    
+
     // 異步加載指定模組
     async loadModule(moduleName) {
         if (this.loadedModules.has(moduleName)) {
             console.log(`📦 模組已加載: ${moduleName}`);
             return true;
         }
-        
+
         const scriptUrl = this.moduleMap[moduleName];
         if (!scriptUrl) {
             console.warn(`⚠️ 未知模組: ${moduleName}`);
             return false;
         }
-        
+
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
             script.src = scriptUrl;
@@ -557,7 +568,7 @@ const ModuleLoader = {
             document.head.appendChild(script);
         });
     },
-    
+
     // 根據 Tab 頁籤按需加載
     loadModuleForTab(tabId) {
         const tabModuleMap = {
@@ -569,7 +580,7 @@ const ModuleLoader = {
             'ads': 'ads',
             'emoji': 'emoji'
         };
-        
+
         const moduleName = tabModuleMap[tabId];
         if (moduleName && !this.loadedModules.has(moduleName)) {
             this.loadModule(moduleName).catch(() => {
