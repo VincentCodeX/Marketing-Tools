@@ -8,7 +8,7 @@ window.generateShortUrl = async function() {
     const shortenBtn = document.getElementById('shorten-btn');
 
     if (!longUrl) { 
-        alert("請輸入網址！"); 
+        window.showToast?.('請輸入網址！', 'warning'); 
         return; 
     }
     
@@ -16,7 +16,7 @@ window.generateShortUrl = async function() {
     try {
         new URL(longUrl);
     } catch (e) {
-        alert("請輸入有效的網址（例如：https://example.com）");
+        window.showToast?.('請輸入有效的網址（例如：https://example.com）', 'warning');
         return;
     }
     
@@ -100,7 +100,7 @@ window.generateShortUrl = async function() {
 window.copyShortUrl = function() {
     const urlText = document.getElementById('short-link').innerText;
     if (!urlText || urlText === 'https://is.gd/xyz') {
-        alert('請先產生短網址');
+        window.showToast?.('請先產生短網址', 'warning');
         return;
     }
     
@@ -113,6 +113,6 @@ window.copyShortUrl = function() {
         }, 2000); 
     }).catch(err => {
         console.error('複製失敗:', err);
-        alert('複製失敗，請手動複製');
+        window.showToast('複製失敗，請手動複製', 'error');
     });
 }

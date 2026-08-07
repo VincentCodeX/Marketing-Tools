@@ -50,6 +50,7 @@ const MarketingTools = {
             'copyNotionFormat': () => window.copyNotionFormat?.(),
             'exportToCsv': () => window.exportToCsv?.(),
             'exportToJson': () => window.exportToJson?.(),
+            'copyAdSize': (target) => window.copyAdSize?.(target.dataset.value),
             'renderCards': (target) => window.renderCards?.(target.value),
             'switchSubTab': (target) => window.switchSubTab?.(target.dataset.value),
         };
@@ -530,13 +531,13 @@ const ModuleLoader = {
 
     // 模組對應表（按需加載）
     moduleMap: {
-        'qrcode': '/js/qrcode.js',
-        'utm': '/js/utm.js',
-        'shortener': '/js/urlShortener.js',
-        'image': '/js/imageTool.js',
-        'ocr': '/js/ocr.js',
-        'ads': '/js/ads.js',
-        'emoji': '/js/emoji.js'
+        'qrcode': 'js/qrcode.js',
+        'utm': 'js/utm.js',
+        'shortener': 'js/urlShortener.js',
+        'image': 'js/imageTool.js',
+        'ocr': 'js/ocr.js',
+        'ads': 'js/ads.js',
+        'emoji': 'js/emoji.js'
     },
 
     // 異步加載指定模組

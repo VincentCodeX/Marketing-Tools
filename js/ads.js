@@ -24,7 +24,7 @@ function renderCards(filterValue) {
         if (filterValue !== 'all' && platform.name !== filterValue) return;
         const specsHtml = platform.specs.map(spec => {
             let typeClass = spec.type.includes('影片') ? 'tag-video' : 'tag-img';
-            return `<div class="spec-item"><div class="spec-info"><div class="spec-title">${spec.title}</div><div class="spec-details">${spec.size}<span class="tag tag-ratio">${spec.ratio}</span><span class="tag ${typeClass}">${spec.type}</span></div></div><button class="copy-btn-small" onclick="copyAdSize('${spec.size}')" title="複製"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></div>`;
+            return `<div class="spec-item"><div class="spec-info"><div class="spec-title">${spec.title}</div><div class="spec-details">${spec.size}<span class="tag tag-ratio">${spec.ratio}</span><span class="tag ${typeClass}">${spec.type}</span></div></div><button class="copy-btn-small" data-action="copyAdSize" data-value="${spec.size}" title="複製"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></div>`;
         }).join('');
         const card = document.createElement('div'); card.className = 'platform-card';
         card.innerHTML = `<div class="card-header ${platform.class}"><span>${platform.name}</span><span class="spec-count">${platform.specs.length}</span></div><div class="card-body">${specsHtml}</div>`;

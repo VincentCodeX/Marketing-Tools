@@ -112,17 +112,19 @@ window.runCompression = async function() {
         const targetH = document.getElementById('custom-height').value;
         const format = document.getElementById('output-format').value;
         
-        // 【修正 2】放寬手機版限制，對齊備份版邏輯 (50MB)
-        // 這能避免手機為了壓到 2MB 而過度運算或崩潰
         const options = { 
             maxSizeMB: 50, 
             useWebWorker: true,
             initialQuality: quality
         };
         
-        // 尺寸設定
-        if (targetW) options.maxWidthOrHeight = parseInt(targetW);
-        if (targetW && targetH) options.maxWidthOrHeight = Math.max(parseInt(targetW), parseInt(targetH));
+        const widthValue = parseInt(targetW, 10);
+        const heightValue = parseInt(targetH, 10);
+        if (widthValue && heightValue) {
+            options.maxWidthOrHeight = Math.max(widthValue, heightValue);
+        } else if (widthValue || heightValue) {
+            options.maxWidthOrHeight = widthValue || heightValue;
+        }
         
         // 【修正 1】致命錯誤修正：傳遞正確的 MIME Type
         // 備份版是直接傳 format，正式版原本錯誤地轉成了 'jpg'
@@ -165,7 +167,8 @@ window.downloadImage = function() {
     }
     
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(compressedBlob);
+    const downloadUrl = URL.createObjectURL(compressedBlob);
+    link.href = downloadUrl;
     
     // 處理副檔名
     let ext = currentFile.name.split('.').pop();
@@ -176,6 +179,9 @@ window.downloadImage = function() {
     if(format === 'image/webp') ext = 'webp';
     
     link.download = currentFile.name.replace(/\.[^/.]+$/, "") + '-opt.' + ext;
+    link.addEventListener('click', () => {
+        setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+    }, { once: true });
     link.click();
     
     window.showToast?.('圖片下載中...', 'success');

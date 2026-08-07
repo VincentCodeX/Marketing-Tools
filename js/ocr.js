@@ -240,10 +240,86 @@ window.copyAllOcr = function() {
     });
 }
 
+window.copyNotionFormat = function() {
+    const fields = getOcrFields();
+    const notionText = [
+        `Name:: ${fields.name}`,
+        `Title:: ${fields.title}`,
+        `Company:: ${fields.company}`,
+        `Phone:: ${fields.phone}`,
+        `Email:: ${fields.email}`,
+        `LINE:: ${fields.line}`,
+        `Tax ID:: ${fields.tax}`
+    ].filter(line => line.trim().endsWith('::') === false).join('\n');
+
+    if (!notionText) {
+        window.showToast?.('沒有可複製的資料', 'warning');
+        return;
+    }
+
+    navigator.clipboard.writeText(notionText)
+        .then(() => window.showToast?.('Notion 格式已複製', 'success'))
+        .catch((err) => {
+            console.error(err);
+            window.showToast?.('複製失敗，請手動複製', 'error');
+        });
+}
+
+window.exportToCsv = function() {
+    const fields = getOcrFields();
+    const rows = [
+        ['欄位', '內容'],
+        ['姓名', fields.name],
+        ['職稱', fields.title],
+        ['公司', fields.company],
+        ['電話', fields.phone],
+        ['Email', fields.email],
+        ['LINE', fields.line],
+        ['統編', fields.tax]
+    ];
+    const csv = rows.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\n');
+
+    navigator.clipboard.writeText(csv)
+        .then(() => window.showToast?.('CSV 資料已複製', 'success'))
+        .catch((err) => {
+            console.error(err);
+            window.showToast?.('複製失敗，請手動複製', 'error');
+        });
+}
+
+window.exportToJson = function() {
+    const fields = getOcrFields();
+    const jsonText = JSON.stringify(fields, null, 2);
+
+    navigator.clipboard.writeText(jsonText)
+        .then(() => window.showToast?.('JSON 已複製', 'success'))
+        .catch((err) => {
+            console.error(err);
+            window.showToast?.('複製失敗，請手動複製', 'error');
+        });
+}
+
+function getOcrFields() {
+    return {
+        name: document.getElementById('ocr-name')?.value || '',
+        title: document.getElementById('ocr-title')?.value || '',
+        company: document.getElementById('ocr-company')?.value || '',
+        phone: document.getElementById('ocr-phone')?.value || '',
+        email: document.getElementById('ocr-email')?.value || '',
+        line: document.getElementById('ocr-line')?.value || '',
+        tax: document.getElementById('ocr-tax')?.value || ''
+    };
+}
+
 window.resetOcr = function() {
     clearOcrForm();
-    document.getElementById('ocr-preview-img').src = "";
-    document.getElementById('ocr-preview-img').style.display = 'none';
-    document.getElementById('ocr-default-view').style.display = 'block';
-    document.getElementById('ocr-input').value = ''; // 清空 file input 以便重複上傳同一張
+    const previewImg = document.getElementById('ocr-preview-img');
+    if (previewImg) {
+        previewImg.src = "";
+        previewImg.style.display = 'none';
+    }
+    const defaultView = document.getElementById('ocr-default-view');
+    if (defaultView) defaultView.style.display = 'block';
+    const input = document.getElementById('ocr-input');
+    if (input) input.value = ''; // 清空 file input 以便重複上傳同一張
 }
