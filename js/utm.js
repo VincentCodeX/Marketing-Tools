@@ -9,7 +9,7 @@ function generateUTM() {
 
     if (!url) { 
         resultDisplay.innerText = "請至少輸入「目標網址」..."; 
-        resultDisplay.style.color = "#ccc"; 
+        resultDisplay.style.color = "#94A3B8"; 
         return; 
     }
     
@@ -25,9 +25,10 @@ function generateUTM() {
     if (params.length > 0) {
         let finalUrl = url + separator + params.join('&');
         resultDisplay.innerText = finalUrl; 
-        resultDisplay.style.color = "#2C3E50";
+        resultDisplay.style.color = "#FED7AA";
     } else { 
         resultDisplay.innerText = url; 
+        resultDisplay.style.color = "#FED7AA";
     }
 }
 
@@ -38,6 +39,6 @@ function copyUTM() {
     
     navigator.clipboard.writeText(urlText).then(() => { 
         // 呼叫我們剛剛寫好的共用彈跳視窗
-        showToast("✅ UTM 連結已複製！");
-    }); // <--- 補上這裡的 }); 就修好了
+        showToast("UTM 連結已複製！");
+    });
 }

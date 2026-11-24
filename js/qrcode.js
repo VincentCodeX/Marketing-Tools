@@ -7,9 +7,10 @@ function initQRCode() {
 
     if (typeof QRCodeStyling !== 'undefined') {
         if (!qrCodeObj) {
+            const initialColor = document.getElementById('qr-color')?.value || "#0F172A";
             qrCodeObj = new QRCodeStyling({
                 width: 300, height: 300, type: "svg", data: "https://github.com", image: "",
-                dotsOptions: { color: "#2C3E50", type: "square" }, backgroundOptions: { color: "#ffffff" },
+                dotsOptions: { color: initialColor, type: "square" }, backgroundOptions: { color: "#ffffff" },
                 imageOptions: { crossOrigin: "anonymous", margin: 10 }
             });
             qrCodeObj.append(document.getElementById("qrcode-canvas"));
@@ -34,6 +35,8 @@ function updateQR() {
     if (!qrCodeObj) return;
     const text = document.getElementById('qr-text').value || "https://github.com";
     const color = document.getElementById('qr-color').value;
+    const hexDisplay = document.getElementById('qr-color-hex');
+    if (hexDisplay) hexDisplay.textContent = color.toUpperCase();
     const correction = document.getElementById('qr-correction').value;
     const dotsType = document.getElementById('qr-dots-type').value;
     const cornerType = document.getElementById('qr-corner-type').value;

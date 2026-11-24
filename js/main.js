@@ -109,12 +109,35 @@ const MarketingTools = {
             btn.addEventListener('click', (e) => {
                 const targetId = btn.getAttribute('data-target');
                 this.switchTab(targetId, e.currentTarget);
+                // 窄螢幕橫滑模式下，點擊分頁自動捲動至可見置中位置
+                btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
             });
         });
+
+        // 窄螢幕時，在導覽列上使用滑鼠滾輪也可直接左右捲動
+        const navContainer = document.querySelector('.nav-container');
+        if (navContainer) {
+            navContainer.addEventListener('wheel', (e) => {
+                if (navContainer.scrollWidth > navContainer.clientWidth && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+                    e.preventDefault();
+                    navContainer.scrollLeft += e.deltaY;
+                }
+            }, { passive: false });
+        }
     },
 
-    // 預先加載當前分頁的模組
+    // 預先加載當前分頁的模組（並支援 ?tab= 網址參數自動切換分頁）
     loadActiveTabModule() {
+        const params = new URLSearchParams(window.location.search);
+        const tabParam = params.get('tab');
+        if (tabParam) {
+            const targetBtn = document.querySelector(`.nav-btn[data-target="${tabParam}"]`);
+            if (targetBtn) {
+                this.switchTab(tabParam, targetBtn);
+                return;
+            }
+        }
+
         const activeBtn = document.querySelector('.nav-btn.active');
         if (activeBtn) {
             const targetId = activeBtn.getAttribute('data-target');
@@ -175,18 +198,21 @@ const MarketingTools = {
         const toast = document.getElementById('global-toast');
         if (!toast) return;
 
-        // 圖示對應
+        // 移除訊息開頭重複的手動圖示，避免出現兩個勾勾或圖示
+        const cleanMessage = String(message || '').replace(/^[\s✅❌⚠️ℹ️✓✔]+/, '').trim();
+
+        // 簡約線條 SVG 圖示對應
         const icons = {
-            success: '✅',
-            error: '❌',
-            warning: '⚠️',
-            info: 'ℹ️'
+            success: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+            error: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>',
+            warning: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+            info: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FB923C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>'
         };
 
         // 設定內容和樣式
         toast.innerHTML = `
-            <span style="font-size: 18px;">${icons[type] || '✓'}</span>
-            <span>${message}</span>
+            <span style="display:inline-flex; align-items:center; flex-shrink:0;">${icons[type] || icons.success}</span>
+            <span>${cleanMessage}</span>
         `;
 
         toast.className = `toast-msg ${type}`;
@@ -196,8 +222,9 @@ const MarketingTools = {
             toast.classList.add('show');
         });
 
-        // 自動隱藏
-        setTimeout(() => {
+        // 清除舊計時器，避免連續點擊時過早隱藏
+        clearTimeout(this._toastTimer);
+        this._toastTimer = setTimeout(() => {
             toast.classList.remove('show');
         }, duration);
     },
@@ -214,7 +241,7 @@ const MarketingTools = {
         ripple.style.position = 'absolute';
         ripple.style.borderRadius = '50%';
         ripple.style.transform = 'translate(-50%, -50%) scale(0)';
-        ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+        ripple.style.background = 'rgba(249, 115, 22, 0.35)';
         ripple.style.pointerEvents = 'none';
         ripple.style.animation = 'ripple-effect 0.6s ease-out';
 
@@ -326,7 +353,7 @@ const injectAnimations = () => {
         }
         
         .keyboard-nav *:focus {
-            outline: 3px solid #3B82F6 !important;
+            outline: 2px solid #F97316 !important;
             outline-offset: 2px;
         }
     `;

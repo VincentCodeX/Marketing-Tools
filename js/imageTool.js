@@ -18,10 +18,34 @@ function isMobileDevice() {
 
 // 初始化
 function initImageTool() {
+    if (window.imageToolInitialized) return;
     const dropZone = document.getElementById('drop-zone');
-    if (dropZone && isMobileDevice()) {
-        const uploadText = dropZone.querySelector('.upload-text');
-        if (uploadText) uploadText.textContent = '點擊選擇圖片';
+    if (dropZone) {
+        if (isMobileDevice()) {
+            const uploadText = dropZone.querySelector('.upload-text');
+            if (uploadText) uploadText.textContent = '點擊選擇圖片';
+        } else {
+            // 桌面版支援拖放圖片上傳
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.add('dragover');
+            });
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('dragover');
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    window.processImage(e.dataTransfer.files[0]);
+                }
+            });
+        }
+        window.imageToolInitialized = true;
     }
     console.log('✅ 圖片工具已初始化');
 }
@@ -49,7 +73,7 @@ window.processImage = function(file) {
     document.getElementById('preview-empty').style.display = 'none';
     document.getElementById('preview-active').style.display = 'block';
     document.getElementById('info-original').innerText = formatSize(file.size);
-    document.getElementById('info-compressed').innerHTML = '<span style="color:#666">讀取中...</span>';
+    document.getElementById('info-compressed').innerHTML = '<span style="color:#94A3B8">讀取中...</span>';
     
     // 2. 預先讀取圖片尺寸 (解決 Race Condition)
     const img = new Image();
@@ -145,7 +169,7 @@ window.runCompression = async function() {
         
         // 計算數據
         const saved = ((currentFile.size - compressedBlob.size) / currentFile.size * 100).toFixed(1);
-        const color = saved > 0 ? '#10B981' : '#666'; // 綠色或灰色
+        const color = saved > 0 ? '#34D399' : '#94A3B8'; // 深色模式柔和綠或灰
         const sizeText = formatSize(compressedBlob.size);
         const percentText = saved > 0 ? `-${Math.abs(saved)}%` : `+${Math.abs(saved)}%`;
         

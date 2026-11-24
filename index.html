@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="整合行銷工具盒 - 提供 QR Code、GTM 追蹤、短網址、圖片壓縮、OCR 辨識、廣告規格及特殊符號等一站式行銷工具">
     <meta name="keywords" content="QR Code, GTM 追蹤, 短網址, 圖片壓縮, OCR 辨識, 廣告規格, 行銷工具">
-    <meta name="theme-color" content="#0071e3">
+    <meta name="theme-color" content="#0F172A">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="dark-content">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>整合行銷工具盒 - QR Code & 行銷工具集合</title>
     <link rel="icon" href="favicon.png" type="image/png">
     <link rel="manifest" href="/manifest.json">
@@ -19,286 +19,133 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
 
-    <!-- 關鍵 CSS（內聯首屏必需樣式，提升首繪速度）-->
+    <!-- 防止深色模式載入前閃白 -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-        
-        :root {
-            --brand-blue: #0071e3;
-            --brand-blue-hover: #0077ed;
-            --primary-color: #0071e3;
-            --primary: #0071e3;
-            --primary-light: rgba(0, 113, 227, 0.1);
-            --text-primary: #1d1d1f;
-            --text-secondary: #86868b;
-            --bg-main: #f5f5f7;
-            --bg-gray: #f5f5f7;
-            --bg-card: #ffffff;
-            --radius-lg: 24px;
-            --radius-md: 12px;
-            --radius-sm: 8px;
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --transition-normal: 0.3s;
-            --transition-fast: 0.2s;
-            --gradient-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-page-bg: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
-            --spacing-sm: 8px;
-            --spacing-md: 16px;
-            --spacing-lg: 24px;
-            --spacing-xl: 32px;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
-            background: var(--gradient-page-bg);
-            background-attachment: fixed;
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 20px;
-            width: 100%;
-        }
-        
-        .header-title {
-            display: block;
-            width: 100%;
-            text-align: center;
-            margin-top: 50px;
-            margin-bottom: 30px;
-            font-family: 'Noto Sans TC', sans-serif;
-            font-size: 36px;
-            font-weight: 900;
-            color: white;
-            letter-spacing: 0.2em;
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        .top-nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding: var(--spacing-md) var(--spacing-lg);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: var(--shadow-md);
-            animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--spacing-xl);
-            flex-wrap: wrap;
-        }
-        
-        .brand {
-            font-size: 24px;
-            font-weight: 800;
-            background: var(--gradient-purple);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: var(--spacing-sm);
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .nav-btn {
-            padding: 10px 20px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .nav-btn.active {
-            color: white;
-            background: var(--brand-blue);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .main-content {
-            margin-top: var(--spacing-xl);
-            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .tool-section {
-            display: none;
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            margin-bottom: 50px;
-            animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        .tool-section.active {
-            display: block;
-        }
-        
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
+        html, body { background-color: #1E293B; color: #CBD5E1; }
     </style>
-    
-    <!-- 完整樣式表（同步加載） -->
+
+    <!-- 完整樣式表 -->
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* 防止未加載前的 Flash - 樣式加載後立即顯示 */
-        html { visibility: hidden; opacity: 0; }
-        html.stylesheet-loaded { visibility: visible; opacity: 1; }
-    </style>
-    <script>
-        // 在 CSS 加載後立即顯示（防止 FOUC - Flash of Unstyled Content）
-        document.documentElement.classList.add('stylesheet-loaded');
-    </script>
-
-
-
 </head>
 
 <body>
-    <div id="global-toast" class="toast-msg">已複製到剪貼簿</div>
-    <h1 class="header-title">整合行銷工具盒</h1>
-
-    <div class="nav-container">
-        <button class="nav-btn active" data-target="qr">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7"></rect>
-                <rect x="14" y="3" width="7" height="7"></rect>
-                <rect x="14" y="14" width="7" height="7"></rect>
-                <path d="M3 14h7v7H3z"></path>
-            </svg>
-            QR Code
-        </button>
-
-        <button class="nav-btn" data-target="utm">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="20" x2="12" y2="10"></line>
-                <line x1="18" y1="20" x2="18" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="16"></line>
-            </svg>
-            GTM 追蹤
-        </button>
-
-        <button class="nav-btn" data-target="shorten">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-            </svg>
-            短網址
-        </button>
-
-        <button class="nav-btn" data-target="compress">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                <polyline points="21 15 16 10 5 21"></polyline>
-            </svg>
-            圖片壓縮
-        </button>
-
-        <button class="nav-btn" data-target="ocr">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"></path>
-                <path
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                </path>
-            </svg>
-            OCR 辨識
-        </button>
-
-        <button class="nav-btn" data-target="ads">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect>
-                <polyline points="17 2 12 7 7 2"></polyline>
-            </svg>
-            廣告規格
-        </button>
-
-        <button class="nav-btn" data-target="emoji">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-                <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                <line x1="15" y1="9" x2="15.01" y2="9"></line>
-            </svg>
-            特殊符號
-        </button>
+    <!-- 室內設計感建築光影背景舞台（純裝飾，不影響互動） -->
+    <div class="ambient-scene" aria-hidden="true">
+        <div class="ambient-glow glow-warm"></div>
+        <div class="ambient-glow glow-cool"></div>
+        <div class="ambient-glow glow-amber"></div>
+        <div class="ambient-beam"></div>
+        <div class="ambient-grid"></div>
+        <div class="ambient-noise"></div>
     </div>
+
+    <div id="global-toast" class="toast-msg">已複製到剪貼簿</div>
+
+    <header class="site-header">
+        <h1 class="header-title">整合行銷工具盒</h1>
+    </header>
+
+    <nav class="top-nav" aria-label="工具導覽列">
+        <div class="nav-container">
+            <button class="nav-btn active" data-target="qr">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <path d="M3 14h7v7H3z"></path>
+                </svg>
+                QR Code
+            </button>
+
+            <button class="nav-btn" data-target="utm">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="20" x2="12" y2="10"></line>
+                    <line x1="18" y1="20" x2="18" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="16"></line>
+                </svg>
+                GTM 追蹤
+            </button>
+
+            <button class="nav-btn" data-target="shorten">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                短網址
+            </button>
+
+            <button class="nav-btn" data-target="compress">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                圖片壓縮
+            </button>
+
+            <button class="nav-btn" data-target="ocr">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+                    <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+                    <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+                    <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+                    <line x1="7" y1="12" x2="17" y2="12"></line>
+                </svg>
+                OCR 辨識
+            </button>
+
+            <button class="nav-btn" data-target="ads">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect>
+                    <polyline points="17 2 12 7 7 2"></polyline>
+                </svg>
+                廣告規格
+            </button>
+
+            <button class="nav-btn" data-target="emoji">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                </svg>
+                特殊符號
+            </button>
+        </div>
+    </nav>
+
     <div class="container main-content">
 
+        <!-- 1. QR Code 產生器 -->
         <div id="tab-qr" class="tool-section active">
             <div class="qr-layout">
                 <div class="controls">
                     <div class="setting-group">
                         <div class="setting-title">選擇類型</div>
                         <div class="type-toggle">
-                            <button class="type-btn active" data-action="setQRType" data-value="url">🔗 網址 (URL)</button>
-                            <button class="type-btn" data-action="setQRType" data-value="text">📝 純文字</button>
+                            <button class="type-btn active" data-action="setQRType" data-value="url">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                </svg>
+                                網址 (URL)
+                            </button>
+                            <button class="type-btn" data-action="setQRType" data-value="text">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                                純文字
+                            </button>
                         </div>
                     </div>
                     <div class="setting-group">
@@ -318,8 +165,12 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="label-secondary">顏色</label>
-                                <input type="color" id="qr-color" class="color-picker" value="#2C3E50" data-action="updateQR">
+                                <label class="label-secondary" for="qr-color">顏色</label>
+                                <label class="color-picker-field" for="qr-color">
+                                    <input type="color" id="qr-color" class="color-picker" value="#0F172A" data-action="updateQR">
+                                    <span id="qr-color-hex" class="color-hex-code">#0F172A</span>
+                                    <span class="color-picker-hint">自訂</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -349,24 +200,36 @@
                         <div class="setting-title">品牌 Logo</div>
                         <input type="file" id="qr-logo" accept="image/*" style="display:none" data-action="handleLogoUpload">
                         <div class="file-upload" data-action="triggerFileInput" data-target="qr-logo">
-                            <span id="logo-status">📤 點擊上傳 Logo (置中顯示)</span>
+                            <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <span id="logo-status">點擊上傳 Logo (置中顯示)</span>
                         </div>
                     </div>
                 </div>
                 <div class="preview-wrapper">
                     <div id="qrcode-canvas"></div>
-                    <p class="preview-hint">即時預覽中...</p>
-                    <button class="action-btn" data-action="downloadQR">下載 QR Code</button>
+                    <p class="preview-hint">即時預覽中 · 保留高對比白底確保掃描成功率</p>
+                    <button class="action-btn primary-btn" data-action="downloadQR">
+                        <span>下載 QR Code</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
 
+        <!-- 2. GTM 網址產生器 -->
         <div id="tab-utm" class="tool-section">
-
             <h2 class="section-title">GTM 網址產生器</h2>
+            <p class="section-subtitle">快速組合行銷追蹤參數，確保廣告與社群成效完整歸因。</p>
 
             <div class="utm-layout-container">
-
                 <div class="utm-left-panel">
                     <div class="form-group full-width">
                         <label>1. 目標網址 (Website URL) <span class="label-required">*</span></label>
@@ -400,18 +263,24 @@
                     <div class="result-sticky-card">
                         <div class="result-header">
                             <span>追蹤連結預覽</span>
-                            <span id="copy-msg" class="copy-status">✅ 已複製</span>
+                            <span id="copy-msg" class="copy-status">已複製</span>
                         </div>
                         <div class="code-display">
                             <code id="final-url">請輸入左側資料...</code>
                         </div>
-                        <button class="action-btn" data-action="copyUTM">複製連結</button>
+                        <button class="action-btn primary-btn" data-action="copyUTM">
+                            <span>複製追蹤連結</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
-
             </div>
         </div>
 
+        <!-- 3. 短網址產生器 -->
         <div id="tab-shorten" class="tool-section">
             <h2 class="section-title">短網址產生器 (is.gd)</h2>
             <p class="section-subtitle">使用 is.gd 服務，產生永久有效、完全無廣告的短連結。</p>
@@ -420,49 +289,62 @@
                 <div class="shorten-left-panel">
                     <div class="form-group full-width">
                         <label>請輸入長網址 (Website URL)</label>
-                        <input type="url" id="long-url" placeholder="https://www.example.com/very-long-link"
-                            style="width: 100%;">
+                        <input type="url" id="long-url" placeholder="https://www.example.com/very-long-link">
                     </div>
-                    <button class="action-btn secondary-btn" id="shorten-btn" data-action="generateShortUrl">
+                    <button class="action-btn primary-btn" id="shorten-btn" data-action="generateShortUrl">
                         <span id="btn-text">產生短網址</span>
                         <div id="btn-loader" class="loading-spinner" style="display:none;"></div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
                     </button>
-                    <p class="usage-hint">* 系統自動處理跨網域請求 (CORS Proxy)</p>
+                    <p class="usage-hint mt-3">* 系統自動透過跨網域安全連線產生短連結</p>
                 </div>
 
                 <div class="shorten-right-panel">
                     <div id="short-result" class="result-sticky-card" style="display:none;">
                         <div class="result-header">
                             <span>您的短連結</span>
-                            <span id="short-copy-msg" class="copy-status">✅ 已複製</span>
+                            <span id="short-copy-msg" class="copy-status">已複製</span>
                         </div>
 
                         <div class="short-url-box">
-                            <a id="short-link" href="#" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 600; word-break: break-all;">https://is.gd/xyz</a>
+                            <a id="short-link" href="#" target="_blank" rel="noopener noreferrer">https://is.gd/xyz</a>
                         </div>
 
-                        <button class="action-btn primary-btn" data-action="copyShortUrl" style="width: 100%; margin-top: 20px;">
-                            📋 複製短網址
+                        <button class="action-btn primary-btn" data-action="copyShortUrl">
+                            <span>複製短網址</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- 4. 專業圖片壓縮 -->
         <div id="tab-compress" class="tool-section">
             <h2 class="section-title">專業圖片壓縮</h2>
-            <p class="section-subtitle">所有運算皆在瀏覽器完成，隱私百分百，支援批量預設尺寸。</p>
+            <p class="section-subtitle">所有運算皆在瀏覽器本地完成，隱私百分百，支援常用社群尺寸預設。</p>
 
             <div class="compress-layout-container">
                 <div class="compress-left-panel">
-
                     <div class="setting-group">
                         <div class="setting-title">1. 上傳圖片</div>
                         <div class="file-upload-card" id="drop-zone"
                             data-action="triggerFileInput" data-target="img-input">
-                            <div class="upload-icon">🖼️</div>
+                            <div class="upload-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                            </div>
                             <div class="upload-text">點擊或拖放圖片至此</div>
-                            <div class="upload-hint">支援 JPG, PNG, WEBP</div>
+                            <div class="upload-hint">支援 JPG、PNG、WEBP</div>
                         </div>
                         <input type="file" id="img-input" accept="image/*" style="display:none"
                             data-action="processImage">
@@ -482,7 +364,7 @@
                         <div class="form-row mt-2">
                             <div class="form-group">
                                 <label>寬度 (px)</label>
-                                <input type="number" id="custom-width" placeholder="原寶" data-action="runCompression">
+                                <input type="number" id="custom-width" placeholder="原寬" data-action="runCompression">
                             </div>
                             <div class="form-group">
                                 <label>高度 (px)</label>
@@ -494,7 +376,7 @@
                     <div class="setting-group">
                         <div class="setting-title">3. 壓縮設定</div>
                         <div class="form-group">
-                            <label>壓縮品質: <span id="quality-val" style="color:var(--primary-color)">0.8</span></label>
+                            <label>壓縮品質：<span id="quality-val" style="color:var(--accent-orange-soft); font-weight:700;">0.8</span></label>
                             <input type="range" id="quality" min="0.1" max="1.0" step="0.1" value="0.8"
                                 data-action="updateQualityVal">
                         </div>
@@ -513,7 +395,12 @@
                 <div class="compress-right-panel">
                     <div class="result-sticky-card">
                         <div id="preview-empty" class="empty-state">
-                            <div class="empty-icon">⏳</div>
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
                             <p>等待上傳圖片...</p>
                         </div>
 
@@ -535,17 +422,25 @@
                                 </div>
                             </div>
 
-                            <button class="action-btn" data-action="downloadImage">下載優化圖片</button>
+                            <button class="action-btn primary-btn" data-action="downloadImage">
+                                <span>下載優化圖片</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </button>
                         </div>
                     </div>
-                    <p class="usage-hint" style="text-align:center; margin-top:20px;">ℹ️ 圖片處理完全在本地完成</p>
+                    <p class="usage-hint mt-3" style="text-align:center;">所有圖片處理均於本機瀏覽器內完成，不會上傳至伺服器</p>
                 </div>
             </div>
         </div>
 
+        <!-- 5. OCR 名片辨識 -->
         <div id="tab-ocr" class="tool-section">
             <h2 class="section-title">OCR 名片辨識</h2>
-            <p class="section-subtitle">自動讀取名片資訊，並整理為結構化資料，支援匯出至 Notion 或試算表。</p>
+            <p class="section-subtitle">自動讀取名片上的聯絡資訊，並整理為表單方便核對與複製。</p>
 
             <div class="ocr-layout-container">
                 <div class="ocr-left-panel">
@@ -554,23 +449,35 @@
                         <div class="file-upload-card" id="ocr-drop-zone"
                             data-action="triggerFileInput" data-target="ocr-input">
                             <div id="ocr-default-view">
-                                <div class="upload-icon">📸</div>
+                                <div class="upload-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                        <circle cx="12" cy="13" r="4"></circle>
+                                    </svg>
+                                </div>
                                 <div class="upload-text">掃描名片</div>
-                                <div class="upload-hint">請確保文字清晰無反光</div>
+                                <div class="upload-hint">請上傳 JPG / PNG 格式（不支援 HEIC）</div>
                             </div>
                             <img id="ocr-preview-img" class="ocr-preview-display" style="display:none;">
                         </div>
-                        <input type="file" id="ocr-input" accept="image/*" style="display:none"
+                        <input type="file" id="ocr-input" accept="image/jpeg,image/png,image/webp" style="display:none"
                             data-action="processOcr">
                     </div>
 
                     <div id="ocr-loading" class="status-indicator" style="display:none;">
                         <div class="mini-spinner"></div>
-                        <span id="ocr-status-text">AI 正在讀取資訊...</span>
+                        <span id="ocr-status-text">正在讀取資訊...</span>
                     </div>
 
-                    <div class="usage-hint mt-3">
-                        ✨ <strong>提示：</strong> 支援中、英文辨識。若辨識有誤，可直接在右側卡片手動修正。
+                    <div id="ocr-error-tip" class="usage-hint mt-3 ocr-error-box" style="display:none;"></div>
+
+                    <div class="usage-hint mt-3 ocr-note-box">
+                        <div class="ocr-note-title">使用備註</div>
+                        <ul class="ocr-note-list">
+                            <li><strong>請使用 JPG 或 PNG 格式圖片</strong>；若為 iPhone 拍攝的 HEIC 檔案，請先「截圖」或轉存為 JPG 後再上傳。</li>
+                            <li>建議正面平拍、光線充足且避免反光，辨識效果會較佳。</li>
+                            <li>本功能為純瀏覽器免費運算，辨識結果僅供參考，未偵測到的欄位會自動填入「無」，可直接於右側手動修改。</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -579,45 +486,57 @@
                         <div class="result-header">
                             <span>整理後的聯絡資訊</span>
                             <div class="header-actions">
-                                <button class="icon-btn" data-action="resetOcr">🔄 重置</button>
+                                <button class="icon-btn" data-action="resetOcr">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="23 4 23 10 17 10"></polyline>
+                                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                                    </svg>
+                                    重置
+                                </button>
                             </div>
                         </div>
 
                         <div class="ocr-data-form">
                             <div class="form-item">
-                                <label>👤 姓名</label>
+                                <label>姓名</label>
                                 <input type="text" id="ocr-name" placeholder="尚未讀取">
                             </div>
                             <div class="form-item">
-                                <label>💼 職稱</label>
+                                <label>職稱</label>
                                 <input type="text" id="ocr-title" placeholder="尚未讀取">
                             </div>
                             <div class="form-item">
-                                <label>🏢 公司</label>
+                                <label>公司</label>
                                 <input type="text" id="ocr-company" placeholder="尚未讀取">
                             </div>
                             <div class="form-item">
-                                <label>📞 電話</label>
+                                <label>電話</label>
                                 <input type="text" id="ocr-phone" placeholder="尚未讀取">
                             </div>
                             <div class="form-item">
-                                <label>✉️ Email</label>
+                                <label>Email</label>
                                 <input type="text" id="ocr-email" placeholder="尚未讀取">
+                            </div>
+                            <div class="form-item">
+                                <label>LINE ID</label>
+                                <input type="text" id="ocr-line" placeholder="尚未讀取">
+                            </div>
+                            <div class="form-item">
+                                <label>統一編號</label>
+                                <input type="text" id="ocr-tax" placeholder="尚未讀取">
                             </div>
                         </div>
 
-                        <div class="export-actions">
-                            <button class="action-btn primary-btn" data-action="copyNotionFormat">專出至 Notion</button>
-                            <div class="secondary-actions">
-                                <button class="action-btn secondary-btn" data-action="exportToCsv">CSV</button>
-                                <button class="action-btn secondary-btn" data-action="exportToJson">JSON</button>
-                            </div>
-                        </div>
+                        <details id="ocr-raw-wrapper" class="ocr-raw-details" style="display:none;">
+                            <summary>查看原始辨識文字（方便手動核對）</summary>
+                            <textarea id="ocr-raw-text" readonly rows="5"></textarea>
+                        </details>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- 6. 廣告規格速查 -->
         <div id="tab-ads" class="tool-section">
             <div class="header-with-filter">
                 <h2 class="title-main">各大平台廣告規格速查</h2>
@@ -632,29 +551,41 @@
                 </select>
             </div>
 
-            <div id="gridContainer" class="ads-grid-container">
-            </div>
+            <div id="gridContainer" class="ads-grid-container"></div>
 
             <div class="hint-box mt-md">
-                <span class="hint-box-icon">ⓘ</span>
-                <div class="hint-box-content">提示：點擊右側複製按鈕可快速複製尺寸（如 1080x1080），方便在 PS 或 Canva 中使用。</div>
+                <span class="hint-box-icon">
+                    <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </span>
+                <div class="hint-box-content">提示：點擊右側複製按鈕可快速複製尺寸（如 1080x1080），方便在 Photoshop 或 Canva 中直接使用。</div>
             </div>
-
         </div>
 
+        <!-- 7. 特殊符號 & Emoji -->
         <div id="tab-emoji" class="tool-section">
             <div class="emoji-header-box">
-                <div class="emoji-icon-bg">😊</div>
+                <div class="emoji-icon-bg">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                        <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                        <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                    </svg>
+                </div>
                 <div>
-                    <h2 style="margin:0; color:var(--primary);">常用標點符號 & Emoji & 顏文字</h2>
-                    <p style="margin:5px 0 0; font-size:13px; color:#666;">點擊即可複製到剪貼簿，方便快速使用</p>
+                    <h2 class="emoji-header-title">常用標點符號 & Emoji & 顏文字</h2>
+                    <p class="emoji-header-desc">點擊即可複製到剪貼簿，方便撰寫社群文案快速使用</p>
                 </div>
             </div>
 
             <div class="sub-nav-container">
-                <button class="sub-nav-btn active" data-action="switchSubTab" data-value="symbols">T 標點符號</button>
-                <button class="sub-nav-btn" data-action="switchSubTab" data-value="emojis">☺ Emoji</button>
-                <button class="sub-nav-btn" data-action="switchSubTab" data-value="kaomoji">˕•ᴥ•˕ 顏文字</button>
+                <button class="sub-nav-btn active" data-action="switchSubTab" data-value="symbols">標點符號</button>
+                <button class="sub-nav-btn" data-action="switchSubTab" data-value="emojis">Emoji</button>
+                <button class="sub-nav-btn" data-action="switchSubTab" data-value="kaomoji">顏文字</button>
             </div>
 
             <div id="view-symbols" class="sub-view active"></div>
@@ -662,24 +593,25 @@
             <div id="view-kaomoji" class="sub-view"></div>
 
             <div class="footer-note mt-md">
-                <span>⚡</span>
-                <div>小技巧：點擊符號、Emoji 或顏文字即可自動複製，然後在任何地方使用 Ctrl+V (或 Cmd+V) 貼上。</div>
+                <span class="note-icon">
+                    <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                </span>
+                <div>小技巧：點擊符號、Emoji 或顏文字即可自動複製，然後在任何地方使用 Ctrl+V（或 Cmd+V）貼上。</div>
             </div>
-
         </div>
 
     </div>
 
     <footer class="app-footer">
-        <a href="https://www.next-level-creative.com/" target="_blank" class="footer-link">
-            Made with ✨VincentGame✨ © 2026 整合行銷工具盒
+        <a href="https://www.next-level-creative.com/" target="_blank" rel="noopener noreferrer" class="footer-link">
+            Made by VincentGame © 2026 整合行銷工具盒
         </a>
     </footer>
 
-    <!-- 【修复】只加载 main.js，所有工具脚本由 main.js 的 ModuleLoader 系统动态加载 -->
+    <!-- 只載入 main.js，所有工具腳本由 main.js 的 ModuleLoader 動態載入 -->
     <script src="js/main.js" defer></script>
-
-
 </body>
 
 </html>

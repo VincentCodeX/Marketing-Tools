@@ -6,8 +6,8 @@
     "scope": "/",
     "display": "standalone",
     "orientation": "portrait-primary",
-    "background_color": "#ffffff",
-    "theme_color": "#0071e3",
+    "background_color": "#0F172A",
+    "theme_color": "#0F172A",
     "icons": [
         {
             "src": "/favicon.png",
@@ -79,15 +79,5 @@
                 }
             ]
         }
-    ],
-    "share_target": {
-        "action": "/share",
-        "method": "POST",
-        "enctype": "application/x-www-form-urlencoded",
-        "params": {
-            "title": "title",
-            "text": "text",
-            "url": "url"
-        }
-    }
+    ]
 }

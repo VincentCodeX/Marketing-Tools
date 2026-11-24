@@ -1,12 +1,14 @@
 // ==========================================
-// Service Worker - 离线支持 + 缓存策略
+// Service Worker - 離線支援 + 快取策略
 // ==========================================
 
-const CACHE_NAME = 'marketing-tools-v1.2'; // 每次修改 JS 需要更新此版本号
+const CACHE_NAME = 'marketing-tools-v1.4'; // 每次修改 JS/CSS 需要更新此版本號
+const EXTERNAL_CACHE_NAME = 'external-cache-v1';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
     '/style.css',
+    '/manifest.json',
     '/js/main.js',
     '/js/qrcode.js',
     '/js/utm.js',
@@ -19,30 +21,27 @@ const ASSETS_TO_CACHE = [
 ];
 
 const EXTERNAL_CACHE = [
-    'https://fonts.googleapis.com',
-    'https://fonts.gstatic.com',
     'https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js',
     'https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js',
     'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'
 ];
 
-// === 安装事件：缓存本地和关键资源 ===
+// === 安裝事件：快取本地與關鍵資源 ===
 self.addEventListener('install', (event) => {
-    console.log('🔧 Service Worker 正在安装...');
+    console.log('🔧 Service Worker 正在安裝...');
     
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            console.log('📦 缓存本地资源');
+            console.log('📦 快取本地資源');
             return cache.addAll(ASSETS_TO_CACHE).catch((error) => {
-                console.warn('⚠️ 某些资源缓存失败（可能是外部资源）:', error);
-                // 继续，不让安装失败
+                console.warn('⚠️ 某些資源快取失敗（可能是外部資源）:', error);
                 return Promise.resolve();
             }).then(() => {
-                // 【重要】也要缓存外部 CDN 资源，确保离线或网络差时仍可用
-                return caches.open('external-cache-v1').then((externalCache) => {
-                    console.log('📦 缓存外部 CDN 资源');
+                // 【重要】快取外部 CDN 資源，確保離線或網路不穩時仍可使用
+                return caches.open(EXTERNAL_CACHE_NAME).then((externalCache) => {
+                    console.log('📦 快取外部 CDN 資源');
                     return externalCache.addAll(EXTERNAL_CACHE).catch((error) => {
-                        console.warn('⚠️ CDN 资源缓存可能失败（离线状态）:', error);
+                        console.warn('⚠️ CDN 資源快取可能失敗（離線狀態）:', error);
                         return Promise.resolve();
                     });
                 });
@@ -50,20 +49,21 @@ self.addEventListener('install', (event) => {
         })
     );
     
-    // 跳过等待，立即激活
+    // 跳過等待，立即啟用
     self.skipWaiting();
 });
 
-// === 激活事件：清理旧缓存 ===
+// === 啟用事件：清理舊快取 ===
 self.addEventListener('activate', (event) => {
-    console.log('✅ Service Worker 已激活');
+    console.log('✅ Service Worker 已啟用');
+    const validCaches = [CACHE_NAME, EXTERNAL_CACHE_NAME];
     
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        console.log(`🗑️ 删除旧缓存: ${cacheName}`);
+                    if (!validCaches.includes(cacheName)) {
+                        console.log(`🗑️ 刪除舊快取: ${cacheName}`);
                         return caches.delete(cacheName);
                     }
                 })
@@ -71,7 +71,7 @@ self.addEventListener('activate', (event) => {
         })
     );
     
-    // 激活后立即控制所有客户端
+    // 啟用後立即控制所有用戶端
     self.clients.claim();
 });
 
@@ -182,7 +182,7 @@ function createOfflineResponse() {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>离线模式</title>
+                <title>離線模式</title>
                 <style>
                     body {
                         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
@@ -217,10 +217,10 @@ function createOfflineResponse() {
             <body>
                 <div class="offline-container">
                     <div class="offline-icon">📡</div>
-                    <h1>离线模式</h1>
-                    <p>您目前处于离线状态，但您可以使用已缓存的内容。</p>
+                    <h1>離線模式</h1>
+                    <p>您目前處於離線狀態，但仍可使用已快取的功能。</p>
                     <p style="margin-top: 20px; font-size: 12px; color: #999;">
-                        该应用已支持 PWA 离线功能！请稍后恢复网络连接。
+                        此應用程式已支援 PWA 離線功能，請稍後恢復網路連線。
                     </p>
                 </div>
             </body>
