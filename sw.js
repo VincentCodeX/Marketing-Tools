@@ -2,28 +2,27 @@
 // Service Worker - 離線支援 + 快取策略
 // ==========================================
 
-const CACHE_NAME = 'marketing-tools-v1.4'; // 每次修改 JS/CSS 需要更新此版本號
+const CACHE_NAME = 'marketing-tools-v1.5'; // 每次修改 JS/CSS 需要更新此版本號
 const EXTERNAL_CACHE_NAME = 'external-cache-v1';
 const ASSETS_TO_CACHE = [
-    '/',
-    '/index.html',
-    '/style.css',
-    '/manifest.json',
-    '/js/main.js',
-    '/js/qrcode.js',
-    '/js/utm.js',
-    '/js/urlShortener.js',
-    '/js/imageTool.js',
-    '/js/ocr.js',
-    '/js/ads.js',
-    '/js/emoji.js',
-    '/favicon.png'
+    './',
+    './index.html',
+    './style.css',
+    './manifest.json',
+    './js/main.js',
+    './js/qrcode.js',
+    './js/utm.js',
+    './js/urlShortener.js',
+    './js/imageTool.js',
+    './js/ocr.js',
+    './js/ads.js',
+    './js/emoji.js',
+    './favicon.png'
 ];
 
+// 首屏僅預先快取核心輕量 CDN，重型套件於實際使用時由 fetch 攔截自動快取，避免拖慢首次載入
 const EXTERNAL_CACHE = [
-    'https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js',
-    'https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js',
-    'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'
+    'https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js'
 ];
 
 // === 安裝事件：快取本地與關鍵資源 ===

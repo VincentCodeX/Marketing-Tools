@@ -403,10 +403,10 @@ const setupLazyLoading = () => {
     }
 };
 
-// === 3.6 Service Worker 註冊 ===
+// === 3.6 Service Worker 註冊（使用相對路徑相容 GitHub Pages 子目錄與自訂網域）===
 const registerServiceWorker = () => {
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('./sw.js')
             .then((registration) => {
                 console.log('✅ Service Worker 已註冊:', registration);
 
@@ -552,9 +552,10 @@ const CacheManager = {
     }
 };
 
-// === 7. 模組動態加載系統（代碼分割）===
+// === 7. 模組動態加載系統（代碼分割 + 外部重型套件按需載入）===
 const ModuleLoader = {
     loadedModules: new Set(),
+    loadedScripts: new Map(),
 
     // 模組對應表（按需加載）
     moduleMap: {
@@ -567,10 +568,41 @@ const ModuleLoader = {
         'emoji': 'js/emoji.js'
     },
 
-    // 異步加載指定模組
+    // 重型外部 CDN 套件（僅在切換至該工具分頁時才載入，避免拖慢首頁開啟速度）
+    externalDeps: {
+        'image': [
+            'https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js'
+        ],
+        'ocr': [
+            'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'
+        ]
+    },
+
+    // 載入單一 script（具防重複保護）
+    loadScriptOnce(url) {
+        if (this.loadedScripts.has(url)) {
+            return this.loadedScripts.get(url);
+        }
+
+        const promise = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = url;
+            script.async = true;
+            script.onload = () => resolve(true);
+            script.onerror = () => {
+                this.loadedScripts.delete(url);
+                reject(new Error(`載入失敗: ${url}`));
+            };
+            document.head.appendChild(script);
+        });
+
+        this.loadedScripts.set(url, promise);
+        return promise;
+    },
+
+    // 異步加載指定模組（先載入外部依賴，再載入本地邏輯）
     async loadModule(moduleName) {
         if (this.loadedModules.has(moduleName)) {
-            console.log(`📦 模組已加載: ${moduleName}`);
             return true;
         }
 
@@ -580,21 +612,15 @@ const ModuleLoader = {
             return false;
         }
 
-        return new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = scriptUrl;
-            script.async = true;
-            script.onload = () => {
-                this.loadedModules.add(moduleName);
-                console.log(`✅ 模組已加載: ${moduleName}`);
-                resolve(true);
-            };
-            script.onerror = () => {
-                console.error(`❌ 模組加載失敗: ${moduleName}`);
-                reject(false);
-            };
-            document.head.appendChild(script);
-        });
+        const deps = this.externalDeps[moduleName] || [];
+        for (const depUrl of deps) {
+            await this.loadScriptOnce(depUrl);
+        }
+
+        await this.loadScriptOnce(scriptUrl);
+        this.loadedModules.add(moduleName);
+        console.log(`✅ 模組已加載: ${moduleName}`);
+        return true;
     },
 
     // 根據 Tab 頁籤按需加載

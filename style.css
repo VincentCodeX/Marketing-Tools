@@ -123,83 +123,106 @@ body {
     mask-image: radial-gradient(ellipse 92% 85% at 50% 30%, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.55) 60%, transparent 100%);
 }
 
-/* 柔和不刺眼的雙色室內天光與暮光暈 */
+/* 柔和不刺眼的雙色室內天光與暮光暈（改用高平滑高斯漸層取代昂貴 blur 濾鏡，外觀完全一致且手機極速流暢） */
 .ambient-glow {
     position: absolute;
     border-radius: 50%;
-    filter: blur(85px);
     will-change: transform, opacity;
+    transform: translate3d(0, 0, 0);
 }
 
 .glow-warm {
-    width: 760px;
-    height: 580px;
-    top: -150px;
-    left: -100px;
-    background: radial-gradient(circle, rgba(251, 146, 60, 0.36) 0%, rgba(254, 215, 170, 0.18) 42%, transparent 72%);
+    width: 1080px;
+    height: 900px;
+    top: -310px;
+    left: -260px;
+    background: radial-gradient(
+        closest-side,
+        rgba(251, 146, 60, 0.31) 0%,
+        rgba(252, 165, 95, 0.22) 26%,
+        rgba(254, 215, 170, 0.11) 52%,
+        rgba(254, 215, 170, 0.035) 76%,
+        transparent 100%
+    );
     animation: driftWarm 18s ease-in-out infinite alternate;
 }
 
 .glow-cool {
-    width: 720px;
-    height: 660px;
-    top: 4%;
-    right: -140px;
-    background: radial-gradient(circle, rgba(125, 211, 252, 0.28) 0%, rgba(148, 163, 184, 0.16) 46%, transparent 74%);
+    width: 1040px;
+    height: 980px;
+    top: calc(4% - 160px);
+    right: -300px;
+    background: radial-gradient(
+        closest-side,
+        rgba(125, 211, 252, 0.24) 0%,
+        rgba(135, 188, 220, 0.16) 28%,
+        rgba(148, 163, 184, 0.08) 56%,
+        rgba(148, 163, 184, 0.025) 78%,
+        transparent 100%
+    );
     animation: driftCool 22s ease-in-out infinite alternate;
 }
 
 .glow-amber {
-    width: 820px;
-    height: 500px;
-    bottom: -180px;
-    left: 24%;
-    background: radial-gradient(circle, rgba(234, 88, 12, 0.26) 0%, rgba(251, 146, 60, 0.1) 48%, transparent 74%);
+    width: 1140px;
+    height: 820px;
+    bottom: -340px;
+    left: calc(24% - 160px);
+    background: radial-gradient(
+        closest-side,
+        rgba(234, 88, 12, 0.22) 0%,
+        rgba(242, 115, 35, 0.13) 28%,
+        rgba(251, 146, 60, 0.06) 56%,
+        rgba(251, 146, 60, 0.018) 78%,
+        transparent 100%
+    );
     animation: driftAmber 24s ease-in-out infinite alternate;
 }
 
-/* 斜向自然天光洗牆光帶（柔和但肉眼清楚可見） */
+/* 斜向自然天光洗牆光帶（無濾鏡平滑羽化漸層，外觀一致且零 GPU 模糊負擔） */
 .ambient-beam {
     position: absolute;
     top: -25%;
-    left: 14%;
-    width: 580px;
+    left: 11%;
+    width: 680px;
     height: 155%;
-    transform: rotate(-22deg);
+    transform: rotate(-22deg) translateZ(0);
     background: linear-gradient(
         90deg,
         transparent 0%,
-        rgba(255, 247, 237, 0.05) 32%,
-        rgba(253, 186, 116, 0.12) 50%,
-        rgba(226, 232, 240, 0.05) 68%,
+        rgba(255, 247, 237, 0.018) 18%,
+        rgba(255, 247, 237, 0.05) 34%,
+        rgba(253, 186, 116, 0.11) 50%,
+        rgba(226, 232, 240, 0.05) 66%,
+        rgba(226, 232, 240, 0.015) 82%,
         transparent 100%
     );
-    filter: blur(28px);
 }
 
-/* 細緻石材微顆粒質感 */
+/* 細緻石材微顆粒質感（獨立靜態合成層避免重複運算） */
 .ambient-noise {
     position: absolute;
     inset: 0;
     opacity: 0.045;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    transform: translateZ(0);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-size: 180px 180px;
 }
 
 @keyframes driftWarm {
-    0% { transform: translate(0, 0) scale(1); opacity: 0.9; }
-    100% { transform: translate(65px, 45px) scale(1.08); opacity: 1; }
+    0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.9; }
+    100% { transform: translate3d(65px, 45px, 0) scale(1.06); opacity: 1; }
 }
 
 @keyframes driftCool {
-    0% { transform: translate(0, 0) scale(1); opacity: 0.85; }
-    100% { transform: translate(-55px, 60px) scale(1.1); opacity: 1; }
+    0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.85; }
+    100% { transform: translate3d(-55px, 60px, 0) scale(1.08); opacity: 1; }
 }
 
 @keyframes driftAmber {
-    0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
-    100% { transform: translate(45px, -35px) scale(1.06); opacity: 1; }
+    0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.8; }
+    100% { transform: translate3d(45px, -35px, 0) scale(1.05); opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1686,11 +1709,12 @@ input[type="number"] {
     .top-nav {
         width: calc(100% - 24px);
         top: 10px;
-        padding: 8px 10px;
+        /* 外框不吃上下 padding，將空間留給內層滾動區，避免按鈕橘色光暈被裁切 */
+        padding: 0 4px;
         border-radius: var(--radius-pill);
     }
 
-    /* 手機版改為單排左右滑動膠囊列，不折行擋住畫面 */
+    /* 手機版改為單排左右滑動膠囊列，預留上下左右光暈呼吸空間避免切邊 */
     .nav-container {
         flex-wrap: nowrap;
         justify-content: flex-start;
@@ -1698,9 +1722,9 @@ input[type="number"] {
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
         gap: 6px;
-        padding: 1px 12px 1px 2px;
-        -webkit-mask-image: linear-gradient(to right, #000 0%, #000 88%, transparent 100%);
-        mask-image: linear-gradient(to right, #000 0%, #000 88%, transparent 100%);
+        padding: 8px 18px 8px 8px;
+        -webkit-mask-image: linear-gradient(to right, transparent 0px, #000 6px, #000 calc(100% - 18px), transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0px, #000 6px, #000 calc(100% - 18px), transparent 100%);
     }
 
     .nav-container::-webkit-scrollbar {
@@ -1712,6 +1736,15 @@ input[type="number"] {
         padding: 0.45rem 0.95rem;
         font-size: 13px;
         min-height: 36px;
+    }
+
+    .nav-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(2, 6, 23, 0.32), 0 0 12px rgba(234, 88, 12, 0.22);
+    }
+
+    .nav-btn.active {
+        box-shadow: 0 4px 12px rgba(2, 6, 23, 0.36), 0 0 14px rgba(234, 88, 12, 0.3);
     }
 }
 
